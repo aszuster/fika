@@ -1,6 +1,288 @@
 @import "tailwindcss";
 
+@theme {
+  --breakpoint-*: initial;
+  --breakpoint-sm: 480px;
+  --breakpoint-smd: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1440px;
+  --breakpoint-3xl: 1536px;
+  --breakpoint-4xl: 1920px;
+
+  --color-primary-00: #2A2A2A;
+  --color-primary-01: #D2D2D1;
+  --color-primary-02: #EEEEEE;
+  --color-primary-03: #FFFFFF;
+
+  --color-secondary-00: #141414;
+  --color-secondary-01: #666666;
+  --color-secondary-02: #9D9D9D;
+
+
+  --font-mono: var(--font-jetbrains-mono);
+  --font-sans: var(--font-public-sans);
+
+}
+
+
+
+
+/* fonts */
+
+  /* headlines */
+
+.hl-xs{
+  font-family: var(--font-mono);
+  font-size: .9375rem;
+  font-weight: 300;
+  line-height: 1.5625rem;
+}
+.hl-sm{
+  font-family: var(--font-mono);
+  font-size: 1.5625rem;
+  font-weight: 300;
+  line-height: 2.0625rem;
+}
+.hl-md{
+  font-family: var(--font-mono);
+  font-size: 2.5rem;
+  font-weight: 300;
+  line-height: 3rem;
+}
+.hl-lg{
+  font-family: var(--font-mono);
+  font-size: 3.125rem;
+  font-weight: 300;
+  line-height: 4.125rem;
+}
+.hl-xl{
+  font-family: var(--font-mono);
+  font-size: 5rem;
+  font-weight: 300;
+  line-height: 6.625rem;
+}
+.hl-2xl{
+  font-family: var(--font-mono);
+  font-size: 6.875rem;
+  font-weight: 300;
+  line-height: 9.0625rem;
+}
+
+  /* body */
+
+.by-sm{
+  font-family: var(--font-sans);
+  font-size: .9375rem;
+  font-weight: 300;
+  line-height: 1.3125rem;
+}
+.by-md{
+  font-family: var(--font-sans);
+  font-size: 1.875rem;
+  font-weight: 300;
+  line-height: 2.5rem;
+}
+.by-lg{
+  font-family: var(--font-sans);
+  font-size: 3.125rem;
+  font-weight: 300;
+  line-height: 4.9375rem;
+}
+
+  /* buttons */
+
+.btn-sm{
+  font-family: var(--font-mono);
+  font-size: .9375rem;
+  font-weight: 300;
+  text-transform: uppercase;
+}
+.btn-lg{
+  font-family: var(--font-mono);
+  font-size: 1.125rem;
+  font-weight: 300;
+  text-transform: uppercase;
+}
+
+
+/* .display {
+  font-family: var(--font-sora);
+  font-weight: 400;
+  font-size: 6rem;
+  line-height: 110%;
+  letter-spacing: -0.006rem;
+}
+
+h1,
+.h1 {
+  font-family: var(--font-sora);
+  font-weight: 400;
+  font-size: 2.25rem;
+  line-height: 110%;
+  letter-spacing: -0.045rem;
+}
+
+h2,
+.h2 {
+  font-family: var(--font-sora);
+  font-weight: 400;
+  font-size: 2rem;
+  line-height: 110%;
+  letter-spacing: -0.04rem;
+}
+
+h3,
+.h3 {
+  font-family: var(--font-sora);
+  font-weight: 400;
+  font-size: 1.75rem;
+  line-height: 110%;
+  letter-spacing: -0.0175rem;
+}
+
+h4,
+.h4 {
+  font-family: var(--font-sora);
+  font-weight: 400;
+  font-size: 1.5rem;
+  line-height: 110%;
+  letter-spacing: -0.015rem;
+}
+
+h5,
+.h5 {
+  font-family: var(--font-sora);
+  font-weight: 400;
+  font-size: 1.25rem;
+  line-height: 110%;
+  letter-spacing: -0.0125rem;
+}
+
+p,
+.p {
+  font-family: var(--font-inter);
+  font-weight: 400;
+  font-size: 1rem;
+  line-height: 120%;
+}
+
+.xs {
+  font-family: var(--font-inter);
+  font-weight: 400;
+  font-size: var(--text-xs);
+  line-height: 120%;
+  letter-spacing: -0.015rem;
+  text-transform: uppercase;
+}
+
+.sm {
+  font-family: var(--font-inter);
+  font-weight: 400;
+  font-size: var(--text-sm);
+  line-height: 120%;
+}
+
+.lg {
+  font-family: var(--font-inter);
+  font-weight: 400;
+  font-size: var(--text-lg);
+  line-height: 120%;
+}
+
+.font-inter {
+  font-family: var(--font-inter);
+}
+
+@media screen and (min-width: 1025px) {
+  .display {
+    font-size: 8rem;
+    letter-spacing: -0.32rem;
+    line-height: 120%;
+  }
+
+  h1,
+  .h1 {
+    font-size: 4.5rem;
+    line-height: 120%;
+    letter-spacing: -0.09rem;
+  }
+
+  h2,
+  .h2 {
+    font-size: 3rem;
+    line-height: 120%;
+    letter-spacing: -0.06rem;
+  }
+
+  h3,
+  .h3 {
+    font-size: 2.5rem;
+    line-height: 120%;
+    letter-spacing: -0.025rem;
+  }
+
+  h4,
+  .h4 {
+    font-size: 2rem;
+    line-height: 120%;
+    letter-spacing: -0.02rem;
+  }
+
+  h5,
+  .h5 {
+    font-size: 1.5rem;
+    line-height: 120%;
+    letter-spacing: -0.015rem;
+  }
+} */
+
+/* Lenis styles */
+
+/* html.lenis,
+html.lenis body {
+  height: auto;
+} */
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
+}
+
+
 :root {
+  /* Fix para viewport en mobile - previene saltos cuando aparecen/desaparecen las barras del navegador */
+  --viewport-height: 100dvh;
+
+  /* Soporte para nuevas unidades de viewport */
+  /* Usamos lvh (Large Viewport Height) para que use el viewport MÁS GRANDE (sin barras) */
+  /* Esto previene que los elementos se achiquen cuando aparecen las barras del navegador */
+  @supports (height: 100lvh) {
+    --viewport-height: 100lvh;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-mono);
+}
+
+
+
+/* :root {
   --background: #ffffff;
   --foreground: #171717;
 }
@@ -23,4 +305,4 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
-}
+} */

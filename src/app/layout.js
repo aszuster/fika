@@ -1,13 +1,16 @@
-import { Geist, Geist_Mono } from "next/font/google";
+import { JetBrains_Mono } from "next/font/google";
+import { Public_Sans } from "next/font/google";
 import "./globals.css";
+import {ReactLenis} from "@/utils/lenis"
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+
+
+const jetBrainsMono = JetBrains_Mono({
+  variable: "--font-jetbrains-mono",
   subsets: ["latin"],
 });
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const publicSans = Public_Sans({
+  variable: "--font-public-sans",
   subsets: ["latin"],
 });
 
@@ -20,9 +23,11 @@ export default function RootLayout({ children }) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${jetBrainsMono.variable} ${publicSans.variable} h-full antialiased`}
     >
+      <ReactLenis root>
       <body className="min-h-full flex flex-col">{children}</body>
+      </ReactLenis>
     </html>
   );
 }
