@@ -261,6 +261,48 @@ html.lenis body {
   pointer-events: none;
 }
 
+/* Columns range control (line + draggable dot, like a volume slider) */
+
+.range-cols {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 1rem;
+  background: transparent;
+  cursor: pointer;
+}
+
+.range-cols:focus {
+  outline: none;
+}
+
+.range-cols::-webkit-slider-runnable-track {
+  height: 1px;
+  background: var(--color-primary-01);
+}
+
+.range-cols::-moz-range-track {
+  height: 1px;
+  background: var(--color-primary-01);
+}
+
+.range-cols::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 10px;
+  height: 10px;
+  margin-top: -4.5px;
+  border-radius: 9999px;
+  background: var(--color-primary-00);
+}
+
+.range-cols::-moz-range-thumb {
+  width: 10px;
+  height: 10px;
+  border: none;
+  border-radius: 9999px;
+  background: var(--color-primary-00);
+}
+
 
 :root {
   /* Fix para viewport en mobile - previene saltos cuando aparecen/desaparecen las barras del navegador */
