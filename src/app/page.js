@@ -4,7 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Button from "@/components/buttons/Button";
 import Navbar from "@/components/navbar/Navbar";
-import {motion} from "motion/react"
+import { motion } from "motion/react";
 
 const grids = {
   3: "grid-cols-3",
@@ -45,6 +45,75 @@ const products = [
   { title: "Hexa", src: "/img/productos/hexa.png" },
   { title: "Piano keyboard", src: "/img/productos/piano-keyboard.png" },
 ];
+
+const colors = [
+  { label: "Negro", hex: "#2E2E2E" },
+  { label: "Blanco", hex: "#2E2E2E" },
+  { label: "Gris", hex: "#989DA4" },
+  { label: "Beige", hex: "#D4C4BA" },
+  { label: "Azul", hex: "#3066A5" },
+  { label: "Rosa", hex: "#EACCD2" },
+  { label: "Verde", hex: "#537561" },
+  { label: "Rojo", hex: "#A20000" },
+  { label: "Amarillo", hex: "#CE9300" },
+  { label: "Marrón", hex: "#864E00" },
+];
+
+const materials = [
+  "Piedra natural",
+  "Porcelanato",
+  "Cerámica",
+  "Porcelanato monomasa",
+];
+
+const formats = [
+  { label: "Mosaik", note: "(Pequeña escala)" },
+  { label: "Brik", note: "(Mediana escala)" },
+  { label: "Skala", note: "(Gran escala)" },
+];
+
+const applications = ["Pared", "Piso", "Pared + Piso"];
+
+// Grid lines are drawn with a background-color trick: the grid container has
+// bg-primary-01 (gray) and gap-px, while every real cell paints bg-primary-03
+// (white) over its own area, so only the 1px gaps show through as lines. When
+// a list doesn't fill a full row, the leftover tracks have no cell to paint
+// them, so the container's gray shows through solid. GridFillers paints those
+// leftover tracks white so it keeps working no matter how many items a CMS
+// ends up sending.
+const getFillerCount = (itemCount, cols) => (cols - (itemCount % cols)) % cols;
+
+function GridFillers({ items, cols }) {
+  const count = getFillerCount(items.length, cols);
+  return Array.from({ length: count }, (_, index) => (
+    <div key={`filler-${index}`} className="bg-primary-03" />
+  ));
+}
+
+function FilterSection({ title, items, borderTop, renderItem }) {
+  return (
+    <div>
+      <div
+        className={`h-12.5 flex justify-center items-center border-b border-primary-00${
+          borderTop ? " border-t" : ""
+        }`}
+      >
+        <p className="hl-xs uppercase">{title}</p>
+      </div>
+      <div className="grid grid-cols-2 gap-px bg-primary-01">
+        {items.map((item, index) => (
+          <div
+            key={index}
+            className="h-12.5 flex items-center px-7.5 bg-primary-03"
+          >
+            {renderItem(item)}
+          </div>
+        ))}
+        <GridFillers items={items} cols={2} />
+      </div>
+    </div>
+  );
+}
 
 export default function Home() {
   const [cols, setCols] = useState(3);
@@ -90,111 +159,48 @@ export default function Home() {
             initial={false}
             animate={{ x: isFiltersOpen ? 0 : "-100%" }}
             transition={{ duration: 0.35, ease: "easeInOut" }}
-            className="absolute w-160 bg-primary-03 h-dvh border-r border-primary-00"
+            className="absolute w-160 bg-primary-03 h-[calc(100dvh-7.625rem)] border-r border-primary-00 flex flex-col justify-between"
           >
-            <div>
-              <div className="h-12.5 flex justify-center items-center border-b border-primary-00">
-                <p className="hl-xs uppercase ">Color</p>
-              </div>
-              <div className="grid grid-cols-2 gap-px bg-primary-01">
-                <div className="h-12.5 flex justify-between items-center px-7.5 bg-primary-03">
-                  <p className="by-sm">Negro</p>
-                  <div className="w-5.5 h-5.5 bg-[#2E2E2E] rounded-full"></div>
-                </div>
-                <div className="h-12.5 flex justify-between items-center px-7.5 bg-primary-03">
-                  <p className="by-sm">Blanco</p>
-                  <div className="w-5.5 h-5.5 bg-[#2E2E2E] rounded-full"></div>
-                </div>
-                <div className="h-12.5 flex justify-between items-center px-7.5 bg-primary-03">
-                  <p className="by-sm">Gris</p>
-                  <div className="w-5.5 h-5.5 bg-[#989DA4] rounded-full"></div>
-                </div>
-                <div className="h-12.5 flex justify-between items-center px-7.5 bg-primary-03">
-                  <p className="by-sm">Beige</p>
-                  <div className="w-5.5 h-5.5 bg-[#D4C4BA] rounded-full"></div>
-                </div>
-                <div className="h-12.5 flex justify-between items-center px-7.5 bg-primary-03">
-                  <p className="by-sm">Azul</p>
-                  <div className="w-5.5 h-5.5 bg-[#3066A5] rounded-full"></div>
-                </div>
-                <div className="h-12.5 flex justify-between items-center px-7.5 bg-primary-03">
-                  <p className="by-sm">Rosa</p>
-                  <div className="w-5.5 h-5.5 bg-[#EACCD2] rounded-full"></div>
-                </div>
-                <div className="h-12.5 flex justify-between items-center px-7.5 bg-primary-03">
-                  <p className="by-sm">Verde</p>
-                  <div className="w-5.5 h-5.5 bg-[#537561] rounded-full"></div>
-                </div>
-                <div className="h-12.5 flex justify-between items-center px-7.5 bg-primary-03">
-                  <p className="by-sm">Rojo</p>
-                  <div className="w-5.5 h-5.5 bg-[#A20000] rounded-full"></div>
-                </div>
-                <div className="h-12.5 flex justify-between items-center px-7.5 bg-primary-03">
-                  <p className="by-sm">Amarillo</p>
-                  <div className="w-5.5 h-5.5 bg-[#CE9300] rounded-full"></div>
-                </div>
-                <div className="h-12.5 flex justify-between items-center px-7.5 bg-primary-03">
-                  <p className="by-sm">Marrón</p>
-                  <div className="w-5.5 h-5.5 bg-[#864E00] rounded-full"></div>
-                </div>
-              </div>
-            </div>
-            <div>
-              <div className="h-12.5 flex justify-center items-center border-y border-primary-00">
-                <p className="hl-xs uppercase">Material</p>
-              </div>
-              <div className="grid grid-cols-2 gap-px bg-primary-01">
-                <div className="h-12.5 flex items-center px-7.5 bg-primary-03">
-                  <p className="by-sm">Piedra natural</p>
-                </div>
-                <div className="h-12.5 flex items-center px-7.5 bg-primary-03">
-                  <p className="by-sm">Porcelanato</p>
-                </div>
-                <div className="h-12.5 flex items-center px-7.5 bg-primary-03">
-                  <p className="by-sm">Cerámica</p>
-                </div>
-                <div className="h-12.5 flex items-center px-7.5 bg-primary-03">
-                  <p className="by-sm">Porcelanato monomasa</p>
-                </div>
-              </div>
-            </div>
-            <div>
-              <div className="h-12.5 flex justify-center items-center border-y border-primary-00">
-                <p className="hl-xs uppercase">Formato</p>
-              </div>
-              <div className="grid grid-cols-2 gap-px bg-primary-01">
-                <div className="h-12.5 flex items-center px-7.5 bg-primary-03">
-                  <p className="by-sm">Mosaik <span className="text-secondary-02">(Pequeña escala)</span></p>
-                </div>
-                <div className="h-12.5 flex items-center px-7.5 bg-primary-03">
-                  <p className="by-sm">Brik <span className="text-secondary-02">(Mediana escala)</span></p>
-                </div>
-                <div className="h-12.5 flex items-center px-7.5 bg-primary-03">
-                  <p className="by-sm">Skala <span className="text-secondary-02">(Gran escala)</span>
+            <div className="border-b border-primary-00">
+              <FilterSection
+                title="Color"
+                items={colors}
+                renderItem={({ label, hex }) => (
+                  <div className="flex w-full items-center justify-between">
+                    <p className="by-sm">{label}</p>
+                    <div
+                      className="w-5.5 h-5.5 rounded-full"
+                      style={{ backgroundColor: hex }}
+                    ></div>
+                  </div>
+                )}
+              />
+              <FilterSection
+                title="Material"
+                items={materials}
+                borderTop
+                renderItem={(label) => <p className="by-sm">{label}</p>}
+              />
+              <FilterSection
+                title="Formato"
+                items={formats}
+                borderTop
+                renderItem={({ label, note }) => (
+                  <p className="by-sm">
+                    {label} <span className="text-secondary-02">{note}</span>
                   </p>
-                </div>
-              </div>
+                )}
+              />
+              <FilterSection
+                title="Aplicación"
+                items={applications}
+                borderTop
+                renderItem={(label) => <p className="by-sm">{label}</p>}
+              />
             </div>
-            <div>
-              <div className="h-12.5 flex justify-center items-center border-y border-primary-00">
-                <p className="hl-xs uppercase">Aplicación</p>
-              </div>
-              <div className="grid grid-cols-2 gap-px bg-primary-01">
-                <div className="h-12.5 flex items-center px-7.5 bg-primary-03">
-                  <p className="by-sm">Pared</p>
-                </div>
-                <div className="h-12.5 flex items-center px-7.5 bg-primary-03">
-                  <p className="by-sm">Piso</p>
-                </div>
-                <div className="h-12.5 flex items-center px-7.5 bg-primary-03">
-                  <p className="by-sm">Pared + Piso
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div>
-              <div></div>
-              <div></div>
+            <div className="w-full h-18 border-t border-primary-00 flex">
+              <div className="w-full flex justify-center items-center border-r border-primary-00"><Button copy="Borrar" variant="tertiary"/></div>
+              <div className="w-full flex justify-center items-center"><Button copy="Aplicar" variant="tertiary"/></div>
             </div>
           </motion.div>
         </div>
@@ -240,6 +246,7 @@ export default function Home() {
                 </div>
               );
             })}
+            <GridFillers items={products} cols={cols} />
           </div>
         </div>
       </div>
