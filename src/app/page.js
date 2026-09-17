@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Button from "@/components/buttons/Button";
 import Navbar from "@/components/navbar/Navbar";
+import {motion} from "motion/react"
 
 const grids = {
   3: "grid-cols-3",
@@ -47,6 +48,7 @@ const products = [
 
 export default function Home() {
   const [cols, setCols] = useState(3);
+  const [isFiltersOpen, setIsFiltersOpen] = useState(false);
   const imageSizes = `${Math.ceil(100 / cols)}vw`;
   const visibleRows = cols === 6 ? 3 : 2;
 
@@ -58,7 +60,12 @@ export default function Home() {
           <div className="flex w-full justify-between items-center px-7.25  h-12.5 border-b border-primary-00">
             <div className="flex items-center gap-7.25 h-full">
               <div>
-                <Button copy="Filtros" url="" variant="secondary" />
+                <Button
+                  copy="Filtros"
+                  url=""
+                  variant="secondary"
+                  onClick={() => setIsFiltersOpen((open) => !open)}
+                />
               </div>
               <div className="border-l border-primary-00 pl-7.25 h-full flex items-center">
                 <p className="by-sm underline">¿Qué estás buscando?</p>
@@ -79,7 +86,119 @@ export default function Home() {
               />
             </div>
           </div>
+          <motion.div
+            initial={false}
+            animate={{ x: isFiltersOpen ? 0 : "-100%" }}
+            transition={{ duration: 0.35, ease: "easeInOut" }}
+            className="absolute w-160 bg-primary-03 h-dvh border-r border-primary-00"
+          >
+            <div>
+              <div className="h-12.5 flex justify-center items-center border-b border-primary-00">
+                <p className="hl-xs uppercase ">Color</p>
+              </div>
+              <div className="grid grid-cols-2 gap-px bg-primary-01">
+                <div className="h-12.5 flex justify-between items-center px-7.5 bg-primary-03">
+                  <p className="by-sm">Negro</p>
+                  <div className="w-5.5 h-5.5 bg-[#2E2E2E] rounded-full"></div>
+                </div>
+                <div className="h-12.5 flex justify-between items-center px-7.5 bg-primary-03">
+                  <p className="by-sm">Blanco</p>
+                  <div className="w-5.5 h-5.5 bg-[#2E2E2E] rounded-full"></div>
+                </div>
+                <div className="h-12.5 flex justify-between items-center px-7.5 bg-primary-03">
+                  <p className="by-sm">Gris</p>
+                  <div className="w-5.5 h-5.5 bg-[#989DA4] rounded-full"></div>
+                </div>
+                <div className="h-12.5 flex justify-between items-center px-7.5 bg-primary-03">
+                  <p className="by-sm">Beige</p>
+                  <div className="w-5.5 h-5.5 bg-[#D4C4BA] rounded-full"></div>
+                </div>
+                <div className="h-12.5 flex justify-between items-center px-7.5 bg-primary-03">
+                  <p className="by-sm">Azul</p>
+                  <div className="w-5.5 h-5.5 bg-[#3066A5] rounded-full"></div>
+                </div>
+                <div className="h-12.5 flex justify-between items-center px-7.5 bg-primary-03">
+                  <p className="by-sm">Rosa</p>
+                  <div className="w-5.5 h-5.5 bg-[#EACCD2] rounded-full"></div>
+                </div>
+                <div className="h-12.5 flex justify-between items-center px-7.5 bg-primary-03">
+                  <p className="by-sm">Verde</p>
+                  <div className="w-5.5 h-5.5 bg-[#537561] rounded-full"></div>
+                </div>
+                <div className="h-12.5 flex justify-between items-center px-7.5 bg-primary-03">
+                  <p className="by-sm">Rojo</p>
+                  <div className="w-5.5 h-5.5 bg-[#A20000] rounded-full"></div>
+                </div>
+                <div className="h-12.5 flex justify-between items-center px-7.5 bg-primary-03">
+                  <p className="by-sm">Amarillo</p>
+                  <div className="w-5.5 h-5.5 bg-[#CE9300] rounded-full"></div>
+                </div>
+                <div className="h-12.5 flex justify-between items-center px-7.5 bg-primary-03">
+                  <p className="by-sm">Marrón</p>
+                  <div className="w-5.5 h-5.5 bg-[#864E00] rounded-full"></div>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div className="h-12.5 flex justify-center items-center border-y border-primary-00">
+                <p className="hl-xs uppercase">Material</p>
+              </div>
+              <div className="grid grid-cols-2 gap-px bg-primary-01">
+                <div className="h-12.5 flex items-center px-7.5 bg-primary-03">
+                  <p className="by-sm">Piedra natural</p>
+                </div>
+                <div className="h-12.5 flex items-center px-7.5 bg-primary-03">
+                  <p className="by-sm">Porcelanato</p>
+                </div>
+                <div className="h-12.5 flex items-center px-7.5 bg-primary-03">
+                  <p className="by-sm">Cerámica</p>
+                </div>
+                <div className="h-12.5 flex items-center px-7.5 bg-primary-03">
+                  <p className="by-sm">Porcelanato monomasa</p>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div className="h-12.5 flex justify-center items-center border-y border-primary-00">
+                <p className="hl-xs uppercase">Formato</p>
+              </div>
+              <div className="grid grid-cols-2 gap-px bg-primary-01">
+                <div className="h-12.5 flex items-center px-7.5 bg-primary-03">
+                  <p className="by-sm">Mosaik <span className="text-secondary-02">(Pequeña escala)</span></p>
+                </div>
+                <div className="h-12.5 flex items-center px-7.5 bg-primary-03">
+                  <p className="by-sm">Brik <span className="text-secondary-02">(Mediana escala)</span></p>
+                </div>
+                <div className="h-12.5 flex items-center px-7.5 bg-primary-03">
+                  <p className="by-sm">Skala <span className="text-secondary-02">(Gran escala)</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div className="h-12.5 flex justify-center items-center border-y border-primary-00">
+                <p className="hl-xs uppercase">Aplicación</p>
+              </div>
+              <div className="grid grid-cols-2 gap-px bg-primary-01">
+                <div className="h-12.5 flex items-center px-7.5 bg-primary-03">
+                  <p className="by-sm">Pared</p>
+                </div>
+                <div className="h-12.5 flex items-center px-7.5 bg-primary-03">
+                  <p className="by-sm">Piso</p>
+                </div>
+                <div className="h-12.5 flex items-center px-7.5 bg-primary-03">
+                  <p className="by-sm">Pared + Piso
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div></div>
+              <div></div>
+            </div>
+          </motion.div>
         </div>
+
         <div>
           <div
             className={`grid ${grids[cols]} gap-px bg-primary-01 ${autoRaws[visibleRows]}`}
@@ -100,7 +219,7 @@ export default function Home() {
                       width={24}
                       height={24}
                       alt=""
-                      className="pointer-events-none absolute top-0 left-0 z-10 -translate-x-[calc(50%+0.5px)] -translate-y-1/2"
+                      className="pointer-events-none absolute top-0 left-0 z-5 -translate-x-[calc(50%+0.5px)] -translate-y-1/2"
                     />
                   )}
                   <div className="h-21.75 shrink-0 border-b border-primary-01 w-full flex flex-col items-center justify-center">

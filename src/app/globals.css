@@ -35,37 +35,37 @@
 
 .hl-xs{
   font-family: var(--font-mono);
-  font-size: .9375rem;
+  font-size: .9375rem; /*15px*/
   font-weight: 300;
   line-height: 1.5625rem;
 }
 .hl-sm{
   font-family: var(--font-mono);
-  font-size: 1.5625rem;
+  font-size: 1.5625rem; /*25px*/
   font-weight: 300;
   line-height: 2.0625rem;
 }
 .hl-md{
   font-family: var(--font-mono);
-  font-size: 2.5rem;
+  font-size: 2.5rem; /*40px*/
   font-weight: 300;
   line-height: 3rem;
 }
 .hl-lg{
   font-family: var(--font-mono);
-  font-size: 3.125rem;
+  font-size: 3.125rem; /*50px*/
   font-weight: 300;
   line-height: 4.125rem;
 }
 .hl-xl{
   font-family: var(--font-mono);
-  font-size: 5rem;
+  font-size: 5rem; /*80px*/
   font-weight: 300;
   line-height: 6.625rem;
 }
 .hl-2xl{
   font-family: var(--font-mono);
-  font-size: 6.875rem;
+  font-size: 6.875rem; /*110px*/
   font-weight: 300;
   line-height: 9.0625rem;
 }
@@ -74,19 +74,19 @@
 
 .by-sm{
   font-family: var(--font-sans);
-  font-size: .9375rem;
+  font-size: .9375rem; /*15px*/
   font-weight: 300;
   line-height: 1.3125rem;
 }
 .by-md{
   font-family: var(--font-sans);
-  font-size: 1.875rem;
+  font-size: 1.875rem; /*30px*/
   font-weight: 300;
   line-height: 2.5rem;
 }
 .by-lg{
   font-family: var(--font-sans);
-  font-size: 3.125rem;
+  font-size: 3.125rem; /*50px*/
   font-weight: 300;
   line-height: 4.9375rem;
 }
@@ -95,13 +95,13 @@
 
 .btn-sm{
   font-family: var(--font-mono);
-  font-size: .9375rem;
+  font-size: .9375rem; /*15px*/
   font-weight: 300;
   text-transform: uppercase;
 }
 .btn-lg{
   font-family: var(--font-mono);
-  font-size: 1.125rem;
+  font-size: 1.125rem; /*18px*/
   font-weight: 300;
   text-transform: uppercase;
 }
