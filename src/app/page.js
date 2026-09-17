@@ -3,7 +3,6 @@
 import { useState } from "react";
 import Image from "next/image";
 import Button from "@/components/buttons/Button";
-import Navbar from "@/components/navbar/Navbar";
 import { motion } from "motion/react";
 
 const grids = {
@@ -122,132 +121,133 @@ export default function Home() {
   const visibleRows = cols === 6 ? 3 : 2;
 
   return (
-    <div>
-      <Navbar />
-      <div className="bg-primary-03 h-[calc(100%-4.5rem)]">
-        <div className="sticky top-18 z-10 w-full bg-primary-03">
-          <div className="flex w-full justify-between items-center px-7.25  h-12.5 border-b border-primary-00">
-            <div className="flex items-center gap-7.25 h-full">
-              <div>
-                <Button
-                  copy="Filtros"
-                  url=""
-                  variant="secondary"
-                  onClick={() => setIsFiltersOpen((open) => !open)}
-                />
-              </div>
-              <div className="border-l border-primary-00 pl-7.25 h-full flex items-center">
-                <p className="by-sm underline">¿Qué estás buscando?</p>
-              </div>
-            </div>
-
-            <div className="flex h-full items-center gap-8 border-l border-primary-00 pl-7.25">
-              <p className="btn-sm">Vista</p>
-              <input
-                type="range"
-                min={3}
-                max={6}
-                step={1}
-                value={9 - cols}
-                onChange={(e) => setCols(9 - Number(e.target.value))}
-                aria-label="Zoom de la grilla"
-                className="range-cols w-34.25"
+    <div className="bg-primary-03 h-[calc(100%-4.5rem)]">
+      <div className="sticky top-18 z-10 w-full bg-primary-03">
+        <div className="flex w-full justify-between items-center px-7.25  h-12.5 border-b border-primary-00">
+          <div className="flex items-center gap-7.25 h-full">
+            <div>
+              <Button
+                copy="Filtros"
+                url=""
+                variant="secondary"
+                onClick={() => setIsFiltersOpen((open) => !open)}
               />
+            </div>
+            <div className="border-l border-primary-00 pl-7.25 h-full flex items-center">
+              <p className="by-sm underline">¿Qué estás buscando?</p>
             </div>
           </div>
-          <motion.div
-            initial={false}
-            animate={{ x: isFiltersOpen ? 0 : "-100%" }}
-            transition={{ duration: 0.35, ease: "easeInOut" }}
-            className="absolute w-160 bg-primary-03 h-[calc(100dvh-7.625rem)] border-r border-primary-00 flex flex-col justify-between"
-          >
-            <div className="border-b border-primary-00">
-              <FilterSection
-                title="Color"
-                items={colors}
-                renderItem={({ label, hex }) => (
-                  <div className="flex w-full items-center justify-between">
-                    <p className="by-sm">{label}</p>
-                    <div
-                      className="w-5.5 h-5.5 rounded-full"
-                      style={{ backgroundColor: hex }}
-                    ></div>
-                  </div>
-                )}
-              />
-              <FilterSection
-                title="Material"
-                items={materials}
-                borderTop
-                renderItem={(label) => <p className="by-sm">{label}</p>}
-              />
-              <FilterSection
-                title="Formato"
-                items={formats}
-                borderTop
-                renderItem={({ label, note }) => (
-                  <p className="by-sm">
-                    {label} <span className="text-secondary-02">{note}</span>
-                  </p>
-                )}
-              />
-              <FilterSection
-                title="Aplicación"
-                items={applications}
-                borderTop
-                renderItem={(label) => <p className="by-sm">{label}</p>}
-              />
-            </div>
-            <div className="w-full h-18 border-t border-primary-00 flex">
-              <div className="w-full flex justify-center items-center border-r border-primary-00"><Button copy="Borrar" variant="tertiary"/></div>
-              <div className="w-full flex justify-center items-center"><Button copy="Aplicar" variant="tertiary"/></div>
-            </div>
-          </motion.div>
+
+          <div className="flex h-full items-center gap-8 border-l border-primary-00 pl-7.25">
+            <p className="btn-sm">Vista</p>
+            <input
+              type="range"
+              min={3}
+              max={6}
+              step={1}
+              value={9 - cols}
+              onChange={(e) => setCols(9 - Number(e.target.value))}
+              aria-label="Zoom de la grilla"
+              className="range-cols w-34.25"
+            />
+          </div>
         </div>
+        <motion.div
+          initial={false}
+          animate={{ x: isFiltersOpen ? 0 : "-100%" }}
+          transition={{ duration: 0.35, ease: "easeInOut" }}
+          className="absolute w-160 bg-primary-03 h-[calc(100dvh-7.625rem)] border-r border-primary-00 flex flex-col justify-between"
+        >
+          <div className="border-b border-primary-00">
+            <FilterSection
+              title="Color"
+              items={colors}
+              renderItem={({ label, hex }) => (
+                <div className="flex w-full items-center justify-between">
+                  <p className="by-sm">{label}</p>
+                  <div
+                    className="w-5.5 h-5.5 rounded-full"
+                    style={{ backgroundColor: hex }}
+                  ></div>
+                </div>
+              )}
+            />
+            <FilterSection
+              title="Material"
+              items={materials}
+              borderTop
+              renderItem={(label) => <p className="by-sm">{label}</p>}
+            />
+            <FilterSection
+              title="Formato"
+              items={formats}
+              borderTop
+              renderItem={({ label, note }) => (
+                <p className="by-sm">
+                  {label} <span className="text-secondary-02">{note}</span>
+                </p>
+              )}
+            />
+            <FilterSection
+              title="Aplicación"
+              items={applications}
+              borderTop
+              renderItem={(label) => <p className="by-sm">{label}</p>}
+            />
+          </div>
+          <div className="w-full h-18 border-t border-primary-00 flex">
+            <div className="w-full flex justify-center items-center border-r border-primary-00">
+              <Button copy="Borrar" variant="tertiary" />
+            </div>
+            <div className="w-full flex justify-center items-center">
+              <Button copy="Aplicar" variant="tertiary" />
+            </div>
+          </div>
+        </motion.div>
+      </div>
 
-        <div>
-          <div
-            className={`grid ${grids[cols]} gap-px bg-primary-01 ${autoRaws[visibleRows]}`}
-          >
-            {products.map(({ title, src }, index) => {
-              const row = Math.floor(index / cols);
-              const col = index % cols;
-              const hasCross = row > 0 && col > 0;
+      <div>
+        <div
+          className={`grid ${grids[cols]} gap-px bg-primary-01 ${autoRaws[visibleRows]}`}
+        >
+          {products.map(({ title, src }, index) => {
+            const row = Math.floor(index / cols);
+            const col = index % cols;
+            const hasCross = row > 0 && col > 0;
 
-              return (
-                <div
-                  key={title}
-                  className="relative flex h-full flex-col items-center bg-primary-03"
-                >
-                  {hasCross && (
+            return (
+              <div
+                key={title}
+                className="relative flex h-full flex-col items-center bg-primary-03"
+              >
+                {hasCross && (
+                  <Image
+                    src="/img/cross.svg"
+                    width={24}
+                    height={24}
+                    alt=""
+                    className="pointer-events-none absolute top-0 left-0 z-5 -translate-x-[calc(50%+0.5px)] -translate-y-1/2"
+                  />
+                )}
+                <div className="h-21.75 shrink-0 border-b border-primary-01 w-full flex flex-col items-center justify-center">
+                  <p className={`${titles[cols]} uppercase`}>{title}</p>
+                </div>
+                <div className="min-h-0 w-full flex-1 p-8">
+                  <div className="relative h-full w-full">
                     <Image
-                      src="/img/cross.svg"
-                      width={24}
-                      height={24}
+                      src={src}
                       alt=""
-                      className="pointer-events-none absolute top-0 left-0 z-5 -translate-x-[calc(50%+0.5px)] -translate-y-1/2"
+                      fill
+                      sizes={imageSizes}
+                      className="object-contain"
+                      loading={index === 0 ? "eager" : undefined}
                     />
-                  )}
-                  <div className="h-21.75 shrink-0 border-b border-primary-01 w-full flex flex-col items-center justify-center">
-                    <p className={`${titles[cols]} uppercase`}>{title}</p>
-                  </div>
-                  <div className="min-h-0 w-full flex-1 p-8">
-                    <div className="relative h-full w-full">
-                      <Image
-                        src={src}
-                        alt=""
-                        fill
-                        sizes={imageSizes}
-                        className="object-contain"
-                        loading={index === 0 ? "eager" : undefined}
-                      />
-                    </div>
                   </div>
                 </div>
-              );
-            })}
-            <GridFillers items={products} cols={cols} />
-          </div>
+              </div>
+            );
+          })}
+          <GridFillers items={products} cols={cols} />
         </div>
       </div>
     </div>

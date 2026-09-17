@@ -2,6 +2,7 @@ import { JetBrains_Mono } from "next/font/google";
 import { Public_Sans } from "next/font/google";
 import "./globals.css";
 import {ReactLenis} from "@/utils/lenis"
+import Navbar from "@/components/navbar/Navbar";
 
 
 
@@ -26,7 +27,10 @@ export default function RootLayout({ children }) {
       className={`${jetBrainsMono.variable} ${publicSans.variable} h-full antialiased`}
     >
       <ReactLenis root>
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <Navbar />
+        {children}
+      </body>
       </ReactLenis>
     </html>
   );
