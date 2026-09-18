@@ -36,19 +36,31 @@ const emptyFilters = {
 };
 
 const matchesFilters = (product, filters) =>
-  Object.entries(filters).every(
-    ([key, values]) => values.length === 0 || values.includes(product[key])
-  );
+  Object.entries(filters).every(([key, values]) => {
+    if (values.length === 0) return true;
+    if (key === "color") {
+      return product.variants.some((variant) => values.includes(variant.color));
+    }
+    return values.includes(product[key]);
+  });
+
+const matchesSearch = (product, query) => {
+  const normalized = query.trim().toLowerCase();
+  return normalized === "" || product.title.toLowerCase().includes(normalized);
+};
 
 export default function Home() {
   const [cols, setCols] = useState(3);
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
   const [appliedFilters, setAppliedFilters] = useState(emptyFilters);
+  const [searchQuery, setSearchQuery] = useState("");
   const imageSizes = `${Math.ceil(100 / cols)}vw`;
   const visibleRows = cols === 6 ? 3 : 2;
 
-  const visibleProducts = products.filter((product) =>
-    matchesFilters(product, appliedFilters)
+  const visibleProducts = products.filter(
+    (product) =>
+      matchesFilters(product, appliedFilters) &&
+      matchesSearch(product, searchQuery)
   );
 
   const appliedFiltersCount = Object.values(appliedFilters).reduce(
@@ -74,7 +86,14 @@ export default function Home() {
               />
             </div>
             <div className="border-l border-primary-00 pl-7.25 h-full flex items-center">
-              <p className="by-sm underline">¿Qué estás buscando?</p>
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="¿Qué estás buscando?"
+                aria-label="Buscar productos"
+                className="by-sm w-56 bg-transparent outline-none placeholder:text-primary-00"
+              />
             </div>
           </div>
 
@@ -106,7 +125,7 @@ export default function Home() {
         <div
           className={`grid ${grids[cols]} gap-px bg-primary-01 ${autoRaws[visibleRows]}`}
         >
-          {visibleProducts.map(({ title, slug, src }, index) => {
+          {visibleProducts.map(({ title, slug, image: src }, index) => {
             const row = Math.floor(index / cols);
             const col = index % cols;
             const hasCross = row > 0 && col > 0;

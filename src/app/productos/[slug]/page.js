@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Button from "@/components/buttons/Button";
+import VariantsPanel from "@/components/product/VariantsPanel";
 import { products, getProductBySlug } from "@/data/products";
 
 export function generateStaticParams() {
@@ -15,10 +16,26 @@ export default async function ProductPage({ params }) {
     notFound();
   }
 
-  const { title, src, color, material, format, application } = product;
+  const {
+    title,
+    image,
+    code,
+    chipSize,
+    meshSize,
+    meshesPerBox,
+    m2PerBox,
+    material,
+    format,
+    application,
+    variants,
+  } = product;
 
   const details = [
-    { label: "Color", value: color },
+    { label: "Código", value: code },
+    { label: "Medida chip", value: chipSize },
+    { label: "Medida malla", value: meshSize },
+    { label: "Mallas por caja", value: meshesPerBox },
+    { label: "M2/caja", value: m2PerBox },
     { label: "Material", value: material },
     { label: "Formato", value: format },
     { label: "Aplicación", value: application },
@@ -30,26 +47,17 @@ export default async function ProductPage({ params }) {
         <Button copy="Volver" url="/" variant="secondary" />
       </div>
 
-      <div className="grid grid-cols-2 h-[calc(100%-3.125rem-1px)]">
-        <div className="relative border-r border-primary-00 p-17">
-          <div className="relative h-full w-full">
-            <Image src={src} alt="" fill sizes="50vw" className="object-contain" />
+      <div className="flex h-[calc(100dvh-7.625rem)] overflow-hidden">
+        <div className="relative border-r border-primary-00 h-full w-160 flex flex-col justify-center items-center shrink-0">
+          <div className="h-22.5 shrink-0 border-b border-primary-01 flex items-center justify-center px-7.5 w-full">
+            <p className="hl-lg uppercase">{title}</p>
+          </div>
+          <div className="relative h-full w-113.5">
+            <Image src={image} alt="" fill className="object-contain" />
           </div>
         </div>
 
-        <div className="flex flex-col">
-          <div className="h-21.75 shrink-0 border-b border-primary-01 flex items-center px-7.5">
-            <p className="hl-lg uppercase">{title}</p>
-          </div>
-          <div className="grid grid-cols-2 gap-px bg-primary-01">
-            {details.map(({ label, value }) => (
-              <div key={label} className="h-12.5 flex flex-col justify-center px-7.5 bg-primary-03">
-                <p className="text-secondary-02 by-sm">{label}</p>
-                <p className="by-sm">{value}</p>
-              </div>
-            ))}
-          </div>
-        </div>
+        <VariantsPanel variants={variants} details={details} />
       </div>
     </div>
   );

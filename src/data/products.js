@@ -42,18 +42,72 @@ const slugs = [
   "piano-keyboard",
 ];
 
-// Mock filter assignments so the filters panel has something to filter
-// against before the CMS is wired up. Cycling through each taxonomy
-// guarantees every filter value matches at least one product.
-export const products = names.map((title, index) => ({
-  title,
-  slug: slugs[index],
-  src: `/img/productos/${slugs[index]}.png`,
-  color: colors[index % colors.length].label,
-  material: materials[index % materials.length],
-  format: formats[index % formats.length].label,
-  application: applications[index % applications.length],
-}));
+const stoneConvexoImg = "/img/productos/producto";
+
+const stoneConvexoSamples = [
+  `${stoneConvexoImg}/sample-carrara-brown-01.png`,
+  `${stoneConvexoImg}/sample-travertino-01.png`,
+];
+
+const productVariants = {
+  "stone-convexo": [
+    {
+      name: "Carrara white",
+      color: "Blanco",
+      catalogPhoto: `${stoneConvexoImg}/carrara-white.png`,
+      samplePhotos: stoneConvexoSamples,
+    },
+    {
+      name: "Carrara brown",
+      color: "Marrón",
+      catalogPhoto: `${stoneConvexoImg}/carrara-brown.png`,
+      samplePhotos: stoneConvexoSamples,
+    },
+    {
+      name: "Travertino",
+      color: "Beige",
+      catalogPhoto: `${stoneConvexoImg}/travertino.png`,
+      samplePhotos: stoneConvexoSamples,
+    },
+    {
+      name: "Carrara emerald",
+      color: "Verde",
+      catalogPhoto: `${stoneConvexoImg}/carrara-emerald.png`,
+      samplePhotos: stoneConvexoSamples,
+    },
+    {
+      name: "Carrara dark green emerald",
+      color: "Verde",
+      catalogPhoto: `${stoneConvexoImg}/carrara-dark-green-emerald.png`,
+      samplePhotos: stoneConvexoSamples,
+    },
+  ],
+};
+
+export const products = names.map((title, index) => {
+  const src = `/img/productos/${slugs[index]}.png`;
+  const slug = slugs[index];
+  const variants = (
+    productVariants[slug] ?? [
+      { name: "Estándar", color: colors[index % colors.length].label },
+    ]
+  ).map((variant) => ({ catalogPhoto: src, samplePhotos: [], ...variant }));
+
+  return {
+    title,
+    slug,
+    image: src,
+    code: `FK-${String(index + 1).padStart(3, "0")}`,
+    chipSize: `${2 + (index % 4)}x${2 + (index % 4)} cm`,
+    meshSize: "30x30 cm",
+    meshesPerBox: 10 + (index % 3) * 2,
+    m2PerBox: Number((0.9 + (index % 5) * 0.1).toFixed(2)),
+    material: materials[index % materials.length],
+    format: formats[index % formats.length].label,
+    application: applications[index % applications.length],
+    variants,
+  };
+});
 
 export const getProductBySlug = (slug) =>
   products.find((product) => product.slug === slug);

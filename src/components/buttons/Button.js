@@ -15,8 +15,8 @@ const Button = ({
   const variantStyles = {
     primary:
       "cursor-pointer w-full flex items-center justify-center relative bg-primary-00 text-primary-01 btn-sm py-4 transition-all duration-300 ease-in-out hover:bg-secondary-00 hover:text-primary-01",
-    secondary: "cursor-pointer relative bg-transparent text-primary-00 btn-sm p-1 border border-transparent rounded-[3px] transition-all duration-300 ease-in-out hover:text-secondary-01 active:border-primary-00 focus:border-primary-00",
-    tertiary: "cursor-pointer relative bg-transparent text-primary-00 btn-sm border-b border-primary-00 transition-all duration-300 leading-[20px]! ease-in-out hover:text-secondary-01 hover:border-b-primary-01 active:border-b-primary-00 focus:border-b-primary-00",
+    secondary: "cursor-pointer relative inline-flex items-center bg-transparent text-primary-00 btn-sm p-1 border border-transparent rounded-[3px] transition-all duration-300 ease-in-out hover:text-secondary-01 active:border-primary-00 focus:border-primary-00",
+    tertiary: "cursor-pointer relative inline-flex items-center bg-transparent text-primary-00 btn-sm border-b border-primary-00 transition-all duration-300 leading-[20px]! ease-in-out hover:text-secondary-01 hover:border-b-primary-01 active:border-b-primary-00 focus:border-b-primary-00",
   };
 
   const selectedVariant = variantStyles[variant] || variantStyles.primary;
