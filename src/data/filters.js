@@ -4,7 +4,7 @@
 
 export const colors = [
   { label: "Negro", hex: "#2E2E2E" },
-  { label: "Blanco", hex: "#2E2E2E" },
+  { label: "Blanco", hex: "#FFFFFF" },
   { label: "Gris", hex: "#989DA4" },
   { label: "Beige", hex: "#D4C4BA" },
   { label: "Azul", hex: "#3066A5" },

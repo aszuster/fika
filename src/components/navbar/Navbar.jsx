@@ -11,7 +11,7 @@ const navItems = [
     isActive: (pathname) => pathname === "/" || pathname.startsWith("/productos"),
   },
   { label: "Colecciones", url: "" },
-  { label: "Proyectos", url: "" },
+  { label: "Proyectos", url: "/proyectos" },
   { label: "Distribuidores", url: "" },
   { label: "Nosotros", url: "" },
   { label: "Boxes", url: "" },

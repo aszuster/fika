@@ -24,8 +24,6 @@ export default async function ProductPage({ params }) {
     meshSize,
     meshesPerBox,
     m2PerBox,
-    material,
-    format,
     application,
     variants,
   } = product;
@@ -36,8 +34,6 @@ export default async function ProductPage({ params }) {
     { label: "Medida malla", value: meshSize },
     { label: "Mallas por caja", value: meshesPerBox },
     { label: "M2/caja", value: m2PerBox },
-    { label: "Material", value: material },
-    { label: "Formato", value: format },
     { label: "Aplicación", value: application },
   ];
 
@@ -54,6 +50,10 @@ export default async function ProductPage({ params }) {
           </div>
           <div className="relative h-full w-113.5">
             <Image src={image} alt="" fill className="object-contain" />
+          </div>
+          <div className="absolute bottom-7.5 left-7.5 w-65.5 font-sans text-[10px] leading-3.5">
+            <p className="font-semibold pb-2">El color de los mosaicos pueden variar de un lote a otro. </p>
+            <p className="font-normal">Si está realizando un pedido adicional para que coincida con los mosaicos existentes, verifique el numero de lote que figura en las cajas para asegurarse de que el lote sea el mismo al instalado previamente.</p>
           </div>
         </div>
 

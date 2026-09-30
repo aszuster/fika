@@ -1,6 +1,6 @@
 export default function Chevron({
-  width = "16",
-  height = "8",
+  width = "9",
+  height = "16",
   color = "#2A2A2A",
   className = "",
 }) {

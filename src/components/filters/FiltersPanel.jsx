@@ -50,7 +50,7 @@ function FilterSection({
               type="button"
               onClick={() => onToggle(value)}
               aria-pressed={isSelected}
-              className="h-12.5 flex w-full items-center px-7.5 text-left cursor-pointer bg-primary-03"
+              className="h-12.5 flex w-full items-center px-7.5 text-left cursor-pointer bg-primary-03 hover:bg-primary-02"
             >
               {renderItem(item, isSelected)}
             </button>
@@ -98,15 +98,27 @@ const FiltersPanel = ({ isOpen, onApply, onClear }) => {
           getValue={(item) => item.label}
           selected={draft.color}
           onToggle={(value) => toggle("color", value)}
-          renderItem={({ label, hex }, isSelected) => (
-            <div className="flex w-full items-center justify-between">
-              <p className={`by-sm ${wordSelectClass(isSelected)}`}>{label}</p>
-              <div
-                className="w-5.5 h-5.5 rounded-full"
-                style={{ backgroundColor: hex }}
-              ></div>
-            </div>
-          )}
+          renderItem={({ label, hex }, isSelected) => {
+            const isWhite = label === "Blanco";
+
+            return (
+              <div className="flex w-full items-center justify-between">
+                <p className={`by-sm ${wordSelectClass(isSelected)}`}>{label}</p>
+                <div
+                  className={`w-5.5 h-5.5 rounded-full flex justify-center items-center ${
+                    isWhite ? "border border-primary-00" : ""
+                  }`}
+                  style={{ backgroundColor: hex }}
+                >
+                  <div
+                    className={`h-1.5 w-1.5 rounded-full ${
+                      isWhite ? "bg-primary-00" : "bg-primary-03"
+                    }`}
+                  ></div>
+                </div>
+              </div>
+            );
+          }}
         />
         <FilterSection
           title="Material"
