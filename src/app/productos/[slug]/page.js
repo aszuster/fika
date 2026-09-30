@@ -57,7 +57,11 @@ export default async function ProductPage({ params }) {
           </div>
         </div>
 
-        <VariantsPanel variants={variants} details={details} />
+        <VariantsPanel
+          productSlug={slug}
+          variants={variants}
+          details={details}
+        />
       </div>
     </div>
   );

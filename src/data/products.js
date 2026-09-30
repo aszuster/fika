@@ -1,5 +1,13 @@
 import { colors, materials, formats, applications } from "./filters";
 
+const slugify = (value) =>
+  value
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+
 const names = [
   "Arch",
   "Eclair",
@@ -91,7 +99,14 @@ export const products = names.map((title, index) => {
     productVariants[slug] ?? [
       { name: "Estándar", color: colors[index % colors.length].label },
     ]
-  ).map((variant) => ({ catalogPhoto: src, samplePhotos: [], ...variant }));
+  ).map((variant, variantIndex) => ({
+    catalogPhoto: src,
+    samplePhotos: [],
+    slug: slugify(variant.name),
+    // Precio de ejemplo — reemplazar por el precio real cuando exista.
+    price: 12000 + index * 850 + variantIndex * 350,
+    ...variant,
+  }));
 
   return {
     title,
