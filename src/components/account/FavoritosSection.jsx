@@ -51,7 +51,7 @@ const FavoritosSection = ({ favorites, projects }) => {
 
   return (
     <div className="flex flex-col w-full">
-      <div className="h-75 w-full grid grid-cols-3 gap-px bg-primary-01">
+      <div className="h-59 w-full grid grid-cols-3 gap-px bg-primary-01">
         <div className="bg-primary-03 "></div>
         <div className="flex items-center justify-center bg-primary-03">
           <h2 className="hl-lg uppercase text-primary-00 z-10 ">Favoritos</h2>
