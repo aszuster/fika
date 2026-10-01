@@ -84,7 +84,7 @@ const AddToProjectPanel = ({ isOpen, favorite, projects, onClose }) => {
           </button>
         </div>
 
-        <div className="h-60 shrink-0 border-b border-primary-00 flex flex-col items-center justify-center gap-4 p-6">
+        <div className="h-60 shrink-0 border-b border-primary-00 flex flex-col items-center justify-center py-10.5">
           <div className="relative h-36 w-full">
             {variant && (
               <Image
@@ -96,7 +96,7 @@ const AddToProjectPanel = ({ isOpen, favorite, projects, onClose }) => {
               />
             )}
           </div>
-          <p className="hl-sm uppercase text-center">
+          <p className="hl-sm uppercase text-center pt-4 pb-1">
             {variant?.name ?? favorite?.variant_slug}
           </p>
           <p className="by-sm font-normal! text-secondary-02">Agregá este producto a tus proyectos</p>
@@ -122,9 +122,7 @@ const AddToProjectPanel = ({ isOpen, favorite, projects, onClose }) => {
             </div>
           ))}
 
-
-        </div>
-                  {isCreating ? (
+          {isCreating && (
             <div className="h-14.5 shrink-0 border-b border-primary-01 flex items-center justify-between px-7.5 gap-4">
               <input
                 type="text"
@@ -132,24 +130,25 @@ const AddToProjectPanel = ({ isOpen, favorite, projects, onClose }) => {
                 value={newProjectName}
                 onChange={(event) => setNewProjectName(event.target.value)}
                 placeholder="Nombre del proyecto"
-                className="by-sm bg-transparent outline-none border-b border-primary-00 flex-1 py-1"
+                className="hl-sm uppercase bg-transparent outline-none  flex-1 py-1"
               />
               <Button
                 copy="Agregar"
                 variant="tertiary"
                 disabled={isPending || !newProjectName.trim()}
                 onClick={handleCreateAndAdd}
-              />
-            </div>
-          ) : (
-            <div className="h-24.25 shrink-0 border-t border-primary-00 flex items-center justify-center px-7.5">
-              <Button
-                copy="Crear nuevo proyecto"
-                variant="secondary"
-                onClick={() => setIsCreating(true)}
+                className=""
               />
             </div>
           )}
+        </div>
+        <div className="h-24.25 shrink-0 border-t border-primary-00 flex items-center justify-center px-7.5">
+          <Button
+            copy="Crear nuevo proyecto"
+            variant="secondary"
+            onClick={() => setIsCreating(true)}
+          />
+        </div>
       </motion.div>
     </>
   );
