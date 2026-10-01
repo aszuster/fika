@@ -1,20 +1,30 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import Image from "next/image";
 import Button from "@/components/buttons/Button";
+import { getFillerCount } from "@/components/grid/GridFillers";
+import Pencil from "@/svg/Pencil";
+import CotizacionScreen from "@/components/account/CotizacionScreen";
 import {
   createProject,
   renameProject,
   deleteProject,
-  requestQuote,
 } from "@/app/mi-cuenta/actions";
-import { getProductBySlug } from "@/data/products";
 
-const itemLabel = ({ product_slug, variant_slug }) => {
-  const product = getProductBySlug(product_slug);
-  const variant = product?.variants.find((v) => v.slug === variant_slug);
-  return `${product?.title ?? product_slug} — ${variant?.name ?? variant_slug}`;
-};
+const Cross = ({ position }) => (
+  <Image
+    src="/img/cross.svg"
+    width={24}
+    height={24}
+    alt=""
+    className={`pointer-events-none absolute left-0 z-5 -translate-x-[calc(50%+0.5px)] ${
+      position === "bottom"
+        ? "bottom-0 translate-y-[calc(50%+0.5px)]"
+        : "top-0 -translate-y-1/2"
+    }`}
+  />
+);
 
 const dateFormatter = new Intl.DateTimeFormat("es-AR", {
   dateStyle: "short",
@@ -24,16 +34,31 @@ const dateFormatter = new Intl.DateTimeFormat("es-AR", {
 const ProyectosSection = ({ projects, quoteRequests }) => {
   const [isPending, startTransition] = useTransition();
   const [newName, setNewName] = useState("");
+  const [isCreating, setIsCreating] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [editingName, setEditingName] = useState("");
   const [confirmingProject, setConfirmingProject] = useState(null);
   const [justRequestedId, setJustRequestedId] = useState(null);
+
+  // Mientras se crea un proyecto, el cuadro borrador ocupa la siguiente celda
+  // de la grilla, así que cuenta para los rellenos y las cruces.
+  const cellCount = projects.length + (isCreating ? 1 : 0);
+  const fillerCount = getFillerCount(cellCount, 3);
+  const lastRow = Math.floor((cellCount + fillerCount - 1) / 3);
+  const draftRow = Math.floor(projects.length / 3);
+  const draftCol = projects.length % 3;
+
+  const cancelCreating = () => {
+    setIsCreating(false);
+    setNewName("");
+  };
 
   const handleCreate = () => {
     if (!newName.trim()) return;
     startTransition(async () => {
       await createProject(newName.trim());
       setNewName("");
+      setIsCreating(false);
     });
   };
 
@@ -49,14 +74,10 @@ const ProyectosSection = ({ projects, quoteRequests }) => {
     });
   };
 
-  const handleConfirmQuote = () => {
-    const projectId = confirmingProject.id;
-    startTransition(async () => {
-      await requestQuote(projectId);
-      setConfirmingProject(null);
-      setJustRequestedId(projectId);
-      setTimeout(() => setJustRequestedId(null), 4000);
-    });
+  const handleQuoteRequested = (projectId) => {
+    setConfirmingProject(null);
+    setJustRequestedId(projectId);
+    setTimeout(() => setJustRequestedId(null), 4000);
   };
 
   return (
@@ -113,76 +134,188 @@ const ProyectosSection = ({ projects, quoteRequests }) => {
         </div>
       </div>
         ) : (
-          <div className="flex flex-col gap-4">
-            {projects.map((project) => {
-              const itemCount = project.project_items?.length ?? 0;
+          <div className="flex flex-col w-full min-h-[calc(100dvh-7.625rem)] overflow-x-clip">
+            <div className="h-59 shrink-0 w-full grid grid-cols-3 gap-px bg-primary-01">
+              <div className="bg-primary-03 "></div>
+              <div className="flex items-center justify-center bg-primary-03">
+                <h2 className="hl-lg uppercase text-primary-00 z-10 ">Proyectos</h2>
+              </div>
+              <div className="bg-primary-03 h-full "></div>
+            </div>
+            <div className="relative z-1 grid grid-cols-3 gap-px bg-primary-01 border-t border-primary-01">
+              {projects.map((project, index) => {
+                const items = project.project_items ?? [];
+                const itemCount = items.length;
+                const isEditing = editingId === project.id;
+                const row = Math.floor(index / 3);
+                const col = index % 3;
 
-              return (
-                <div
-                  key={project.id}
-                  className="flex items-center justify-between gap-4 border-b border-primary-01 pb-4"
-                >
-                  {editingId === project.id ? (
+                return (
+                  <div
+                    key={project.id}
+                    className="relative flex flex-col bg-primary-03 ring-1 ring-primary-00"
+                  >
+                    {row > 0 && col > 0 && <Cross position="top" />}
+                    {row === lastRow && col > 0 && <Cross position="bottom" />}
+                    <div className="h-17.5 shrink-0  w-full flex flex-col items-center justify-center px-4">
+
+                    </div>
+                    <div className="flex flex-col gap-2 p-8.25 min-h-62.75">
+                      {isEditing ? (
+                        <input
+                          type="text"
+                          value={editingName}
+                          onChange={(event) => setEditingName(event.target.value)}
+                          className="hl-sm uppercase text-center border-b border-primary-00 bg-transparent py-1 outline-none w-full "
+                        />
+                      ) : (
+                        <p className="hl-sm uppercase text-center">
+                          {project.name}
+                        </p>
+                      )}
+                      <p className="btn-sm text-primary-00 text-center">
+                       ({itemCount} productos)
+                      </p>
+                      {/* {itemCount > 0 && (
+                        <ul className="by-sm flex flex-col gap-1">
+                          {items.map((item) => (
+                            <li key={item.id}>{itemLabel(item)}</li>
+                          ))}
+                        </ul>
+                      )} */}
+                    </div>
+                    <div className="flex mt-auto border-t border-primary-00 h-12.5">
+                      {isEditing ? (
+                        <>
+                          <Button
+                            copy="Cancelar"
+                            variant="primary"
+                            onClick={() => setEditingId(null)}
+                            className="bg-primary-03! border-r border-primary-00! text-primary-00! hover:bg-primary-00! hover:text-primary-03!"
+                          />
+                          <Button
+                            copy="Guardar"
+                            variant="primary"
+                            disabled={isPending || !editingName.trim()}
+                            onClick={handleRename}
+                            className="bg-primary-03!  border-primary-00! text-primary-00! hover:bg-primary-00! hover:text-primary-03!"
+                          />
+                        </>
+                      ) : (
+                        <>
+                          <Button
+                            copy="Eliminar"
+                            variant="primary"
+                            disabled={isPending}
+                            onClick={() =>
+                              startTransition(() => deleteProject(project.id))
+                            }
+                            className="bg-primary-03!  border-r border-primary-00! text-primary-00! hover:bg-primary-00! hover:text-primary-03!"
+                          />
+                          <Button
+                            copy="Editar"
+                            variant="primary"
+                            onClick={() => startEditing(project)}
+                            className="bg-primary-03!  border-r border-primary-00! text-primary-00! hover:bg-primary-00! hover:text-primary-03!"
+                          />
+                          <Button
+                            copy="Cotizar"
+                            variant="primary"
+                            disabled={isPending || itemCount === 0}
+                            onClick={() => setConfirmingProject(project)}
+                            className="bg-primary-03! border-primary-00! text-primary-00! hover:bg-primary-00! hover:text-primary-03!"
+                          />
+                        </>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+              {isCreating && (
+                <div className="relative flex flex-col bg-primary-03 ring-1 ring-primary-00">
+                  {draftRow > 0 && draftCol > 0 && <Cross position="top" />}
+                  {draftRow === lastRow && draftCol > 0 && <Cross position="bottom" />}
+                  <div className="h-17.5 shrink-0  w-full flex flex-col items-center justify-center px-4">
+
+                  </div>
+                  <div className="flex flex-col items-center gap-2 p-8.25 min-h-62.75">
+                    <div className="flex items-center gap-3 max-w-full">
                     <input
                       type="text"
-                      value={editingName}
-                      onChange={(event) => setEditingName(event.target.value)}
-                      className="by-sm border-b border-primary-00 bg-transparent py-1 outline-none"
+                      autoFocus
+                      value={newName}
+                      size={Math.max(newName.length, "Nombre del proyecto".length)}
+                      onChange={(event) => setNewName(event.target.value)}
+                      onKeyDown={(event) => {
+                        if (event.key === "Enter") handleCreate();
+                        if (event.key === "Escape") cancelCreating();
+                      }}
+                      placeholder="Nombre del proyecto"
+                      className="hl-sm uppercase text-secondary-02 bg-transparent py-1 outline-none field-sizing-content min-w-0 max-w-full"
                     />
-                  ) : (
-                    <p className="by-sm">
-                      {project.name}{" "}
-                      <span className="text-secondary-02">
-                        ({itemCount} productos)
-                      </span>
-                      {justRequestedId === project.id && (
-                        <span className="text-secondary-02"> — cotización enviada ✓</span>
-                      )}
+                    <Pencil/>
+                    </div>
+                    <p className="btn-sm text-secondary-02 text-center">
+                      (0 productos)
                     </p>
-                  )}
-
-                  <div className="flex items-center gap-4">
-                    {editingId === project.id ? (
-                      <>
-                        <Button
-                          copy="Guardar"
-                          variant="secondary"
-                          disabled={isPending}
-                          onClick={handleRename}
-                        />
-                        <Button
-                          copy="Cancelar"
-                          variant="secondary"
-                          onClick={() => setEditingId(null)}
-                        />
-                      </>
-                    ) : (
-                      <>
-                        <Button
-                          copy="Pedir cotización"
-                          variant="secondary"
-                          disabled={isPending || itemCount === 0}
-                          onClick={() => setConfirmingProject(project)}
-                        />
-                        <Button
-                          copy="Editar"
-                          variant="secondary"
-                          onClick={() => startEditing(project)}
-                        />
-                      </>
-                    )}
+                  </div>
+                  <div className="flex mt-auto border-t border-primary-00 h-12.5">
                     <Button
-                      copy="Eliminar"
-                      variant="secondary"
+                      copy="Cancelar"
+                      variant="primary"
                       disabled={isPending}
-                      onClick={() =>
-                        startTransition(() => deleteProject(project.id))
-                      }
+                      onClick={cancelCreating}
+                      className="bg-primary-03! border-r border-primary-00! text-primary-00! hover:bg-primary-00! hover:text-primary-03!"
+                    />
+                    <Button
+                      copy={isPending ? "Creando..." : "Crear"}
+                      variant="primary"
+                      disabled={isPending || !newName.trim()}
+                      onClick={handleCreate}
+                      className="bg-primary-03!  border-primary-00! text-primary-00! hover:bg-primary-00! hover:text-primary-03!"
                     />
                   </div>
                 </div>
-              );
-            })}
+              )}
+              {Array.from({ length: fillerCount }, (_, fillerIndex) => {
+                const absoluteIndex = cellCount + fillerIndex;
+                const row = Math.floor(absoluteIndex / 3);
+                const col = absoluteIndex % 3;
+
+                return (
+                  <div key={`filler-${fillerIndex}`} className="relative bg-primary-03 flex items-end justify-center">
+                    <div className="h-12.5 w-full border-t border-primary-01"></div>
+                    {row > 0 && col > 0 && <Cross position="top" />}
+                    {row === lastRow && col > 0 && <Cross position="bottom" />}
+                  </div>
+                );
+              })}
+            </div>
+            <div className="relative flex-1 min-h-0 overflow-hidden">
+              <div className="absolute inset-0 pt-px grid grid-cols-3 gap-px auto-rows-87 content-start bg-primary-01">
+                {Array.from({ length: 12 }, (_, cellIndex) => (
+                  <div key={cellIndex} className="relative bg-primary-03">
+                    {cellIndex >= 3 && cellIndex % 3 > 0 && <Cross position="top" />}
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="h-24.25 shrink-0" />
+            <div className="fixed bottom-0 inset-x-0 z-10 h-24.25 bg-primary-03 border-t border-primary-00 flex items-center justify-between gap-4 pl-12.5">
+              <p className="btn-sm text-secondary-02 font-normal!">
+                Tenés <span className="text-primary-00">{projects.length} {projects.length === 1 ? "proyecto" : "proyectos"} </span>
+                {projects.length === 1 ? "creado" : "creados"}
+              </p>
+              <div className="h-full ">              <Button
+                copy="Crear nuevo proyecto"
+                variant="primary"
+                disabled={isCreating}
+                onClick={() => setIsCreating(true)}
+                className="px-12.5 bg-primary-03! h-full border-l border-primary-00! text-primary-00! hover:bg-primary-00! hover:text-primary-03!"
+              /></div>
+
+
+            </div>
           </div>
         )}
       {/* </div> */}
@@ -217,35 +350,12 @@ const ProyectosSection = ({ projects, quoteRequests }) => {
       </div> */}
 
       {confirmingProject && (
-        <div className="fixed inset-0 z-20 bg-primary-00/40 flex items-center justify-center">
-          <div className="bg-primary-03 border border-primary-00 w-full max-w-120 p-7.25 flex flex-col gap-6">
-            <p className="hl-sm uppercase">
-              Pedir cotización de &quot;{confirmingProject.name}&quot;
-            </p>
-            <p className="by-sm text-secondary-02">
-              Se va a enviar esta lista para cotizar:
-            </p>
-            <ul className="by-sm flex flex-col gap-2">
-              {confirmingProject.project_items.map((item) => (
-                <li key={item.id}>{itemLabel(item)}</li>
-              ))}
-            </ul>
-            <div className="flex gap-4">
-              <Button
-                copy={isPending ? "Enviando..." : "Confirmar y enviar"}
-                variant="primary"
-                disabled={isPending}
-                onClick={handleConfirmQuote}
-              />
-              <Button
-                copy="Cancelar"
-                variant="secondary"
-                disabled={isPending}
-                onClick={() => setConfirmingProject(null)}
-              />
-            </div>
-          </div>
-        </div>
+        <CotizacionScreen
+          key={confirmingProject.id}
+          project={confirmingProject}
+          onClose={() => setConfirmingProject(null)}
+          onRequested={handleQuoteRequested}
+        />
       )}
     </>
   );

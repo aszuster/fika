@@ -149,7 +149,10 @@ export async function addFavoriteToProject({
   return { projectId: targetProjectId };
 }
 
-export async function requestQuote(projectId) {
+// `items` son los productos del proyecto que el usuario dejó incluidos en la
+// pantalla de cotización ({ itemId, quantity }). Los que quitó ahí siguen en
+// el proyecto, simplemente no vienen en esta lista.
+export async function requestQuote({ projectId, items: selections }) {
   const supabase = await createClient();
   const user = await requireUser(supabase);
 
@@ -162,9 +165,22 @@ export async function requestQuote(projectId) {
 
   if (projectError) throw new Error(projectError.message);
 
+  const quantityByItemId = new Map(
+    selections.map(({ itemId, quantity }) => [itemId, Number(quantity)])
+  );
+
+  // Solo ítems que de verdad pertenecen al proyecto y con cantidad válida.
+  const selectedItems = project.project_items.filter(
+    (item) => quantityByItemId.get(item.id) > 0
+  );
+
+  if (selectedItems.length === 0) {
+    throw new Error("No hay productos para cotizar.");
+  }
+
   // Los nombres lindos hoy salen de la data mock local; el día que los
   // productos vengan de Sanity, esto se reemplaza por una consulta ahí.
-  const items = project.project_items.map((item) => {
+  const items = selectedItems.map((item) => {
     const product = getProductBySlug(item.product_slug);
     const variant = product?.variants.find(
       (v) => v.slug === item.variant_slug
@@ -175,6 +191,7 @@ export async function requestQuote(projectId) {
       variant_slug: item.variant_slug,
       product_title: product?.title ?? item.product_slug,
       variant_name: variant?.name ?? item.variant_slug,
+      quantity: quantityByItemId.get(item.id),
     };
   });
 
@@ -185,6 +202,15 @@ export async function requestQuote(projectId) {
 
   if (error) throw new Error(error.message);
 
+  // Número de solicitud para mostrar ("Solicitud #03"): es correlativo por
+  // usuario — cuántos pedidos lleva hecho contando este — no un id global.
+  const { count, error: countError } = await supabase
+    .from("quote_requests")
+    .select("id", { count: "exact", head: true })
+    .eq("user_id", user.id);
+
+  if (countError) throw new Error(countError.message);
+
   revalidatePath("/mi-cuenta");
-  return data;
+  return { quoteRequestId: data, number: count };
 }
