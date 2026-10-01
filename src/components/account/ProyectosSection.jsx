@@ -60,9 +60,9 @@ const ProyectosSection = ({ projects, quoteRequests }) => {
   };
 
   return (
-    <div className="px-7.25 py-10 flex flex-col gap-10">
-      <div className="flex flex-col gap-6">
-        <div className="flex items-center gap-4">
+    <>
+      {/* <div className="flex flex-col gap-6"> */}
+        {/* <div className="flex items-center gap-4">
           <input
             type="text"
             value={newName}
@@ -76,12 +76,42 @@ const ProyectosSection = ({ projects, quoteRequests }) => {
             disabled={isPending || !newName.trim()}
             onClick={handleCreate}
           />
-        </div>
+        </div> */}
 
         {projects.length === 0 ? (
-          <p className="by-sm text-secondary-02">
-            Todavía no tenés proyectos.
-          </p>
+      <div className="flex h-[calc(100dvh-7.625rem)] relative w-full">
+        <div className="w-full h-full relative">
+          <div className="grid grid-cols-2 grid-rows-[3fr_7fr] bg-primary-03 gap-px w-full h-full">
+          </div>
+        </div>
+        <div className="w-full h-full flex flex-col border-x border-primary-01">
+          <div className="h-[33%] shrink-0 flex flex-col justify-center items-center">
+            <h2 className="hl-lg uppercase">Proyectos</h2>
+          </div>
+          <div className="flex-1 min-h-0 w-full overflow-y-auto flex flex-col ">
+            <div className="h-full border-y border-primary-00 flex justify-center items-center">
+              <p className="by-sm text-secondary-01 font-normal! text-center max-w-70">
+                Creá tu proyecto, sumá productos desde Favoritos y solicitá un presupuesto cuando completes tu selección.
+              </p>
+            </div>
+            <div className="h-full flex justify-center items-end">
+              <div>
+              <Button
+                copy="Crear proyecto"
+                url="/"
+                variant="tertiary"
+                className="mb-20 font-normal!"
+              />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="w-full h-full relative">
+          <div className="grid grid-cols-2 grid-rows-[3fr_7fr] bg-primary-03 gap-px w-full h-full">
+
+          </div>
+        </div>
+      </div>
         ) : (
           <div className="flex flex-col gap-4">
             {projects.map((project) => {
@@ -155,9 +185,9 @@ const ProyectosSection = ({ projects, quoteRequests }) => {
             })}
           </div>
         )}
-      </div>
+      {/* </div> */}
 
-      <div className="flex flex-col gap-4">
+      {/* <div className="flex flex-col gap-4">
         <p className="hl-xs uppercase">Cotizaciones pedidas</p>
         {quoteRequests.length === 0 ? (
           <p className="by-sm text-secondary-02">
@@ -184,7 +214,7 @@ const ProyectosSection = ({ projects, quoteRequests }) => {
             ))}
           </div>
         )}
-      </div>
+      </div> */}
 
       {confirmingProject && (
         <div className="fixed inset-0 z-20 bg-primary-00/40 flex items-center justify-center">
@@ -217,7 +247,7 @@ const ProyectosSection = ({ projects, quoteRequests }) => {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 };
 

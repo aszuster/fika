@@ -145,6 +145,8 @@ export async function addFavoriteToProject({
   if (error) throw new Error(error.message);
 
   revalidatePath("/mi-cuenta");
+
+  return { projectId: targetProjectId };
 }
 
 export async function requestQuote(projectId) {
