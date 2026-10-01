@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Button from "@/components/buttons/Button";
 import { createClient } from "@/utils/supabase/client";
+import TabBar from "./TabBar";
 import PerfilSection from "./PerfilSection";
 import FavoritosSection from "./FavoritosSection";
 import ProyectosSection from "./ProyectosSection";
@@ -13,30 +14,6 @@ const TABS = [
   { key: "favoritos", label: "Favoritos" },
   { key: "proyectos", label: "Proyectos" },
 ];
-
-const TabBar = ({ activeTab, onSelect }) => (
-  <div className="flex w-full relative h-12.5  border-b border-primary-00">
-    <div className="w-full"></div>
-  <div className="w-full h-full flex items-center justify-center gap-px border-x border-primary-00 bg-primary-00">
-    {TABS.map(({ key, label }) => (
-      <div key={key} className="w-full h-full flex items-center justify-center bg-primary-03">
-      <button
-        type="button"
-        onClick={() => onSelect(key)}
-        className={`btn-sm   border px-1.25 rounded-sm cursor-pointer transition-colors duration-300 ease-in-out ${
-          activeTab === key
-            ? "border-primary-00"
-            : "border-transparent text-primary-00"
-        }`}
-      >
-        {label}
-      </button>
-      </div>
-    ))}
-  </div>
-  <div className="w-full"></div>
-  </div>
-);
 
 const AccountTabs = ({ profile, favorites, projects, quoteRequests }) => {
   const router = useRouter();
@@ -58,7 +35,7 @@ const AccountTabs = ({ profile, favorites, projects, quoteRequests }) => {
   if (!activeTab) {
     return (
       <div className="bg-primary-03 h-[calc(100dvh-4.5rem)] flex flex-col">
-        <TabBar activeTab={activeTab} onSelect={setActiveTab} />
+        <TabBar tabs={TABS} activeTab={activeTab} onSelect={setActiveTab} />
 
         <div className="flex flex-1 relative">
           <div className="w-full h-px bg-primary-01 absolute top-1/2 -translate-y-16.25 z-40"></div>
@@ -116,7 +93,7 @@ const AccountTabs = ({ profile, favorites, projects, quoteRequests }) => {
 
   return (
     <div className="bg-primary-03 h-[calc(100%-4.5rem)] flex flex-col">
-      <TabBar activeTab={activeTab} onSelect={setActiveTab} />
+      <TabBar tabs={TABS} activeTab={activeTab} onSelect={setActiveTab} />
 
       <div className="flex-1 overflow-y-auto">
         {activeTab === "perfil" && <PerfilSection profile={profile} />}

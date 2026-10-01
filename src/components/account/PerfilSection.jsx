@@ -1,9 +1,17 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useSearchParams } from "next/navigation";
 import Button from "@/components/buttons/Button";
+import TabBar from "./TabBar";
+import AccessDataForm from "./AccessDataForm";
 import { updateProfile } from "@/app/mi-cuenta/actions";
 import { PROFESSIONAL_ACTIVITIES } from "@/data/profile";
+
+const SUB_TABS = [
+  { key: "personal-data", label: "Datos personales" },
+  { key: "access-data", label: "Datos de acceso" },
+];
 
 const FIELDS = [
   { name: "full_name", label: "Nombre" },
@@ -24,6 +32,13 @@ const initialValues = (profile) =>
   Object.fromEntries(FIELDS.map(({ name }) => [name, profile?.[name] ?? ""]));
 
 const PerfilSection = ({ profile }) => {
+  const searchParams = useSearchParams();
+  const requestedSubTab = searchParams.get("subtab");
+  const initialSubTab = SUB_TABS.some(({ key }) => key === requestedSubTab)
+    ? requestedSubTab
+    : "personal-data";
+
+  const [activeSubTab, setActiveSubTab] = useState(initialSubTab);
   const [isEditing, setIsEditing] = useState(false);
   const [values, setValues] = useState(() => initialValues(profile));
   const [isPending, startTransition] = useTransition();
@@ -33,9 +48,7 @@ const PerfilSection = ({ profile }) => {
 
   const handleSave = () => {
     const formData = new FormData();
-    Object.entries(values).forEach(([key, value]) =>
-      formData.set(key, value)
-    );
+    Object.entries(values).forEach(([key, value]) => formData.set(key, value));
 
     startTransition(async () => {
       await updateProfile(formData);
@@ -49,61 +62,115 @@ const PerfilSection = ({ profile }) => {
   };
 
   return (
-    <div className="max-w-160 px-7.25 py-10 flex flex-col gap-6">
-      {FIELDS.map(({ name, label, select }) => (
-        <div key={name} className="flex flex-col gap-1">
-          <p className="by-sm text-secondary-02">{label}</p>
-          {isEditing ? (
-            select ? (
-              <select
-                value={values[name]}
-                onChange={(event) => handleChange(name, event.target.value)}
-                className="by-sm border-b border-primary-00 bg-transparent py-2 outline-none"
-              >
-                <option value="">Seleccionar...</option>
-                {PROFESSIONAL_ACTIVITIES.map((option) => (
-                  <option key={option} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </select>
+    <div className="flex h-[calc(100dvh-7.625rem)] relative w-full">
+      <div className="w-full h-full relative">
+        <div className="grid grid-cols-2 grid-rows-[3fr_7fr] bg-primary-01 gap-px w-full h-full">
+          <div className="bg-primary-03"></div>
+          <div className="bg-primary-03"></div>
+          <div className="bg-primary-03"></div>
+          <div className="relative bg-primary-03"></div>
+        </div>
+      </div>
+      <div className="w-full h-full flex flex-col border-x border-primary-01">
+        <div className="h-[30%] shrink-0 flex flex-col justify-center items-center">
+          <h2 className="hl-lg uppercase">Perfil</h2>
+        </div>
+        <div className="flex-1 min-h-0 w-full overflow-y-auto flex flex-col ">
+          <TabBar
+            tabs={SUB_TABS}
+            activeTab={activeSubTab}
+            onSelect={setActiveSubTab}
+            fullWidth={false}
+            className="border-x-0! border-t"
+          />
+          <div className="w-full">
+            {activeSubTab === "personal-data" ? (
+              <>
+            {FIELDS.map(({ name, label, select }) => (
+              <div key={name} className="flex flex-col gap-1 w-full">
+                {isEditing ? (
+                  select ? (
+                    <select
+                      value={values[name]}
+                      onChange={(event) =>
+                        handleChange(name, event.target.value)
+                      }
+                      className={`by-sm py-3 px-4 border-b border-primary-01 font-normal! ${
+                        values[name] === (profile?.[name] ?? "")
+                          ? "text-secondary-02"
+                          : "text-primary-00"
+                      }`}
+                    >
+                      <option value="">Seleccionar...</option>
+                      {PROFESSIONAL_ACTIVITIES.map((option) => (
+                        <option key={option} value={option}>
+                          {option}
+                        </option>
+                      ))}
+                    </select>
+                  ) : (
+                    <input
+                      type="text"
+                      value={values[name]}
+                      onChange={(event) =>
+                        handleChange(name, event.target.value)
+                      }
+                      className={`by-sm py-3 px-5 border-b border-primary-01 font-normal! ${
+                        values[name] === (profile?.[name] ?? "")
+                          ? "text-secondary-02"
+                          : "text-primary-00"
+                      }`}
+                    />
+                  )
+                ) : (
+                  <p className="by-sm py-3 px-5 border-b border-primary-01 font-normal!">{values[name] || "—"}</p>
+                )}
+              </div>
+            ))}
+              </>
             ) : (
-              <input
-                type="text"
-                value={values[name]}
-                onChange={(event) => handleChange(name, event.target.value)}
-                className="by-sm border-b border-primary-00 bg-transparent py-2 outline-none"
-              />
-            )
-          ) : (
-            <p className="by-sm">{values[name] || "—"}</p>
+              <AccessDataForm />
+            )}
+          </div>
+          {activeSubTab === "personal-data" && (
+            <div className="flex flex-col gap-px">
+              {isEditing ? (
+                <>
+                  <Button
+                    copy={isPending ? "Guardando..." : "Guardar cambios"}
+                    variant="primary"
+                    onClick={handleSave}
+                    disabled={isPending}
+                  />
+                  <div className="w-full flex items-center justify-center">
+                  <Button
+                    copy="Cancelar"
+                    variant="primary"
+                    onClick={handleCancel}
+                    disabled={isPending}
+                  />
+                  </div>
+                </>
+              ) : (
+                <div className="w-full flex items-center justify-center">
+                <Button
+                  copy="Editar"
+                  variant="primary"
+                  onClick={() => setIsEditing(true)}
+                />
+                </div>
+              )}
+            </div>
           )}
         </div>
-      ))}
-
-      <div className="flex gap-4">
-        {isEditing ? (
-          <>
-            <Button
-              copy={isPending ? "Guardando..." : "Guardar"}
-              variant="primary"
-              onClick={handleSave}
-              disabled={isPending}
-            />
-            <Button
-              copy="Cancelar"
-              variant="secondary"
-              onClick={handleCancel}
-              disabled={isPending}
-            />
-          </>
-        ) : (
-          <Button
-            copy="Editar"
-            variant="secondary"
-            onClick={() => setIsEditing(true)}
-          />
-        )}
+      </div>
+      <div className="w-full h-full relative">
+        <div className="grid grid-cols-2 grid-rows-[3fr_7fr] bg-primary-01 gap-px w-full h-full">
+          <div className="bg-primary-03"></div>
+          <div className="bg-primary-03"></div>
+          <div className="bg-primary-03"></div>
+          <div className="relative bg-primary-03"></div>
+        </div>
       </div>
     </div>
   );
