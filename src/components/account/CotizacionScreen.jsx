@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import Image from "next/image";
 import Button from "@/components/buttons/Button";
-import Chevron from "@/svg/Chevron";
+import Arrow from "@/svg/Arrow";
 import { requestQuote } from "@/app/mi-cuenta/actions";
 import { getProductBySlug } from "@/data/products";
 
@@ -56,12 +56,11 @@ const CotizacionScreen = ({ project, onClose, onRequested }) => {
           type="button"
           onClick={onClose}
           disabled={isPending}
-          className="cursor-pointer flex items-center gap-3 btn-sm text-primary-00 hover:text-secondary-01 transition-colors duration-300 ease-in-out"
+          className="h-full cursor-pointer flex items-center gap-3 btn-sm text-primary-00 hover:text-secondary-01 transition-colors duration-300 ease-in-out border-r border-primary-00 pr-7.5"
         >
           <span className="rotate-180 flex">
-            <Chevron />
+            <Arrow />
           </span>
-          Volver
         </button>
       </div>
 
@@ -149,7 +148,7 @@ const CotizacionScreen = ({ project, onClose, onRequested }) => {
       </div>
 
       <div className="h-24.25 shrink-0 bg-primary-03 border-t border-primary-00 flex items-center justify-between gap-4 pl-12.5">
-        <p className="btn-sm text-secondary-02 font-normal!">
+        <p className="btn-sm text-secondary-02 font-normal! mx-auto">
           <span className="text-primary-00">
             {includedCount} {includedCount === 1 ? "producto" : "productos"}
           </span>{" "}
@@ -161,7 +160,7 @@ const CotizacionScreen = ({ project, onClose, onRequested }) => {
             variant="primary"
             disabled={isPending || includedCount === 0 || hasMissingQuantity}
             onClick={handleRequest}
-            className="px-12.5 bg-primary-03! h-full border-l border-primary-00! text-primary-00! hover:bg-primary-00! hover:text-primary-03!"
+            className="px-12.5 bg-primary-03! h-full border-l border-primary-00! text-primary-00! enabled:hover:bg-primary-00! enabled:hover:text-primary-03! disabled:text-secondary-02!"
           />
         </div>
       </div>

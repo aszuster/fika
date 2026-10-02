@@ -7,6 +7,9 @@ import { createClient } from "@/utils/supabase/client";
 import { translateAuthError } from "@/utils/supabase/authErrors";
 import { PROFESSIONAL_ACTIVITIES } from "@/data/profile";
 import Image from "next/image";
+import Visible from "@/svg/Visible";
+import Hidden from "@/svg/Hidden";
+import Select from "@/components/forms/Select";
 
 const initialForm = {
   email: "",
@@ -236,7 +239,7 @@ export default function RegistroPage() {
                       onClick={() => setShowPassword((value) => !value)}
                       className="by-sm text-secondary-02 cursor-pointer pr-5"
                     >
-                      {showPassword ? "Ocultar" : "Mostrar"}
+                      {showPassword ? <Hidden/> : <Visible/>}
                     </button>
                   </div>
                 </div>
@@ -258,7 +261,7 @@ export default function RegistroPage() {
                       onClick={() => setShowRepeatPassword((value) => !value)}
                       className="by-sm text-secondary-02 cursor-pointer pr-5"
                     >
-                      {showRepeatPassword ? "Ocultar" : "Mostrar"}
+                      {showRepeatPassword ? <Hidden/> : <Visible/>}
                     </button>
                   </div>
                   {form.repeatPassword !== "" &&
@@ -270,20 +273,15 @@ export default function RegistroPage() {
                 </div>
 
                 <div className="flex flex-col gap-1">
-                  <select
-                    id="professionalActivity"
-                    required
+                  <Select
                     value={form.professionalActivity}
-                    onChange={setField("professionalActivity")}
-                    className="by-sm border-b border-primary-01 bg-transparent py-3.75 px-5 outline-none"
-                  >
-                    <option value="" className="text-primary-01">Actividad profesional</option>
-                    {PROFESSIONAL_ACTIVITIES.map((option) => (
-                      <option key={option} value={option}>
-                        {option}
-                      </option>
-                    ))}
-                  </select>
+                    onChange={(value) =>
+                      setForm((prev) => ({ ...prev, professionalActivity: value }))
+                    }
+                    options={PROFESSIONAL_ACTIVITIES}
+                    placeholder="*Actividad profesional"
+                    className="by-sm border-b border-primary-01 bg-transparent py-3.75 pl-5 pr-7"
+                  />
                 </div>
 
                 <TextField
@@ -308,7 +306,7 @@ export default function RegistroPage() {
                 variant="primary"
                 disabled={!isStep1Valid}
                 onClick={() => setStep(2)}
-                className="border-x-0!"
+                className="border-x-0! border-y! border-primary-00!"
               />
             </>
           ) : (
@@ -355,7 +353,7 @@ export default function RegistroPage() {
                   type="submit"
                   variant="primary"
                   disabled={!isStep2Valid || loading}
-                  className="border-x-0!"
+                  className={`border-x-0! border-y! border-primary-00! bg-primary-03! text-primary-00! enabled:hover:bg-primary-00! enabled:hover:text-primary-03! disabled:text-secondary-02!`}
                 />
                                 <Button
                   copy="Volver"
@@ -363,7 +361,7 @@ export default function RegistroPage() {
                  variant="primary"
                   onClick={() => setStep(1)}
                   disabled={loading}
-                   className="border-x-0!"
+                  className={`border-x-0! border-b! border-primary-00! bg-primary-03! text-primary-00! enabled:hover:bg-primary-00! enabled:hover:text-primary-03! disabled:text-secondary-02!`}
                 />
               </div>
             </>

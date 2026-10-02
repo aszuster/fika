@@ -5,6 +5,8 @@ import { motion } from "motion/react";
 import Button from "@/components/buttons/Button";
 import { createClient } from "@/utils/supabase/client";
 import { translateAuthError } from "@/utils/supabase/authErrors";
+import Visible from "@/svg/Visible";
+import Hidden from "@/svg/Hidden";
 
 const emptyEmailForm = {
   currentEmailInput: "",
@@ -36,7 +38,7 @@ const PasswordField = ({ id, label, value, onChange, show, onToggleShow }) => (
         onClick={onToggleShow}
         className="by-sm text-secondary-02 cursor-pointer pr-5"
       >
-        {show ? "Ocultar" : "Mostrar"}
+        {show ? <Hidden/> : <Visible/>}
       </button>
     </div>
   </div>
@@ -119,6 +121,48 @@ const AccessDataForm = () => {
     passwordForm.newPassword.length >= 6 &&
     passwordForm.confirmNewPassword === passwordForm.newPassword;
 
+  // Explica por qué "Guardar cambios" está deshabilitado. Solo avisamos
+  // sobre campos que ya se completaron, para no mostrar errores apenas se
+  // abre el formulario vacío.
+  const getEmailValidationError = () => {
+    const currentEmailInput = emailForm.currentEmailInput.trim();
+    if (
+      currentEmailInput !== "" &&
+      currentEmailInput.toLowerCase() !== currentEmail.toLowerCase()
+    ) {
+      return "El mail actual no es correcto.";
+    }
+    if (emailForm.newEmail.trim() !== "" && emailForm.newEmail === currentEmail) {
+      return "El mail nuevo tiene que ser distinto al actual.";
+    }
+    if (
+      emailForm.confirmNewEmail !== "" &&
+      emailForm.confirmNewEmail !== emailForm.newEmail
+    ) {
+      return "Los mails no coinciden.";
+    }
+    return null;
+  };
+
+  const getPasswordValidationError = () => {
+    if (
+      passwordForm.newPassword !== "" &&
+      passwordForm.newPassword.length < 6
+    ) {
+      return "La contraseña nueva tiene que tener al menos 6 caracteres.";
+    }
+    if (
+      passwordForm.confirmNewPassword !== "" &&
+      passwordForm.confirmNewPassword !== passwordForm.newPassword
+    ) {
+      return "Las contraseñas no coinciden.";
+    }
+    return null;
+  };
+
+  const emailMessage = getEmailValidationError() ?? emailError;
+  const passwordMessage = getPasswordValidationError() ?? passwordError;
+
   const cancelEmailChange = () => {
     setOpenSection(null);
     setEmailForm(emptyEmailForm);
@@ -194,8 +238,8 @@ const AccessDataForm = () => {
     }
 
     setPopup({
-      title: "Contraseña actualizada",
-      message: "Tu contraseña se actualizó correctamente.",
+      title: "Contraseña guardada",
+      message: "Tu contraseña fue actualizada con éxito. Usala la próxima vez que inicies sesión.",
     });
     cancelPasswordChange();
   };
@@ -211,6 +255,7 @@ const AccessDataForm = () => {
               copy="Cambiar mail"
               variant="primary"
               onClick={() => setOpenSection("email")}
+              className="bg-primary-03! border-y!  border-primary-00! text-primary-00! font-normal! hover:bg-primary-00! hover:text-primary-03!"
             />
           </>
         )}
@@ -279,8 +324,8 @@ const AccessDataForm = () => {
               />
             </div>
 
-            {emailError && (
-              <p className="by-sm text-[#A20000]">{emailError}</p>
+            {emailMessage && (
+              <p className="by-sm text-[#A20000] px-5">{emailMessage}</p>
             )}
 
             <div className="flex flex-col gap-px">
@@ -295,6 +340,7 @@ const AccessDataForm = () => {
                 variant="primary"
                 onClick={cancelEmailChange}
                 disabled={emailSaving}
+                className="bg-primary-03! border-y!  border-primary-00! text-primary-00! font-normal! hover:bg-primary-00! hover:text-primary-03!"
               />
             </div>
           </form>
@@ -317,6 +363,7 @@ const AccessDataForm = () => {
               copy="Cambiar contraseña"
               variant="primary"
               onClick={() => setOpenSection("password")}
+              className="bg-primary-03! border-y!  border-primary-00! text-primary-00! font-normal! hover:bg-primary-00! hover:text-primary-03!"
             />
           </>
         )}
@@ -376,8 +423,8 @@ const AccessDataForm = () => {
               onToggleShow={() => setShowConfirmPassword((value) => !value)}
             />
 
-            {passwordError && (
-              <p className="by-sm text-[#A20000]">{passwordError}</p>
+            {passwordMessage && (
+              <p className="by-sm text-[#A20000] px-5">{passwordMessage}</p>
             )}
 
             <div className="flex flex-col gap-px">
@@ -392,6 +439,7 @@ const AccessDataForm = () => {
                 variant="primary"
                 onClick={cancelPasswordChange}
                 disabled={passwordSaving}
+                className="bg-primary-03! border-y!  border-primary-00! text-primary-00! font-normal! hover:bg-primary-00! hover:text-primary-03!"
               />
             </div>
           </form>
@@ -400,12 +448,14 @@ const AccessDataForm = () => {
 
       {popup && (
         <div className="fixed inset-0 z-20 bg-primary-00/40 flex items-center justify-center">
-          <div className="bg-primary-03 border border-primary-00 w-full max-w-100 p-7.25 flex flex-col gap-6 text-center">
-            <p className="hl-sm uppercase">{popup.title}</p>
-            <p className="by-sm text-secondary-02">{popup.message}</p>
+          <div className="bg-primary-03 h-[70%] w-[30%] flex flex-col items-center justify-between  py-12.5">
+            <div className="flex flex-col justify-center h-full max-w-74 gap-5.5">
+            <p className="hl-sm uppercase text-center">{popup.title}</p>
+            <p className="by-sm text-secondary-02 text-center">{popup.message}</p>
+            </div>
             <Button
-              copy="Aceptar"
-              variant="primary"
+              copy="Continuar a perfil"
+              variant="tertiary"
               onClick={() => setPopup(null)}
             />
           </div>

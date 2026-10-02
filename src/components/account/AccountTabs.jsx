@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Button from "@/components/buttons/Button";
 import { createClient } from "@/utils/supabase/client";
@@ -19,11 +18,17 @@ const AccountTabs = ({ profile, favorites, projects, quoteRequests }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const requestedTab = searchParams.get("tab");
-  const initialTab = TABS.some(({ key }) => key === requestedTab)
+  // La URL es la fuente de verdad: así un link a /mi-cuenta?tab=... funciona
+  // aunque ya estemos dentro de "Mi cuenta" (la página no se vuelve a montar).
+  const activeTab = TABS.some(({ key }) => key === requestedTab)
     ? requestedTab
     : null;
 
-  const [activeTab, setActiveTab] = useState(initialTab);
+  // pushState actualiza la URL (y useSearchParams) sin volver a pedir los
+  // datos al servidor, a diferencia de router.push.
+  const setActiveTab = (key) => {
+    window.history.pushState(null, "", `?tab=${key}`);
+  };
 
   const handleSignOut = async () => {
     const supabase = createClient();

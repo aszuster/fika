@@ -233,3 +233,93 @@ input[type="checkbox"]:checked::after {
   border-radius:100%;
   background-color: var(--color-primary-03);
 }
+
+
+/*Select styles*/
+
+/* Opt into the modern, fully customizable native select engine */
+/* select, 
+select::picker(select) {
+  appearance: base-select;
+} */
+
+/* Style the main button */
+select {
+  background-color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  min-width: 200px;
+  color:var(--color-secondary-02);
+  font-weight: 400;
+  /* Replace the native arrow with Chevron.jsx pointing down */
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 2.5rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='9' viewBox='0 0 16 9' fill='none'%3E%3Cpath d='M0.35 0.35L8 8L15.65 0.35' stroke='%232A2A2A'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 16px 9px;
+}
+
+/* Fallback: chevron pointing up while the dropdown is open */
+select:open {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='9' viewBox='0 0 16 9' fill='none'%3E%3Cpath d='M0.35 8.65L8 1L15.65 8.65' stroke='%232A2A2A'/%3E%3C/svg%3E");
+}
+
+/* Customizable select (Chrome/Edge 135+). Other browsers keep the fallback above */
+@supports (appearance: base-select) {
+  select,
+  select::picker(select) {
+    appearance: base-select;
+  }
+
+  /* The chevron moves to the picker icon so it can rotate with a transition */
+  select,
+  select:open {
+    background-image: none;
+  }
+
+  /* Give padding back to the Tailwind classes (px-4, px-5...) */
+  select {
+    padding-right: revert-layer;
+  }
+
+  select::picker-icon {
+    content: "";
+    width: 16px;
+    height: 9px;
+    margin-inline-start: auto;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='9' viewBox='0 0 16 9' fill='none'%3E%3Cpath d='M0.35 0.35L8 8L15.65 0.35' stroke='%232A2A2A'/%3E%3C/svg%3E") no-repeat center / contain;
+    transition: rotate 0.2s ease;
+  }
+
+  select:open::picker-icon {
+    rotate: 180deg;
+  }
+
+  /* Style the open dropdown picker (rendered in the top-layer via anchor positioning) */
+  select::picker(select) {
+    background-color: var(--color-primary-03);
+    border: 1px solid var(--color-primary-01);
+    padding: 5px 0;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+
+  /* Style individual option tags directly */
+  select option {
+    padding: 10px 15px;
+    color: var(--color-secondary-02);
+    background: transparent;
+    cursor: pointer;
+  }
+
+  select option::checkmark {
+    display: none;
+  }
+
+  select option:hover,
+  select option:focus-visible {
+    background-color: var(--color-primary-00);
+    color: var(--color-primary-03);
+  }
+}

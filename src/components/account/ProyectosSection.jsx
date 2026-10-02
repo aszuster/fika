@@ -223,7 +223,7 @@ const ProyectosSection = ({ projects, quoteRequests }) => {
                             variant="primary"
                             disabled={isPending || itemCount === 0}
                             onClick={() => setConfirmingProject(project)}
-                            className="bg-primary-03! border-primary-00! text-primary-00! hover:bg-primary-00! hover:text-primary-03!"
+                            className="bg-primary-03! border-primary-00! text-primary-00! enabled:hover:bg-primary-00! enabled:hover:text-primary-03! disabled:text-secondary-02!"
                           />
                         </>
                       )}
@@ -265,14 +265,14 @@ const ProyectosSection = ({ projects, quoteRequests }) => {
                       variant="primary"
                       disabled={isPending}
                       onClick={cancelCreating}
-                      className="bg-primary-03! border-r border-primary-00! text-primary-00! hover:bg-primary-00! hover:text-primary-03!"
+                      className="bg-primary-03! border-r border-primary-00! text-primary-00! enabled:hover:bg-primary-00! enabled:hover:text-primary-03! disabled:text-secondary-02!"
                     />
                     <Button
                       copy={isPending ? "Creando..." : "Crear"}
                       variant="primary"
                       disabled={isPending || !newName.trim()}
                       onClick={handleCreate}
-                      className="bg-primary-03!  border-primary-00! text-primary-00! hover:bg-primary-00! hover:text-primary-03!"
+                      className="bg-primary-03!  border-primary-00! text-primary-00! enabled:hover:bg-primary-00! enabled:hover:text-primary-03! disabled:text-secondary-02!"
                     />
                   </div>
                 </div>
@@ -311,7 +311,7 @@ const ProyectosSection = ({ projects, quoteRequests }) => {
                 variant="primary"
                 disabled={isCreating}
                 onClick={() => setIsCreating(true)}
-                className="px-12.5 bg-primary-03! h-full border-l border-primary-00! text-primary-00! hover:bg-primary-00! hover:text-primary-03!"
+                className="px-12.5 bg-primary-03! h-full border-l border-primary-00! text-primary-00! enabled:hover:bg-primary-00! enabled:hover:text-primary-03! disabled:text-secondary-02!"
               /></div>
 
 

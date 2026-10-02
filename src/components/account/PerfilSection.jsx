@@ -7,6 +7,7 @@ import TabBar from "./TabBar";
 import AccessDataForm from "./AccessDataForm";
 import { updateProfile } from "@/app/mi-cuenta/actions";
 import { PROFESSIONAL_ACTIVITIES } from "@/data/profile";
+import Select from "@/components/forms/Select";
 
 const SUB_TABS = [
   { key: "personal-data", label: "Datos personales" },
@@ -90,24 +91,17 @@ const PerfilSection = ({ profile }) => {
               <div key={name} className="flex flex-col gap-1 w-full">
                 {isEditing ? (
                   select ? (
-                    <select
+                    <Select
                       value={values[name]}
-                      onChange={(event) =>
-                        handleChange(name, event.target.value)
-                      }
+                      onChange={(value) => handleChange(name, value)}
+                      options={PROFESSIONAL_ACTIVITIES}
+                      placeholder="Seleccionar..."
                       className={`by-sm py-3 px-4 border-b border-primary-01 font-normal! ${
                         values[name] === (profile?.[name] ?? "")
                           ? "text-secondary-02"
                           : "text-primary-00"
                       }`}
-                    >
-                      <option value="">Seleccionar...</option>
-                      {PROFESSIONAL_ACTIVITIES.map((option) => (
-                        <option key={option} value={option}>
-                          {option}
-                        </option>
-                      ))}
-                    </select>
+                    />
                   ) : (
                     <input
                       type="text"
@@ -135,12 +129,13 @@ const PerfilSection = ({ profile }) => {
           {activeSubTab === "personal-data" && (
             <div className="flex flex-col gap-px">
               {isEditing ? (
-                <>
+                <div className="flex">
                   <Button
                     copy={isPending ? "Guardando..." : "Guardar cambios"}
                     variant="primary"
                     onClick={handleSave}
                     disabled={isPending}
+                    className="bg-primary-03! border-y! border-r!  border-primary-00! text-primary-00! hover:bg-primary-00! hover:text-primary-03!"
                   />
                   <div className="w-full flex items-center justify-center">
                   <Button
@@ -148,15 +143,17 @@ const PerfilSection = ({ profile }) => {
                     variant="primary"
                     onClick={handleCancel}
                     disabled={isPending}
+                    className="bg-primary-03! border-y!  border-primary-00! text-primary-00! hover:bg-primary-00! hover:text-primary-03!"
                   />
                   </div>
-                </>
+                </div>
               ) : (
                 <div className="w-full flex items-center justify-center">
                 <Button
                   copy="Editar"
                   variant="primary"
                   onClick={() => setIsEditing(true)}
+                  className="bg-primary-03! border-y!  border-primary-00! text-primary-00! font-normal! hover:bg-primary-00! hover:text-primary-03!"
                 />
                 </div>
               )}
