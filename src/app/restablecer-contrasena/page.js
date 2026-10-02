@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import Button from "@/components/buttons/Button";
 import { createClient } from "@/utils/supabase/client";
 import { translateAuthError } from "@/utils/supabase/authErrors";
+import Visible from "@/svg/Visible";
+import Hidden from "@/svg/Hidden";
 
 export default function RestablecerContrasenaPage() {
   const [ready, setReady] = useState(false);
@@ -110,7 +112,7 @@ export default function RestablecerContrasenaPage() {
               onClick={() => setShowPassword((value) => !value)}
               className="by-sm text-secondary-02 cursor-pointer"
             >
-              {showPassword ? "Ocultar" : "Mostrar"}
+              {showPassword ? <Hidden/> : <Visible/>}
             </button>
           </div>
         </div>
