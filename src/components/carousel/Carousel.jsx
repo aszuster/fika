@@ -1,62 +1,90 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { AnimatePresence, motion } from "motion/react";
-import Chevron from "@/svg/Chevron";
+import { animate, motion, useMotionValue } from "motion/react";
+
+// Cuánto hay que arrastrar (fracción del ancho) o qué tan rápido (px/s) para
+// pasar de foto; si no, vuelve a la actual.
+const SWIPE_DISTANCE = 0.2;
+const SWIPE_VELOCITY = 500;
+
+const slideTransition = { duration: 0.35, ease: "easeInOut" };
 
 const Carousel = ({ images }) => {
   const [index, setIndex] = useState(0);
+  const [width, setWidth] = useState(0);
+  const containerRef = useRef(null);
+  const x = useMotionValue(0);
+  const hasMany = images.length > 1;
+
+  // El desplazamiento de la tira se calcula en px, así que necesitamos el
+  // ancho real del contenedor (y actualizarlo si cambia el tamaño).
+  useEffect(() => {
+    const element = containerRef.current;
+    if (!element) return;
+
+    const observer = new ResizeObserver(([entry]) => {
+      setWidth(entry.contentRect.width);
+    });
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const controls = animate(x, -index * width, slideTransition);
+    return () => controls.stop();
+  }, [index, width, x]);
 
   if (images.length === 0) return null;
 
-  const goTo = (next) => setIndex((next + images.length) % images.length);
+  const handleDragEnd = (_event, { offset, velocity }) => {
+    const passedDistance = Math.abs(offset.x) > width * SWIPE_DISTANCE;
+    const passedVelocity = Math.abs(velocity.x) > SWIPE_VELOCITY;
+    const direction = offset.x < 0 ? 1 : -1;
+    const next = Math.min(
+      Math.max(index + direction, 0),
+      images.length - 1,
+    );
+
+    if ((passedDistance || passedVelocity) && next !== index) {
+      setIndex(next);
+    } else {
+      // No alcanzó para cambiar de foto (o es un extremo): vuelve a su lugar.
+      animate(x, -index * width, slideTransition);
+    }
+  };
 
   return (
     <div className="flex h-full w-full flex-col">
-      <div className="relative min-h-0 flex-1 overflow-hidden">
-        <AnimatePresence mode="wait" initial={false}>
-          <motion.div
-            key={index}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.25, ease: "easeInOut" }}
-            className="absolute inset-0"
-          >
-            <Image
-              src={images[index]}
-              alt=""
-              fill
-              sizes="25vw"
-              className="object-contain"
-            />
-          </motion.div>
-        </AnimatePresence>
-
-        {images.length > 1 && (
-          <>
-            <button
-              type="button"
-              onClick={() => goTo(index - 1)}
-              aria-label="Foto anterior"
-              className="absolute -left-2.5 top-1/2 -translate-y-1/2 btn-sm cursor-pointer bg-primary-03/80 rounded-full w-8 h-8 flex items-center justify-center hover:bg-primary-03 rotate-180"
-            >
-              <Chevron />
-            </button>
-            <button
-              type="button"
-              onClick={() => goTo(index + 1)}
-              aria-label="Foto siguiente"
-              className="absolute -right-2.5 top-1/2 -translate-y-1/2 btn-sm cursor-pointer bg-primary-03/80 rounded-full w-8 h-8 flex items-center justify-center hover:bg-primary-03"
-            >
-              <Chevron />
-            </button>
-          </>
-        )}
+      <div ref={containerRef} className="relative min-h-0 flex-1 overflow-hidden">
+        <motion.div
+          className={`flex h-full ${
+            hasMany ? "cursor-grab active:cursor-grabbing" : ""
+          }`}
+          style={{ x }}
+          drag={hasMany ? "x" : false}
+          dragConstraints={{ left: -(images.length - 1) * width, right: 0 }}
+          dragElastic={0.15}
+          dragMomentum={false}
+          onDragEnd={handleDragEnd}
+        >
+          {images.map((src, i) => (
+            <div key={`${src}-${i}`} className="relative h-full w-full shrink-0">
+              <Image
+                src={src}
+                alt=""
+                fill
+                sizes="25vw"
+                draggable={false}
+                className="object-contain pointer-events-none select-none"
+              />
+            </div>
+          ))}
+        </motion.div>
       </div>
 
-      {images.length > 1 && (
+      {hasMany && (
         <div className="shrink-0 flex justify-center gap-2 py-4">
           {images.map((_, i) => (
             <button
@@ -64,7 +92,8 @@ const Carousel = ({ images }) => {
               type="button"
               onClick={() => setIndex(i)}
               aria-label={`Ir a la foto ${i + 1}`}
-              className={`w-1.5 h-1.5 rounded-full cursor-pointer ${
+              aria-current={i === index}
+              className={`w-1.5 h-1.5 rounded-full cursor-pointer transition-colors duration-300 ease-in-out ${
                 i === index ? "bg-primary-00" : "bg-primary-01"
               }`}
             />

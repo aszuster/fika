@@ -92,9 +92,16 @@ const productVariants = {
   ],
 };
 
+// Productos que todavía no tienen la versión "-white" para el hover: usan la
+// misma imagen. Sacarlos de acá cuando llegue la imagen.
+const withoutHoverImage = ["medialuna"];
+
 export const products = names.map((title, index) => {
   const src = `/img/productos/${slugs[index]}.png`;
   const slug = slugs[index];
+  const hoverImage = withoutHoverImage.includes(slug)
+    ? src
+    : `/img/productos/${slug}-white.png`;
   const variants = (
     productVariants[slug] ?? [
       { name: "Estándar", color: colors[index % colors.length].label },
@@ -112,6 +119,7 @@ export const products = names.map((title, index) => {
     title,
     slug,
     image: src,
+    hoverImage,
     code: `ZMN4502`,
     chipSize: `150x20 mm`,
     meshSize: "302x310 mm",

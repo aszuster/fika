@@ -1,119 +1,35 @@
 "use client";
 
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useState } from "react";
 import Image from "next/image";
+import { useSearchParams } from "next/navigation";
 import { AnimatePresence, motion } from "motion/react";
-import Button from "@/components/buttons/Button";
 import GridFillers from "@/components/grid/GridFillers";
+import GridCross, { hasTopCross } from "@/components/grid/GridCross";
 import Carousel from "@/components/carousel/Carousel";
+import FavoriteButton from "@/components/product/FavoriteButton";
+import useFavorites from "@/hooks/useFavorites";
 import { ReactLenis } from "@/utils/lenis";
-import { createClient } from "@/utils/supabase/client";
-import { addFavorite, removeFavoriteByVariant } from "@/app/productos/actions";
+import { priceFormatter } from "@/utils/price";
 import Chevron from "@/svg/Chevron";
+import Arrow from "@/svg/Arrow";
 
-const priceFormatter = new Intl.NumberFormat("es-AR", {
-  style: "currency",
-  currency: "ARS",
-  maximumFractionDigits: 0,
-});
-
-const VariantsPanel = ({ productSlug, variants, details }) => {
-  const [selectedIndex, setSelectedIndex] = useState(null);
+const VariantsPanel = ({
+  productSlug,
+  variants,
+  details,
+  initialVariantSlug = null,
+}) => {
+  const [selectedIndex, setSelectedIndex] = useState(() => {
+    const index = variants.findIndex(({ slug }) => slug === initialVariantSlug);
+    return index === -1 ? null : index;
+  });
   const selected = selectedIndex !== null ? variants[selectedIndex] : null;
 
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [favoritedSlugs, setFavoritedSlugs] = useState(new Set());
-  const [pendingSlugs, setPendingSlugs] = useState(new Set());
-
-  useEffect(() => {
-    const supabase = createClient();
-
-    const loadFavorites = async (userId) => {
-      const { data } = await supabase
-        .from("favorites")
-        .select("variant_slug")
-        .eq("user_id", userId)
-        .eq("product_slug", productSlug);
-
-      setFavoritedSlugs(new Set((data ?? []).map((row) => row.variant_slug)));
-    };
-
-    supabase.auth.getSession().then(({ data }) => {
-      const user = data.session?.user;
-      setIsLoggedIn(Boolean(user));
-      if (user) loadFavorites(user.id);
-    });
-
-    const { data: listener } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setIsLoggedIn(Boolean(session));
-        if (session?.user) {
-          loadFavorites(session.user.id);
-        } else {
-          setFavoritedSlugs(new Set());
-        }
-      }
-    );
-
-    return () => listener.subscription.unsubscribe();
-  }, [productSlug]);
+  const { isLoggedIn, isFavorited, toggleFavorite } = useFavorites(productSlug);
 
   const goToVariant = (next) =>
     setSelectedIndex((next + variants.length) % variants.length);
-
-  const handleToggleFavorite = (variantSlug) => {
-    if (pendingSlugs.has(variantSlug)) return;
-
-    const isFavorited = favoritedSlugs.has(variantSlug);
-    setPendingSlugs((prev) => new Set(prev).add(variantSlug));
-
-    const request = isFavorited
-      ? removeFavoriteByVariant({ productSlug, variantSlug })
-      : addFavorite({ productSlug, variantSlug });
-
-    request
-      .then(() => {
-        setFavoritedSlugs((prev) => {
-          const next = new Set(prev);
-          if (isFavorited) {
-            next.delete(variantSlug);
-          } else {
-            next.add(variantSlug);
-          }
-          return next;
-        });
-      })
-      .finally(() => {
-        setPendingSlugs((prev) => {
-          const next = new Set(prev);
-          next.delete(variantSlug);
-          return next;
-        });
-      });
-  };
-
-  const FavoriteButton = ({ variantSlug, className = "" }) => {
-    if (!isLoggedIn) return null;
-    const isFavorited = favoritedSlugs.has(variantSlug);
-
-    return (
-      <button
-        type="button"
-        onClick={(event) => {
-          event.stopPropagation();
-          handleToggleFavorite(variantSlug);
-        }}
-        aria-label={isFavorited ? "Quitar de favoritos" : "Agregar a favoritos"}
-        className={`z-10 w-6 h-6 rounded-full border border-primary-00 flex items-center justify-center btn-sm cursor-pointer ${
-          isFavorited
-            ? "bg-primary-00 text-primary-03"
-            : "bg-primary-03 text-primary-00"
-        } ${className}`}
-      >
-        {isFavorited ? "−" : "+"}
-      </button>
-    );
-  };
 
   return (
     <ReactLenis
@@ -138,13 +54,19 @@ const VariantsPanel = ({ productSlug, variants, details }) => {
           </div>
           <div className="flex flex-col justify-between h-full">
             <div className="flex flex-col h-full">
-              <div className="h-12.5 shrink-0 flex items-center px-7.5 border-b border-primary-00">
-                <Button
-                  copy="Volver"
-                  variant="secondary"
-                  onClick={() => setSelectedIndex(null)}
-                />
-              </div>
+              {/* <div className="h-12.5 shrink-0 flex items-center px-7.5 border-b border-primary-00">
+                
+                        <button
+                          type="button"
+                          onClick={() => setSelectedIndex(null)}
+                          className="h-full cursor-pointer flex items-center gap-3 btn-sm text-primary-00 hover:text-secondary-01 transition-colors duration-300 ease-in-out border-r border-primary-00 pr-7.5"
+                        >
+                          <span className="rotate-180 flex">
+                            <Arrow />
+                          </span>
+                        </button>
+
+              </div> */}
               <div className="h-22.5 shrink-0 border-b border-primary-00 flex items-center justify-between px-6.5">
                 <button
                   type="button"
@@ -177,42 +99,59 @@ const VariantsPanel = ({ productSlug, variants, details }) => {
                   <Chevron />
                 </button>
               </div>
-              <div className="relative h-60 w-full shrink-0 grow p-8 flex justify-center items-center">
-                <FavoriteButton
-                  variantSlug={selected.slug}
-                  className="absolute top-2 right-2"
-                />
-                <div className="relative h-70 w-72.75">
-                  <AnimatePresence mode="wait" initial={false}>
-                    <motion.div
-                      key={selectedIndex}
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.25, ease: "easeInOut" }}
-                      className="absolute inset-0"
-                    >
-                      <Image
-                        src={selected.catalogPhoto}
-                        alt=""
-                        fill
-                        sizes="25vw"
-                        className="object-contain"
-                      />
-                    </motion.div>
-                  </AnimatePresence>
+              <div className="relative h-60 w-full shrink-0 grow flex flex-col items-center">
+                {isLoggedIn && (
+                  <div className="h-12 w-full border-b border-primary-00 flex items-center justify-center gap-3">
+                    <p className="uppercase">
+                      {isFavorited(productSlug, selected.slug)
+                        ? "Quitar de favoritos"
+                        : "Agregar a favoritos"}
+                    </p>
+                    <FavoriteButton
+                      isFavorited={isFavorited(productSlug, selected.slug)}
+                      onToggle={() =>
+                        toggleFavorite(productSlug, selected.slug)
+                      }
+                      className=""
+                    />
+                  </div>
+                )}
+                <div className="h-full w-full flex justify-center items-center">
+                  <div className="relative h-70 w-72.75">
+                    <AnimatePresence mode="wait" initial={false}>
+                      <motion.div
+                        key={selectedIndex}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.25, ease: "easeInOut" }}
+                        className="absolute inset-0"
+                      >
+                        <Image
+                          src={selected.catalogPhoto}
+                          alt=""
+                          fill
+                          sizes="25vw"
+                          className="object-contain"
+                        />
+                      </motion.div>
+                    </AnimatePresence>
+                  </div>
                 </div>
               </div>
               {isLoggedIn && (
-                <div className="h-8 shrink-0 w-full border-t border-primary-01 flex items-center justify-center gap-2">
-                  <p className="by-sm text-secondary-02">Precio</p>
-                  <p className="by-sm">{priceFormatter.format(selected.price)}</p>
+                <div className="h-8 shrink-0 w-full border-t border-primary-01 flex items-center justify-center gap-2 py-6">
+                  <p className="btn-sm text-secondary-02">Precio</p>
+                  <p className="btn-sm">
+                    {priceFormatter.format(selected.price)}
+                  </p>
+                  <p className="btn-sm text-secondary-02">X M2</p>
                 </div>
               )}
             </div>
             <div className="border-t border-primary-00">
               <div className="h-12.5 flex justify-center items-center border-b border-primary-01">
-              <p className="hl-xs uppercase">Ficha técnica</p>
+                <p className="hl-xs uppercase">Ficha técnica</p>
               </div>
               <div className="grid grid-cols-2 gap-px bg-primary-01">
                 {details.map(({ label, value }) => (
@@ -232,65 +171,71 @@ const VariantsPanel = ({ productSlug, variants, details }) => {
         </div>
       ) : (
         <div className="grid grid-cols-2 gap-px bg-primary-01 auto-rows-[calc((100dvh-7.625rem-2px)/2)]">
-          {variants.map(({ name, slug, catalogPhoto, price }, index) => {
-            const row = Math.floor(index / 2);
-            const col = index % 2;
-            const hasCross = row > 0 && col > 0;
+          {variants.map(({ name, slug, catalogPhoto, price }, index) => (
+            <div
+              key={name}
+              role="button"
+              tabIndex={0}
+              onClick={() => setSelectedIndex(index)}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
+                  setSelectedIndex(index);
+                }
+              }}
+              className="relative flex h-full flex-col bg-primary-03 cursor-pointer group hover:text-primary-00 hover:bg-[#EFEFEF] transition-all duration-300 ease-in-out text-left"
+            >
+              {hasTopCross(index, 2) && <GridCross />}
 
-            return (
-              <div
-                key={name}
-                role="button"
-                tabIndex={0}
-                onClick={() => setSelectedIndex(index)}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter" || event.key === " ") {
-                    event.preventDefault();
-                    setSelectedIndex(index);
-                  }
-                }}
-                className="relative flex h-full flex-col bg-primary-03 cursor-pointer group hover:text-primary-03 hover:bg-primary-00 transition-all duration-300 ease-in-out text-left"
-              >
-                {hasCross && (
-                  <Image
-                    src="/img/cross.svg"
-                    width={24}
-                    height={24}
-                    alt=""
-                    className="pointer-events-none absolute top-0 left-0 z-5 -translate-x-[calc(50%+0.5px)] -translate-y-1/2"
+              <div className="h-21.75 relative shrink-0 border-b border-primary-01 w-full flex items-center justify-center">
+                <p className="hl-xs uppercase">{name}</p>
+                {isLoggedIn && (
+                  <FavoriteButton
+                    isFavorited={isFavorited(productSlug, slug)}
+                    onToggle={() => toggleFavorite(productSlug, slug)}
+                    className="absolute px-8.25 right-0 h-full border-l border-primary-00"
                   />
                 )}
-                <FavoriteButton
-                  variantSlug={slug}
-                  className="absolute top-2 right-2"
-                />
-                <div className="h-21.75 shrink-0 border-b border-primary-01 w-full flex flex-col items-center justify-center">
-                  <p className="hl-sm uppercase">{name}</p>
-                </div>
-                <div className="min-h-0 w-full flex-1 p-8">
-                  <div className="relative h-full w-full">
-                    <Image
-                      src={catalogPhoto}
-                      alt=""
-                      fill
-                      sizes="25vw"
-                      className="object-contain"
-                    />
-                  </div>
-                </div>
-                {isLoggedIn && (
-                  <div className="h-8 shrink-0 w-full border-t border-primary-01 flex items-center justify-center gap-2">
-                    <p className="by-sm text-secondary-02">Precio</p>
-                    <p className="by-sm">{priceFormatter.format(price)}</p>
-                  </div>
-                )}
               </div>
-            );
-          })}
-          <GridFillers items={variants} cols={2} />
+              <div className="min-h-0 w-full flex-1 p-8">
+                <div className="relative h-full w-full">
+                  <Image
+                    src={catalogPhoto}
+                    alt=""
+                    fill
+                    sizes="25vw"
+                    className="object-contain"
+                  />
+                </div>
+              </div>
+              {isLoggedIn && (
+                <div className="h-8 py-7 shrink-0 w-full border-t border-primary-01 flex items-center justify-center gap-2">
+                  <p className="hl-xs uppercase text-secondary-02">Precio</p>
+                  <p className="hl-xs">{priceFormatter.format(price)}</p>
+                  <p className="hl-xs uppercase text-secondary-02">X M2</p>
+                </div>
+              )}
+            </div>
+          ))}
+          <GridFillers items={variants} cols={2} minRows={2} crosses />
         </div>
       )}
     </ReactLenis>
+  );
+};
+
+// Abre directamente la variante de ?variante=<slug> (por ejemplo, al llegar
+// desde la grilla filtrada). Usa useSearchParams, así que en la página tiene
+// que ir dentro de un <Suspense> para que la página siga siendo estática.
+export const VariantsPanelFromUrl = (props) => {
+  const initialVariantSlug = useSearchParams().get("variante");
+
+  return (
+    <VariantsPanel
+      key={initialVariantSlug ?? "none"}
+      {...props}
+      initialVariantSlug={initialVariantSlug}
+    />
   );
 };
 

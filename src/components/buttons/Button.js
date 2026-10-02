@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 const Button = ({
   copy,
   className = "",
@@ -15,22 +17,22 @@ const Button = ({
   const variantStyles = {
     primary:
       `cursor-pointer w-full flex items-center justify-center relative bg-primary-00 text-primary-01 btn-sm py-4 transition-all duration-300 ease-in-out hover:bg-secondary-00 hover:text-primary-01 ${className}`,
-    secondary: `cursor-pointer relative inline-flex items-center bg-transparent text-primary-00 btn-sm p-1 border border-transparent rounded-[3px] transition-all duration-300 ease-in-out hover:text-secondary-01 active:border-primary-00 focus:border-primary-00 ${className}`,
+    secondary: `cursor-pointer relative inline-flex items-center bg-transparent text-primary-00 btn-sm p-1 border border-transparent rounded-[3px] transition-all duration-300 ease-in-out hover:text-secondary-01  ${className}`,
     tertiary: `cursor-pointer relative inline-flex items-center bg-transparent text-primary-00 btn-sm border-b border-primary-00 transition-all duration-300 leading-[20px]! ease-in-out hover:text-secondary-01 hover:border-b-primary-01 active:border-b-primary-00 focus:border-b-primary-00 ${className}`,
   };
 
   const selectedVariant = variantStyles[variant] || variantStyles.primary;
 
-  const Element = url ? "a" : "button";
+  // Las rutas internas usan Link para navegar sin recargar la página (un <a>
+  // común recarga todo y, por ejemplo, el Navbar pierde su estado de sesión).
+  const isInternal = url?.startsWith("/") && target !== "_blank";
+  const Element = url ? (isInternal ? Link : "a") : "button";
 
   const elementProps = url
     ? {
         href: url,
         target,
-        rel: target === "_blank" ? "noopener noreferrer" : undefined,
-        ...(url.startsWith("#") && !isDisabled
-          ? { onClick: handleScroll }
-          : {}),
+        rel: target === "_blank" ? "noopener noreferrer" : undefined
       }
     : {
         type: type === "submit" ? "submit" : "button",

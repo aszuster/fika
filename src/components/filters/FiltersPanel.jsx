@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion } from "motion/react";
 import Button from "@/components/buttons/Button";
 import GridFillers from "@/components/grid/GridFillers";
+import Close from "@/svg/Close";
 import { colors, materials, formats, applications } from "@/data/filters";
 
 const emptySelection = {
@@ -62,7 +63,7 @@ function FilterSection({
   );
 }
 
-const FiltersPanel = ({ isOpen, onApply, onClear }) => {
+const FiltersPanel = ({ isOpen, onApply, onClear, onClose }) => {
   const [draft, setDraft] = useState(emptySelection);
 
   const toggle = (category, value) => {
@@ -89,9 +90,21 @@ const FiltersPanel = ({ isOpen, onApply, onClear }) => {
       initial={false}
       animate={{ x: isOpen ? 0 : "-100%" }}
       transition={{ duration: 0.35, ease: "easeInOut" }}
-      className="absolute w-160 bg-primary-03 h-[calc(100dvh-7.625rem)] border-r border-primary-00 flex flex-col justify-between"
+      className="absolute top-0 left-0 w-160 bg-primary-03 h-[calc(100dvh-4.5rem)] border-r border-primary-00 flex flex-col"
     >
-      <div className="border-b border-primary-00">
+      <div className="h-12.5 shrink-0 border-b border-primary-00 flex items-center justify-between px-7.5">
+        <p className="hl-xs uppercase border rounded-sm px-1.5">Filtros</p>
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="Cerrar filtros"
+          className="cursor-pointer"
+        >
+          <Close />
+        </button>
+      </div>
+      <div className="flex-1 min-h-0 overflow-y-auto" data-lenis-prevent>
+        <div className="border-b border-primary-00">
         <FilterSection
           title="Color"
           items={colors}
@@ -153,8 +166,9 @@ const FiltersPanel = ({ isOpen, onApply, onClear }) => {
             <p className={`by-sm ${wordSelectClass(isSelected)}`}>{label}</p>
           )}
         />
+        </div>
       </div>
-      <div className="w-full h-18 border-t border-primary-00 flex">
+      <div className="w-full h-18 shrink-0 border-t border-primary-00 flex">
         <div className="w-full flex justify-center items-center border-r border-primary-00">
           <Button copy="Borrar" variant="tertiary" onClick={handleClear} />
         </div>
