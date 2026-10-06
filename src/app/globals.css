@@ -1,0 +1,325 @@
+@import "tailwindcss";
+
+@theme {
+  --breakpoint-*: initial;
+  --breakpoint-sm: 480px;
+  --breakpoint-smd: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1440px;
+  --breakpoint-3xl: 1536px;
+  --breakpoint-4xl: 1920px;
+
+  --color-primary-00: #2A2A2A;
+  --color-primary-01: #D2D2D1;
+  --color-primary-02: #EEEEEE;
+  --color-primary-03: #FFFFFF;
+
+  --color-secondary-00: #141414;
+  --color-secondary-01: #666666;
+  --color-secondary-02: #9D9D9D;
+
+
+  --font-mono: var(--font-jetbrains-mono);
+  --font-sans: var(--font-public-sans);
+
+}
+
+
+
+
+/* fonts */
+
+  /* headlines */
+
+.hl-xs{
+  font-family: var(--font-mono);
+  font-size: .9375rem; /*15px*/
+  font-weight: 300;
+  line-height: 1.5625rem;
+}
+.hl-sm{
+  font-family: var(--font-mono);
+  font-size: 1.5625rem; /*25px*/
+  font-weight: 300;
+  line-height: 2.0625rem;
+}
+.hl-md{
+  font-family: var(--font-mono);
+  font-size: 2.5rem; /*40px*/
+  font-weight: 300;
+  line-height: 3rem;
+}
+.hl-lg{
+  font-family: var(--font-mono);
+  font-size: 3.125rem; /*50px*/
+  font-weight: 300;
+  line-height: 4.125rem;
+}
+.hl-xl{
+  font-family: var(--font-mono);
+  font-size: 5rem; /*80px*/
+  font-weight: 300;
+  line-height: 6.625rem;
+}
+.hl-2xl{
+  font-family: var(--font-mono);
+  font-size: 6.875rem; /*110px*/
+  font-weight: 300;
+  line-height: 9.0625rem;
+}
+
+  /* body */
+
+.by-sm{
+  font-family: var(--font-sans);
+  font-size: .9375rem; /*15px*/
+  font-weight: 300;
+  line-height: 1.3125rem;
+}
+.by-md{
+  font-family: var(--font-sans);
+  font-size: 1.875rem; /*30px*/
+  font-weight: 300;
+  line-height: 2.5rem;
+}
+.by-lg{
+  font-family: var(--font-sans);
+  font-size: 3.125rem; /*50px*/
+  font-weight: 300;
+  line-height: 4.9375rem;
+}
+
+  /* buttons */
+
+.btn-sm{
+  font-family: var(--font-mono);
+  font-size: .9375rem; /*15px*/
+  font-weight: 300;
+  text-transform: uppercase;
+}
+.btn-lg{
+  font-family: var(--font-mono);
+  font-size: 1.125rem; /*18px*/
+  font-weight: 300;
+  text-transform: uppercase;
+}
+
+
+/* Lenis styles */
+
+/* html.lenis,
+html.lenis body {
+  height: auto;
+} */
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
+}
+
+/* Columns range control (line + draggable dot, like a volume slider) */
+
+.range-cols {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 1rem;
+  background: transparent;
+  cursor: pointer;
+}
+
+.range-cols:focus {
+  outline: none;
+}
+
+.range-cols::-webkit-slider-runnable-track {
+  height: 1px;
+  background: var(--color-primary-01);
+}
+
+.range-cols::-moz-range-track {
+  height: 1px;
+  background: var(--color-primary-01);
+}
+
+.range-cols::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 10px;
+  height: 10px;
+  margin-top: -4.5px;
+  border-radius: 9999px;
+  background: var(--color-primary-00);
+}
+
+.range-cols::-moz-range-thumb {
+  width: 10px;
+  height: 10px;
+  border: none;
+  border-radius: 9999px;
+  background: var(--color-primary-00);
+}
+
+
+:root {
+  /* Fix para viewport en mobile - previene saltos cuando aparecen/desaparecen las barras del navegador */
+  --viewport-height: 100dvh;
+
+  /* Soporte para nuevas unidades de viewport */
+  /* Usamos lvh (Large Viewport Height) para que use el viewport MÁS GRANDE (sin barras) */
+  /* Esto previene que los elementos se achiquen cuando aparecen las barras del navegador */
+  @supports (height: 100lvh) {
+    --viewport-height: 100lvh;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-mono);
+}
+
+
+
+/* Custom checkbox */
+
+/* Hide the native checkbox */
+input[type="checkbox"] {
+  appearance: none;
+  background-color: #fff;
+  margin: 0;
+  font: inherit;
+  width: 1.25rem;
+  height: 1.25rem;
+  border: .0625rem solid var(--color-primary-00);
+  border-radius: 100%;
+  display: grid;
+  place-content: center;
+  position: relative;
+  cursor: pointer;
+}
+
+input[type="checkbox"]:not(:checked)::after{
+  content: "";
+  width: .375rem;
+  height: .375rem;
+  border-radius:100%;
+  background-color: var(--color-primary-00);
+}
+
+/* Style when checked */
+input[type="checkbox"]:checked {
+  background-color: var(--color-primary-00);
+  border-color: var(--color-primary-00);
+}
+
+/* Add a checkmark icon when checked */
+input[type="checkbox"]:checked::after {
+  content: "";
+  width: .375rem;
+  height: .375rem;
+  border-radius:100%;
+  background-color: var(--color-primary-03);
+}
+
+
+/*Select styles*/
+
+/* Opt into the modern, fully customizable native select engine */
+/* select, 
+select::picker(select) {
+  appearance: base-select;
+} */
+
+/* Style the main button */
+select {
+  background-color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  min-width: 200px;
+  color:var(--color-secondary-02);
+  font-weight: 400;
+  /* Replace the native arrow with Chevron.jsx pointing down */
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 2.5rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='9' viewBox='0 0 16 9' fill='none'%3E%3Cpath d='M0.35 0.35L8 8L15.65 0.35' stroke='%232A2A2A'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 16px 9px;
+}
+
+/* Fallback: chevron pointing up while the dropdown is open */
+select:open {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='9' viewBox='0 0 16 9' fill='none'%3E%3Cpath d='M0.35 8.65L8 1L15.65 8.65' stroke='%232A2A2A'/%3E%3C/svg%3E");
+}
+
+/* Customizable select (Chrome/Edge 135+). Other browsers keep the fallback above */
+@supports (appearance: base-select) {
+  select,
+  select::picker(select) {
+    appearance: base-select;
+  }
+
+  /* The chevron moves to the picker icon so it can rotate with a transition */
+  select,
+  select:open {
+    background-image: none;
+  }
+
+  /* Give padding back to the Tailwind classes (px-4, px-5...) */
+  select {
+    padding-right: revert-layer;
+  }
+
+  select::picker-icon {
+    content: "";
+    width: 16px;
+    height: 9px;
+    margin-inline-start: auto;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='9' viewBox='0 0 16 9' fill='none'%3E%3Cpath d='M0.35 0.35L8 8L15.65 0.35' stroke='%232A2A2A'/%3E%3C/svg%3E") no-repeat center / contain;
+    transition: rotate 0.2s ease;
+  }
+
+  select:open::picker-icon {
+    rotate: 180deg;
+  }
+
+  /* Style the open dropdown picker (rendered in the top-layer via anchor positioning) */
+  select::picker(select) {
+    background-color: var(--color-primary-03);
+    border: 1px solid var(--color-primary-01);
+    padding: 5px 0;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+
+  /* Style individual option tags directly */
+  select option {
+    padding: 10px 15px;
+    color: var(--color-secondary-02);
+    background: transparent;
+    cursor: pointer;
+  }
+
+  select option::checkmark {
+    display: none;
+  }
+
+  select option:hover,
+  select option:focus-visible {
+    background-color: var(--color-primary-00);
+    color: var(--color-primary-03);
+  }
+}
