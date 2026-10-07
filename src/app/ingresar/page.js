@@ -128,7 +128,7 @@ export default function IngresarPage() {
           </div>
           <div className="h-full w-full flex flex-col justify-between">
             <Button
-            className="border-x-0!"
+            className="border-x-0! border-y!"
               copy={loading ? "Ingresando..." : "Iniciar sesión"}
               type="submit"
               variant="primary"
