@@ -98,71 +98,75 @@ export default function RegistroPage() {
 
   if (step === "done") {
     return (
-    <div className="flex h-[calc(100dvh-4.5rem)] relative">
-      <div className="w-full h-full relative">
-        <div className="grid grid-cols-2 bg-primary-01 gap-px w-full h-full">
-          <div className="bg-primary-03"></div>
-          <div className="bg-primary-03"></div>
-          <div className="bg-primary-03"></div>
-          <div className="relative bg-primary-03">
-            <Image
-              src="/img/cross.svg"
-              width={24}
-              height={24}
-              alt=""
-              className="pointer-events-none absolute top-0 left-0 z-10 -translate-x-1/2 -translate-y-1/2"
+      <div className="flex h-[calc(100dvh-4.5rem)] relative">
+        <div className="w-full h-full relative">
+          <div className="grid grid-cols-2 bg-primary-01 gap-px w-full h-full">
+            <div className="bg-primary-03"></div>
+            <div className="bg-primary-03"></div>
+            <div className="bg-primary-03"></div>
+            <div className="relative bg-primary-03">
+              <Image
+                src="/img/cross.svg"
+                width={24}
+                height={24}
+                alt=""
+                className="pointer-events-none absolute top-0 left-0 z-10 -translate-x-1/2 -translate-y-1/2"
+              />
+            </div>
+          </div>
+        </div>
+        <div className="bg-primary-03 border-x border-primary-01 w-full h-full flex items-center justify-center">
+          <div className="w-full h-full flex flex-col justify-between items-center text-center">
+            <div className="h-full flex flex-col justify-center pt-20">
+              <p className="hl-sm uppercase pb-6">Gracias por registrarte</p>
+              {needsEmailConfirmation ? (
+                <p className="by-sm">
+                  Te enviamos un email para confirmar tu cuenta. Una vez
+                  confirmada, ya podés iniciar sesión.
+                </p>
+              ) : (
+                <div className="flex flex-col gap-2 max-w-92.25">
+                  <p className="by-sm text-secondary-01">
+                    Estamos revisando tus datos para activar tu cuenta
+                    profesional. Te contactaremos por correo electrónico una vez
+                    que el proceso haya finalizado.
+                  </p>
+                  <p className="by-sm text-secondary-01">
+                    Mientras tanto, podés continuar explorando el catálogo
+                    completo.
+                  </p>
+                </div>
+              )}
+            </div>
+            <Button
+              copy="Ver productos"
+              url="/"
+              variant="tertiary"
+              className="mb-20"
             />
           </div>
         </div>
-      </div>
-      <div className="bg-primary-03 border-x border-primary-01 w-full h-full flex items-center justify-center">
-        <div className="w-full h-full flex flex-col justify-between items-center text-center">
-          <div className="h-full flex flex-col justify-center pt-20">
-            <p className="hl-sm uppercase pb-6">Gracias por registrarte</p>
-            {needsEmailConfirmation ? (
-              <p className="by-sm">
-                Te enviamos un email para confirmar tu cuenta. Una vez
-                confirmada, ya podés iniciar sesión.
-              </p>
-            ) : (
-              <div className="flex flex-col gap-2 max-w-92.25">
-                <p className="by-sm text-secondary-01">
-                  Estamos revisando tus datos para activar tu cuenta
-                  profesional. Te contactaremos por correo electrónico una vez
-                  que el proceso haya finalizado.
-                </p>
-                <p className="by-sm text-secondary-01">
-                  Mientras tanto, podés continuar explorando el catálogo
-                  completo.
-                </p>
-              </div>
-            )}
-          </div>
-          <Button copy="Ver productos" url="/" variant="tertiary" className="mb-20" />
-        </div>
-      </div>
-      <div className="w-full h-full relative">
-        <div className="grid grid-cols-2 bg-primary-01 gap-px w-full h-full">
-          <div className="bg-primary-03"></div>
-          <div className="bg-primary-03"></div>
-          <div className="bg-primary-03"></div>
-          <div className="relative bg-primary-03">
-            <Image
-              src="/img/cross.svg"
-              width={24}
-              height={24}
-              alt=""
-              className="pointer-events-none absolute top-0 left-0 z-10 -translate-x-1/2 -translate-y-1/2"
-            />
+        <div className="w-full h-full relative">
+          <div className="grid grid-cols-2 bg-primary-01 gap-px w-full h-full">
+            <div className="bg-primary-03"></div>
+            <div className="bg-primary-03"></div>
+            <div className="bg-primary-03"></div>
+            <div className="relative bg-primary-03">
+              <Image
+                src="/img/cross.svg"
+                width={24}
+                height={24}
+                alt=""
+                className="pointer-events-none absolute top-0 left-0 z-10 -translate-x-1/2 -translate-y-1/2"
+              />
+            </div>
           </div>
         </div>
       </div>
-    </div>
     );
   }
 
   return (
-
     <div className="flex h-[calc(100dvh-4.5rem)] relative">
       <div className="w-full h-full relative">
         <div className="grid grid-cols-2 bg-primary-01 gap-px w-full h-full">
@@ -197,7 +201,9 @@ export default function RegistroPage() {
               </p>
             </div>
           </div>
-          <p className="by-sm text-primary-00 text-center font-normal! pb-3">Paso {step}/2</p>
+          <p className="by-sm text-primary-00 text-center font-normal! pb-3">
+            Paso {step}/2
+          </p>
 
           {step === 1 ? (
             <>
@@ -239,7 +245,7 @@ export default function RegistroPage() {
                       onClick={() => setShowPassword((value) => !value)}
                       className="by-sm text-secondary-02 cursor-pointer pr-5"
                     >
-                      {showPassword ? <Hidden/> : <Visible/>}
+                      {showPassword ? <Hidden /> : <Visible />}
                     </button>
                   </div>
                 </div>
@@ -261,7 +267,7 @@ export default function RegistroPage() {
                       onClick={() => setShowRepeatPassword((value) => !value)}
                       className="by-sm text-secondary-02 cursor-pointer pr-5"
                     >
-                      {showRepeatPassword ? <Hidden/> : <Visible/>}
+                      {showRepeatPassword ? <Hidden /> : <Visible />}
                     </button>
                   </div>
                   {form.repeatPassword !== "" &&
@@ -276,7 +282,10 @@ export default function RegistroPage() {
                   <Select
                     value={form.professionalActivity}
                     onChange={(value) =>
-                      setForm((prev) => ({ ...prev, professionalActivity: value }))
+                      setForm((prev) => ({
+                        ...prev,
+                        professionalActivity: value,
+                      }))
                     }
                     options={PROFESSIONAL_ACTIVITIES}
                     placeholder="*Actividad profesional"
@@ -346,8 +355,7 @@ export default function RegistroPage() {
 
               {error && <p className="by-sm text-[#A20000]">{error}</p>}
 
-              <div className="flex flex-col">
-
+              <div className="flex">
                 <Button
                   copy={loading ? "Creando cuenta..." : "Crear cuenta"}
                   type="submit"
@@ -355,24 +363,27 @@ export default function RegistroPage() {
                   disabled={!isStep2Valid || loading}
                   className={`border-x-0! border-y! border-primary-00! bg-primary-03! text-primary-00! enabled:hover:bg-primary-00! enabled:hover:text-primary-03! disabled:text-secondary-02!`}
                 />
-                                <Button
+                <Button
                   copy="Volver"
                   type="button"
-                 variant="primary"
+                  variant="primary"
                   onClick={() => setStep(1)}
                   disabled={loading}
-                  className={`border-x-0! border-b! border-primary-00! bg-primary-03! text-primary-00! enabled:hover:bg-primary-00! enabled:hover:text-primary-03! disabled:text-secondary-02!`}
+                  className={`border-x-0! border-y! border-l! border-primary-00! bg-primary-03! text-primary-00! enabled:hover:bg-primary-00! enabled:hover:text-primary-03! disabled:text-secondary-02!`}
                 />
               </div>
             </>
           )}
 
-            <div className="flex flex-col justify-center items-center gap-2 pt-7">
-              <p className="by-sm text-center ">¿Ya tenés cuenta?</p>
-              <Link href="/ingresar" className="underline btn-sm hover:text-secondary-01 transition-all">
-                Iniciar sesión
-              </Link>
-            </div>
+          <div className="flex flex-col justify-center items-center gap-2 pt-7">
+            <p className="by-sm text-center ">¿Ya tenés cuenta?</p>
+            <Link
+              href="/ingresar"
+              className="underline btn-sm hover:text-secondary-01 transition-all"
+            >
+              Iniciar sesión
+            </Link>
+          </div>
         </form>
       </div>
       <div className="w-full h-full relative">
