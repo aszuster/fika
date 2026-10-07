@@ -109,8 +109,8 @@ const CotizacionScreen = ({ project, onClose, onRequested }) => {
                   <input
                     type="number"
                     min="0"
-                    step="0.5"
-                    inputMode="decimal"
+                    step="1"
+                    inputMode="numeric"
                     value={quantities[item.id] ?? ""}
                     onChange={(event) =>
                       setQuantities((prev) => ({
