@@ -8,6 +8,20 @@ import AddToProjectPanel from "@/components/account/AddToProjectPanel";
 import { removeFavorite } from "@/app/mi-cuenta/actions";
 import { getProductBySlug } from "@/data/products";
 
+const Cross = ({ position }) => (
+  <Image
+    src="/img/cross.svg"
+    width={24}
+    height={24}
+    alt=""
+    className={`pointer-events-none absolute left-0 z-5 -translate-x-[calc(50%+0.5px)] ${
+      position === "bottom"
+        ? "bottom-0 translate-y-[calc(50%+0.5px)]"
+        : "top-0 -translate-y-1/2"
+    }`}
+  />
+);
+
 const FavoritosSection = ({ favorites, projects }) => {
   const [isPending, startTransition] = useTransition();
   const [addToProjectFavorite, setAddToProjectFavorite] = useState(null);
@@ -49,8 +63,11 @@ const FavoritosSection = ({ favorites, projects }) => {
     );
   }
 
+  const fillerCount = getFillerCount(favorites.length, 3);
+  const lastRow = Math.floor((favorites.length + fillerCount - 1) / 3);
+
   return (
-    <div className="flex flex-col w-full">
+    <div className="flex flex-col w-full min-h-[calc(100dvh-7.625rem)] overflow-x-clip">
       <div className="h-59 w-full grid grid-cols-3 gap-px bg-primary-01">
         <div className="bg-primary-03 "></div>
         <div className="flex items-center justify-center bg-primary-03">
@@ -58,7 +75,7 @@ const FavoritosSection = ({ favorites, projects }) => {
         </div>
         <div className="bg-primary-03 h-full "></div>
       </div>
-      <div className="grid grid-cols-3 gap-px bg-primary-00 border-t border-primary-00">
+      <div className="relative z-1 grid grid-cols-3 gap-px bg-primary-00 border-t border-primary-01">
         {favorites.map((favorite, index) => {
           const product = getProductBySlug(favorite.product_slug);
           const variant = product?.variants.find(
@@ -66,7 +83,6 @@ const FavoritosSection = ({ favorites, projects }) => {
           );
           const row = Math.floor(index / 3);
           const col = index % 3;
-          const hasCross = row > 0 && col > 0;
 
           const details = [
             { label: "Código", value: product?.code },
@@ -80,17 +96,10 @@ const FavoritosSection = ({ favorites, projects }) => {
           return (
             <div
               key={favorite.id}
-              className="relative flex flex-col bg-primary-03"
+              className="relative flex flex-col bg-primary-03 ring-1 ring-primary-00"
             >
-              {hasCross && (
-                <Image
-                  src="/img/cross.svg"
-                  width={24}
-                  height={24}
-                  alt=""
-                  className="pointer-events-none absolute top-0 left-0 z-5 -translate-x-[calc(50%+0.5px)] -translate-y-1/2"
-                />
-              )}
+              {row > 0 && col > 0 && <Cross position="top" />}
+              {row === lastRow && col > 0 && <Cross position="bottom" />}
               <div className="h-17.5 shrink-0 border-b border-primary-01 w-full flex flex-col items-center justify-center px-4">
                 <p className="hl-sm uppercase text-center">
                   {variant?.name ?? favorite.variant_slug}
@@ -111,7 +120,7 @@ const FavoritosSection = ({ favorites, projects }) => {
               <div className="h-auto grid grid-cols-2 w-1/2 gap-px bg-primary-01 border-b  border-primary-01">
                 {details.map(({ label, value }) => (
                   <Fragment key={label}>
-                    <div className="h-auto bg-primary-03 px-2.5 py-1">
+                    <div className="h-auto bg-primary-03 px-2.5 py-1 ">
                       <p className="text-secondary-02 by-sm">{label}</p>
                     </div>
                     <div className="h-auto  bg-primary-03 px-2.5 py-1">
@@ -144,29 +153,27 @@ const FavoritosSection = ({ favorites, projects }) => {
             </div>
           );
         })}
-        {Array.from(
-          { length: getFillerCount(favorites.length, 3) },
-          (_, fillerIndex) => {
-            const absoluteIndex = favorites.length + fillerIndex;
-            const row = Math.floor(absoluteIndex / 3);
-            const col = absoluteIndex % 3;
-            const hasCross = row > 0 && col > 0;
+        {Array.from({ length: fillerCount }, (_, fillerIndex) => {
+          const absoluteIndex = favorites.length + fillerIndex;
+          const row = Math.floor(absoluteIndex / 3);
+          const col = absoluteIndex % 3;
 
-            return (
-              <div key={`filler-${fillerIndex}`} className="relative bg-primary-03">
-                {hasCross && (
-                  <Image
-                    src="/img/cross.svg"
-                    width={24}
-                    height={24}
-                    alt=""
-                    className="pointer-events-none absolute top-0 left-0 z-5 -translate-x-[calc(50%+0.5px)] -translate-y-1/2"
-                  />
-                )}
-              </div>
-            );
-          }
-        )}
+          return (
+            <div key={`filler-${fillerIndex}`} className="relative bg-primary-03">
+              {row > 0 && col > 0 && <Cross position="top" />}
+              {row === lastRow && col > 0 && <Cross position="bottom" />}
+            </div>
+          );
+        })}
+      </div>
+      <div className="relative flex-1 min-h-0 overflow-hidden">
+        <div className="absolute inset-0 pt-px grid grid-cols-3 gap-px auto-rows-87 content-start bg-primary-01">
+          {Array.from({ length: 12 }, (_, cellIndex) => (
+            <div key={cellIndex} className="relative bg-primary-03">
+              {cellIndex >= 3 && cellIndex % 3 > 0 && <Cross position="top" />}
+            </div>
+          ))}
+        </div>
       </div>
       <AddToProjectPanel
         isOpen={isAddPanelOpen}
