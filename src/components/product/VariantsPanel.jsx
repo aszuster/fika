@@ -14,9 +14,7 @@ import { ReactLenis } from "@/utils/lenis";
 import { priceFormatter } from "@/utils/price";
 import Chevron from "@/svg/Chevron";
 
-// Actualiza ?variante= sin recargar la página. Next sincroniza pushState y
-// replaceState con useSearchParams, así que VariantsPanelFromUrl se re-renderiza
-// con la variante nueva.
+
 const setVariantInUrl = (variantSlug, { replace = false } = {}) => {
   const params = new URLSearchParams(window.location.search);
   if (variantSlug) {
@@ -29,9 +27,7 @@ const setVariantInUrl = (variantSlug, { replace = false } = {}) => {
   window.history[replace ? "replaceState" : "pushState"](null, "", url);
 };
 
-// `children` es la columna izquierda (imagen del producto), que se renderiza
-// en el servidor. El panel incluye los breadcrumbs porque dependen de la
-// variante seleccionada, que se guarda en ?variante=.
+
 const VariantsPanel = ({
   productSlug,
   productTitle,
@@ -48,8 +44,7 @@ const VariantsPanel = ({
 
   const { isLoggedIn, isFavorited, toggleFavorite } = useFavorites(productSlug);
 
-  // Las flechas reemplazan la entrada del historial para que "atrás" vuelva
-  // al producto y no recorra cada variante vista.
+
   const goToVariant = (next) =>
     setVariantInUrl(
       variants[(next + variants.length) % variants.length].slug,
@@ -194,7 +189,22 @@ const VariantsPanel = ({
                     ))}
                   </div>
                 </div>
-                <div className="h-7.5 shrink-0 w-full border-t border-primary-02"></div>
+                {selected.downloads.length > 0 && (
+                  <div className="flex w-full justify-center gap-5 bg-primary-03 border-t border-primary-00">
+                    {selected.downloads.map(({ label, href }) => (
+                      <a
+                        key={label}
+                        href={href ?? undefined}
+                        download={href ? true : undefined}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="cursor-pointer underline h-15 flex items-center justify-center  btn-sm uppercase text-primary-00 hover:text-secondary-01 transition-colors duration-300 ease-in-out"
+                      >
+                        {label}
+                      </a>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           ) : (
@@ -254,10 +264,6 @@ const VariantsPanel = ({
   );
 };
 
-// Muestra la variante de ?variante=<slug> (al llegar desde la grilla filtrada
-// o al elegir una variante en el panel). Usa useSearchParams, así que en la
-// página tiene que ir dentro de un <Suspense> para que la página siga siendo
-// estática.
 export const VariantsPanelFromUrl = (props) => {
   const selectedVariantSlug = useSearchParams().get("variante");
 
