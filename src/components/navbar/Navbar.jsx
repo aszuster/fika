@@ -45,12 +45,12 @@ const Navbar = () => {
 
   return (
     <nav className="sticky top-0 z-20 h-18 px-7.25 border-b border-primary-00 bg-primary-03">
-      <div className="flex justify-between w-full h-full items-center">
+      <div className="flex justify-between w-full h-full items-center relative">
         <Link href="/">
           <Image src="/img/logo.svg" width={67} height={25} alt="Fika logo" />
         </Link>
         <div>
-          <ul className="flex gap-10.5">
+          <ul className="flex gap-10.5 absolute top-1/2 left-1/2 -translate-1/2">
             {navItems.map(({ label, url, isActive }) => {
               const active = isActive ? isActive(pathname) : pathname === url;
 
