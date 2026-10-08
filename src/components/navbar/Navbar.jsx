@@ -17,7 +17,7 @@ const navItems = [
   { label: "Colecciones", url: "" },
   { label: "Proyectos", url: "/proyectos" },
   { label: "Distribuidores", url: "/distribuidores" },
-  { label: "Nosotros", url: "" },
+  { label: "Nosotros", url: "/nosotros" },
   { label: "Boxes", url: "" },
 ];
 
