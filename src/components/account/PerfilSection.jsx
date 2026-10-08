@@ -65,7 +65,7 @@ const PerfilSection = ({ profile }) => {
   return (
     <div className="flex h-[calc(100dvh-7.625rem)] relative w-full">
       <div className="w-full h-full relative">
-        <div className="grid grid-cols-2 grid-rows-[3fr_7fr] bg-primary-01 gap-px w-full h-full">
+        <div className="grid grid-cols-2 grid-rows-[3fr_7.6fr] 2xl:grid-rows-[3fr_7fr] bg-primary-01 gap-px w-full h-full">
           <div className="bg-primary-03"></div>
           <div className="bg-primary-03"></div>
           <div className="bg-primary-03"></div>
@@ -73,7 +73,7 @@ const PerfilSection = ({ profile }) => {
         </div>
       </div>
       <div className="w-full h-full flex flex-col border-x border-primary-01">
-        <div className="h-[30%] shrink-0 flex flex-col justify-center items-center">
+        <div className="h-[20%] 2xl:h-[30%] shrink-0 flex flex-col justify-center items-center">
           <h2 className="hl-lg uppercase">Perfil</h2>
         </div>
         <div className="flex-1 min-h-0 w-full overflow-y-auto flex flex-col ">
@@ -162,7 +162,7 @@ const PerfilSection = ({ profile }) => {
         </div>
       </div>
       <div className="w-full h-full relative">
-        <div className="grid grid-cols-2 grid-rows-[3fr_7fr] bg-primary-01 gap-px w-full h-full">
+        <div className="grid grid-cols-2 grid-rows-[3fr_7.6fr] 2xl:grid-rows-[3fr_7fr] bg-primary-01 gap-px w-full h-full">
           <div className="bg-primary-03"></div>
           <div className="bg-primary-03"></div>
           <div className="bg-primary-03"></div>

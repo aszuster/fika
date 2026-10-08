@@ -190,7 +190,6 @@ export default function Home() {
             />
           </div>
         </div>
-        {/* El overlay va antes del panel para quedar entre la barra y el panel. */}
         <motion.div
           initial={false}
           animate={{ opacity: isFiltersOpen ? 1 : 0 }}
@@ -216,9 +215,6 @@ export default function Home() {
           className={`grid ${grids[cols]} gap-px bg-primary-01 ${autoRaws[visibleRows]}`}
         >
           {gridItems.map(({ key, href, title, subtitle, image: src, hoverImage, productSlug, variantSlug, price }, index) => {
-            // Solo las tarjetas de variantes tienen precio y favoritos, y su
-            // hover es gris claro (como en la página del producto) en vez de
-            // negro con la foto "-white".
             const isVariant = Boolean(variantSlug);
             const hasHoverImage = Boolean(hoverImage) && hoverImage !== src;
 
@@ -238,7 +234,7 @@ export default function Home() {
                 className="flex h-full flex-col items-center"
               >
                 <div className="h-21.75 relative shrink-0 border-b border-primary-01 w-full flex items-center justify-center">
-                  <p className={` ${isVariant ? "hl-xs" : titles[cols]}  uppercase `}>{title} {subtitle}</p>
+                  <p className={` ${isVariant ? "hl-xs max-w-50 text-center 2xl:max-w-100" : titles[cols]}  uppercase `}>{title} {subtitle}</p>
                                 {isVariant && isLoggedIn && (
                 <FavoriteButton
                   isFavorited={isFavorited(productSlug, variantSlug)}
@@ -246,7 +242,6 @@ export default function Home() {
                   className="absolute px-8.25 right-0 h-full border-l border-primary-00"
                 />
               )}
-                  {/* {subtitle && <p className="by-sm">{subtitle}</p>} */}
                 </div>
                 <div className="min-h-0 w-full flex-1 p-8">
                   <div className="relative h-full w-full">
@@ -284,8 +279,6 @@ export default function Home() {
             </div>
             );
           })}
-          {/* Completa la última fila y, si hay pocos items (o el panel de
-              filtros está abierto), rellena hasta llenar la pantalla. */}
           <GridFillers
             items={gridItems}
             cols={cols}

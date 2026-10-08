@@ -41,7 +41,7 @@ export default async function ProductPage({ params }) {
   ];
 
   const productColumn = (
-    <div className="relative border-r border-primary-00 h-full w-160 flex flex-col justify-center items-center shrink-0">
+    <div className="relative border-r border-primary-00 h-full w-[40%] flex flex-col justify-center items-center shrink-0">
       <div className="h-22.5 shrink-0 border-b border-primary-01 flex items-center justify-center px-7.5 w-full">
         <p className="hl-lg uppercase">{title}</p>
       </div>

@@ -107,7 +107,7 @@ const VariantsPanel = ({
                           animate={{ opacity: 1 }}
                           exit={{ opacity: 0 }}
                           transition={{ duration: 0.25, ease: "easeInOut" }}
-                          className="hl-sm uppercase absolute"
+                          className="hl-sm text-center uppercase absolute"
                         >
                           {selected.name}
                         </motion.p>
@@ -124,7 +124,7 @@ const VariantsPanel = ({
                   </div>
                   <div className="relative h-60 w-full shrink-0 grow flex flex-col items-center">
                     {isLoggedIn && (
-                      <div className="h-12 w-full border-b border-primary-00 flex items-center justify-center gap-3">
+                      <div className="h-12 py-2 2xl:py-0 w-full border-b border-primary-00 flex items-center justify-center gap-3">
                         <p className="uppercase">
                           {isFavorited(productSlug, selected.slug)
                             ? "Quitar de favoritos"
@@ -135,12 +135,12 @@ const VariantsPanel = ({
                           onToggle={() =>
                             toggleFavorite(productSlug, selected.slug)
                           }
-                          className=""
+                          className="w-5 2xl:w-6"
                         />
                       </div>
                     )}
                     <div className="h-full w-full flex justify-center items-center">
-                      <div className="relative h-70 w-72.75">
+                      <div className="relative w-40 h-full 2xl:h-70 2xl:w-72.75">
                         <AnimatePresence mode="wait" initial={false}>
                           <motion.div
                             key={selectedIndex}
@@ -226,7 +226,7 @@ const VariantsPanel = ({
                   {hasTopCross(index, 2) && <GridCross />}
 
                   <div className="h-21.75 relative shrink-0 border-b border-primary-01 w-full flex items-center justify-center">
-                    <p className="hl-xs uppercase">{name}</p>
+                    <p className="hl-sm uppercase max-w-50 text-center 2xl:max-w-100">{name}</p>
                     {isLoggedIn && (
                       <FavoriteButton
                         isFavorited={isFavorited(productSlug, slug)}

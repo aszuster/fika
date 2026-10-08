@@ -14,17 +14,15 @@ const navItems = [
     isActive: (pathname) =>
       pathname === "/" || pathname.startsWith("/productos"),
   },
-  { label: "Colecciones", url: "" },
+  // { label: "Colecciones", url: "" },
   { label: "Proyectos", url: "/proyectos" },
   { label: "Distribuidores", url: "/distribuidores" },
   { label: "Nosotros", url: "/nosotros" },
-  { label: "Boxes", url: "" },
+  // { label: "Boxes", url: "" },
 ];
 
 const Navbar = () => {
   const pathname = usePathname();
-  // null = todavía no sabemos si hay sesión. Evita que se vea "Iniciar
-  // sesión" por un instante cuando en realidad la usuaria está logueada.
   const [isLoggedIn, setIsLoggedIn] = useState(null);
 
   useEffect(() => {

@@ -131,7 +131,7 @@ export default async function Nosotros() {
         <div className="flex-1 min-w-0 h-full flex flex-col bg-primary-02 gap-px">
           <div className="w-full h-[calc(var(--spacing)*50-0.5px)] bg-primary-03"></div>
           <div className="w-full h-[calc(var(--spacing)*150-1px)] bg-primary-03 relative">
-            <div className=" pl-17.5 pr-25  font-sans xl:text-[28px] xl:leading-12 2xl:text-[30px] 2xl:leading-10 flex flex-col gap-6 absolute top-1/2 -translate-y-1/2">
+            <div className=" pl-17.5 pr-25  font-sans text-[20px] leading-10 3xl:text-[24px] 3xl:leading-10 4xl:text-[30px] 4xl:leading-10 flex flex-col gap-6 absolute top-1/2 -translate-y-1/2">
               <p>
                 Fika entiende el diseño como una disciplina de precisión. Una
                 práctica donde la unidad mínima se articula para dar respuesta a

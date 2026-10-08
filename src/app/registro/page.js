@@ -30,7 +30,7 @@ const TextField = ({ label, ...props }) => (
     <input
       {...props}
       placeholder={`*${label}`}
-      className="by-sm  bg-transparent outline-none py-3.75 px-5"
+      className="by-sm  bg-transparent outline-none py-2 2xl:py-3.75 px-5"
     />
   </div>
 );
@@ -238,7 +238,7 @@ export default function RegistroPage() {
                       autoComplete="new-password"
                       value={form.password}
                       onChange={setField("password")}
-                      className="by-sm bg-transparent outline-none flex-1 py-3.75 pl-5"
+                      className="by-sm bg-transparent outline-none flex-1 py-2 2xl:py-3.75 pl-5"
                     />
                     <button
                       type="button"
@@ -260,7 +260,7 @@ export default function RegistroPage() {
                       autoComplete="new-password"
                       value={form.repeatPassword}
                       onChange={setField("repeatPassword")}
-                      className="by-sm bg-transparent outline-none flex-1 py-3.75 pl-5"
+                      className="by-sm bg-transparent outline-none flex-1 py-2 2xl:py-3.75 pl-5"
                     />
                     <button
                       type="button"
@@ -289,7 +289,7 @@ export default function RegistroPage() {
                     }
                     options={PROFESSIONAL_ACTIVITIES}
                     placeholder="*Actividad profesional"
-                    className="by-sm border-b border-primary-01 bg-transparent py-3.75 pl-5 pr-7"
+                    className="by-sm border-b border-primary-01 bg-transparent py-2 2xl:py-3.75 pl-5 pr-7"
                   />
                 </div>
 
