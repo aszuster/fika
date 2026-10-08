@@ -1,7 +1,8 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Button from "@/components/buttons/Button";
-import Arrow from "@/svg/Arrow";
+import BackToTop from "@/components/buttons/BackToTop";
+import Misc from "@/svg/Misc";
 
 export default async function Nosotros() {
   return (
@@ -93,12 +94,18 @@ export default async function Nosotros() {
             </div>
           </div>
           <div className="">
-            <div className="w-full h-50 grid grid-cols-5 border-t border-primary-02">
+            <div className="w-full h-50 grid grid-cols-5 border-t border-primary-02 relative">
+              <div className="absolute z-10 w-5 h-5 left-1/2 top-1/2 -translate-1/2 bg-primary-00 rounded-full"></div>
+              <div className="absolute z-10 w-5 h-5 left-1/2 top-0 -translate-1/2 bg-primary-00 rounded-full"></div>
+              <div className="absolute z-10 w-5 h-5 left-1/2 bottom-0 -translate-x-1/2 translate-y-1/2 bg-primary-00 rounded-full"></div>
+              <div className="absolute z-10 w-1.5 h-1.5 left-1/2 top-1/2 -translate-1/2 bg-primary-03 rounded-full"></div>
+              <div className="absolute z-10 w-1.5 h-1.5 left-1/2 top-0 -translate-1/2 bg-primary-03 rounded-full"></div>
+              <div className="absolute z-10 w-1.5 h-1.5 left-1/2 bottom-0 -translate-x-1/2 translate-y-1/2 bg-primary-03 rounded-full"></div>
               <div className="col-span-2 bg-primary-02 grid grid-rows-2 gap-px">
                 <div className="w-full h-full bg-primary-03"></div>
                 <div className="w-full h-full bg-primary-03"></div>
               </div>
-              <div className="col-span-1 bg-primary-02 grid grid-cols-2 gap-px ">
+              <div className="col-span-1 bg-primary-02 grid grid-cols-2 gap-px relative">
                 <div className="bg-primary-03 w-full h-full"></div>
                 <div className="bg-primary-03 w-full h-full"></div>
                 <div className="bg-primary-03 w-full h-full"></div>
@@ -142,10 +149,19 @@ export default async function Nosotros() {
               </p>
             </div>
           </div>
-          <div className="w-full h-[calc(var(--spacing)*50-0.5px)] bg-primary-03"></div>
+          <div className="w-full h-[calc(var(--spacing)*50-0.5px)] bg-primary-03 relative"></div>
           <div className="w-full h-[calc(var(--spacing)*250-1.5px)] bg-primary-02 flex flex-col gap-px relative">
+            <div className="absolute top-0 left-0  flex flex-col gap-0">
+              <div className="-scale-x-100">
+                <Misc />
+              </div>
+              <p className="text-[18px] font-normal">2026</p>
+            </div>
             <div className="absolute left-1/2 top-1/2 -translate-1/2 h-165.5 w-165.5 rounded-full bg-[url('/img/nosotros/circle.webp')] bg-cover"></div>
             <div className="absolute left-1/2 top-1/2 -translate-1/2 h-31.25 w-31.25 rounded-full bg-primary-03"></div>
+            <div className="absolute top-[calc(50%+var(--spacing)*82.75)] left-0 -scale-x-100">
+              <Misc />
+            </div>
 
             <div className="w-full h-full bg-primary-03"></div>
             <div className="w-full h-full bg-primary-03"></div>
@@ -153,15 +169,21 @@ export default async function Nosotros() {
         </div>
       </div>
       <div className="flex flex-col">
-        <div className="bg-primary-03 h-232.5 relative px-12.5 py-25 ">
-          <Image src="img/logo.svg" fill className="px-12.5 py-25" alt="" />
+        <div className="bg-primary-03 px-12.5 pt-25">
+          <Image src="/img/logo.svg" width={67} height={25} className="w-full h-auto" alt="" />
         </div>
-        <div className="h-full flex justify-between relative p-12.5">
-            <div className="flex gap-10">
-                <a href="" className="hl-xs underline uppercase">Instagram</a>
-                <a href="" className="hl-xs underline uppercase">Info@fikarevestimientos.com</a>
-            </div>
-            <div><a href="" className="hl-xs underline uppercase flex">Back to top ↑</a></div>
+        <div className="h-full flex justify-between relative px-12.5 py-12.5">
+          <div className="flex gap-10">
+            <a href="" className="hl-xs underline uppercase transition-all duration-300 hover:text-secondary-01">
+              Instagram
+            </a>
+            <a href="mailto:info@fikarevestimientos.com" target="_blank" className="hl-xs underline uppercase transition-all duration-300 hover:text-secondary-01">
+              info@fikarevestimientos.com
+            </a>
+          </div>
+          <div>
+            <BackToTop className="hl-xs underline uppercase flex transition-all duration-300 hover:text-secondary-01" />
+          </div>
         </div>
       </div>
     </div>
