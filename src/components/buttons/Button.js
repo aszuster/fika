@@ -44,7 +44,7 @@ const Button = ({
     <Element  className={[
           selectedVariant,
           isDisabled
-            ? "bg-primary-03! text-primary-01!  border-primary-01 cursor-default! active:border-primary-01! focus:border-primary-01!"
+            ? "bg-primary-03! text-primary-01!  border-primary-00 cursor-default! active:border-primary-01! focus:border-primary-01!"
             : "",
         ]
           .filter(Boolean)

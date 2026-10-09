@@ -6,7 +6,6 @@ const FavoriteButton = ({ isFavorited, onToggle, className = "" }) => (
   <button
     type="button"
     onClick={(event) => {
-      // Que el click no abra la tarjeta/variante que está debajo.
       event.preventDefault();
       event.stopPropagation();
       onToggle();

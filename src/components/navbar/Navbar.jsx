@@ -14,17 +14,16 @@ const navItems = [
     isActive: (pathname) =>
       pathname === "/" || pathname.startsWith("/productos"),
   },
-  { label: "Colecciones", url: "" },
+  // Colecciones y Boxes todavía no están disponibles: se muestran en gris y sin link.
+  { label: "Colecciones", disabled: true },
   { label: "Proyectos", url: "/proyectos" },
-  { label: "Distribuidores", url: "" },
-  { label: "Nosotros", url: "" },
-  { label: "Boxes", url: "" },
+  { label: "Distribuidores", url: "/distribuidores" },
+  { label: "Nosotros", url: "/nosotros" },
+  { label: "Boxes", disabled: true },
 ];
 
 const Navbar = () => {
   const pathname = usePathname();
-  // null = todavía no sabemos si hay sesión. Evita que se vea "Iniciar
-  // sesión" por un instante cuando en realidad la usuaria está logueada.
   const [isLoggedIn, setIsLoggedIn] = useState(null);
 
   useEffect(() => {
@@ -45,13 +44,26 @@ const Navbar = () => {
 
   return (
     <nav className="sticky top-0 z-20 h-18 px-7.25 border-b border-primary-00 bg-primary-03">
-      <div className="flex justify-between w-full h-full items-center">
+      <div className="flex justify-between w-full h-full items-center relative">
         <Link href="/">
           <Image src="/img/logo.svg" width={67} height={25} alt="Fika logo" />
         </Link>
         <div>
-          <ul className="flex gap-10.5">
-            {navItems.map(({ label, url, isActive }) => {
+          <ul className="flex gap-10.5 absolute top-1/2 left-1/2 -translate-1/2">
+            {navItems.map(({ label, url, isActive, disabled }) => {
+              if (disabled) {
+                return (
+                  <li key={label} className="relative">
+                    <span
+                      aria-disabled="true"
+                      className="inline-flex items-center btn-sm p-1 border border-transparent text-secondary-02 cursor-default select-none"
+                    >
+                      {label}
+                    </span>
+                  </li>
+                );
+              }
+
               const active = isActive ? isActive(pathname) : pathname === url;
 
               return (

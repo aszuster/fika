@@ -13,7 +13,6 @@ const names = [
   "Eclair",
   "Stone cóncavo",
   "Stone convexo",
-  "Medialuna",
   "Quadra 10x10",
   "Finger",
   "Stackbond",
@@ -34,7 +33,6 @@ const slugs = [
   "eclair",
   "stone-concavo",
   "stone-convexo",
-  "medialuna",
   "quadra-10-10",
   "finger",
   "stackbond",
@@ -112,6 +110,13 @@ export const products = names.map((title, index) => {
     slug: slugify(variant.name),
     // Precio de ejemplo — reemplazar por el precio real cuando exista.
     price: 12000 + index * 850 + variantIndex * 350,
+    // PDFs descargables de ejemplo — reemplazar label y href (por ejemplo,
+    // "/pdf/<archivo>.pdf") cuando existan. Sin href, el link no es clickeable.
+    downloads: [
+      { label: "Plano DWG", href: null },
+      { label: "Ficha", href: null },
+      { label: "3D SKP", href: null },
+    ],
     ...variant,
   }));
 
