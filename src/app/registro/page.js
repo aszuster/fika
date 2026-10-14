@@ -245,7 +245,7 @@ export default function RegistroPage() {
                       onClick={() => setShowPassword((value) => !value)}
                       className="by-sm text-secondary-02 cursor-pointer pr-5"
                     >
-                      {showPassword ? <Hidden /> : <Visible />}
+                      {showPassword ? <Visible /> : <Hidden />}
                     </button>
                   </div>
                 </div>
@@ -267,7 +267,7 @@ export default function RegistroPage() {
                       onClick={() => setShowRepeatPassword((value) => !value)}
                       className="by-sm text-secondary-02 cursor-pointer pr-5"
                     >
-                      {showRepeatPassword ? <Hidden /> : <Visible />}
+                      {showRepeatPassword ? <Visible /> : <Hidden />}
                     </button>
                   </div>
                   {form.repeatPassword !== "" &&

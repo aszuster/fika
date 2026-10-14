@@ -38,7 +38,7 @@ const PasswordField = ({ id, label, value, onChange, show, onToggleShow }) => (
         onClick={onToggleShow}
         className="by-sm text-secondary-02 cursor-pointer pr-5"
       >
-        {show ? <Hidden/> : <Visible/>}
+        {show ? <Visible/> : <Hidden/>}
       </button>
     </div>
   </div>

@@ -104,7 +104,7 @@ export default function IngresarPage() {
                     onClick={() => setShowPassword((value) => !value)}
                     className="by-sm text-secondary-02 cursor-pointer pr-5 whitespace-nowrap"
                   >
-                    {showPassword ? <Hidden/> : <Visible/>}
+                    {showPassword ? <Visible/> : <Hidden/>}
                   </button>
                 </div>
 

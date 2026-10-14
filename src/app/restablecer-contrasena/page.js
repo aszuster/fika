@@ -112,7 +112,7 @@ export default function RestablecerContrasenaPage() {
               onClick={() => setShowPassword((value) => !value)}
               className="by-sm text-secondary-02 cursor-pointer"
             >
-              {showPassword ? <Hidden/> : <Visible/>}
+              {showPassword ? <Visible/> : <Hidden/>}
             </button>
           </div>
         </div>
