@@ -30,7 +30,7 @@ export default function DistribuidoresMap({
     if (active) {
       map.flyTo({
         center: active.coords,
-        zoom: Math.max(provincia.zoom, 13),
+        zoom: Math.max(provincia.zoom, 16),
         duration: 1200,
       });
     } else {
