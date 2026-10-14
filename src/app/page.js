@@ -176,7 +176,7 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="flex h-full items-center gap-8 border-l border-primary-00 pl-7.25">
+          <div className="flex h-full items-center gap-8  pl-7.25">
             <p className="btn-sm">Vista</p>
             <input
               type="range"
