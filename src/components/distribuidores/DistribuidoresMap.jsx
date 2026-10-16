@@ -9,7 +9,7 @@ setWorkerUrl(
   `https://unpkg.com/maplibre-gl@${getVersion()}/dist/maplibre-gl-worker.mjs`,
 );
 
-const MAPTILER_STYLE = "01a11721-a9d1-7229-8e6e-c49425feb72f";
+const MAPTILER_STYLE = "01a117e0-a842-7824-b521-8a5cec90700e";
 const key = process.env.NEXT_PUBLIC_MAPTILER_KEY;
 const mapStyle = key
   ? `https://api.maptiler.com/maps/${MAPTILER_STYLE}/style.json?key=${key}`
