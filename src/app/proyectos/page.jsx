@@ -6,7 +6,7 @@ import Button from "@/components/buttons/Button";
 export default async function Proyectos() {
 
   return (
-    <div className="bg-primary-03 h-[calc(100%-4.5rem)]">
+    <div className="bg-primary-03 h-[calc(100%-3.125rem)]">
 
     </div>
   );

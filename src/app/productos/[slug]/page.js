@@ -70,7 +70,7 @@ export default async function ProductPage({ params }) {
   };
 
   return (
-    <div className="bg-primary-03 h-[calc(100%-4.5rem)]">
+    <div className="bg-primary-03 h-[calc(100%-3.125rem)]">
       <Suspense
         fallback={<VariantsPanel {...panelProps}>{productColumn}</VariantsPanel>}
       >

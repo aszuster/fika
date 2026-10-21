@@ -98,7 +98,7 @@ export default function RegistroPage() {
 
   if (step === "done") {
     return (
-      <div className="flex h-[calc(100dvh-4.5rem)] relative">
+      <div className="flex h-[calc(100dvh-3.125rem)] relative">
         <div className="w-full h-full relative">
           <div className="grid grid-cols-2 bg-primary-01 gap-px w-full h-full">
             <div className="bg-primary-03"></div>
@@ -167,7 +167,7 @@ export default function RegistroPage() {
   }
 
   return (
-    <div className="flex h-[calc(100dvh-4.5rem)] relative">
+    <div className="flex h-[calc(100dvh-3.125rem)] relative">
       <div className="w-full h-full relative">
         <div className="grid grid-cols-2 bg-primary-01 gap-px w-full h-full">
           <div className="bg-primary-03"></div>

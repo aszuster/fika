@@ -63,7 +63,7 @@ const PerfilSection = ({ profile }) => {
   };
 
   return (
-    <div className="flex h-[calc(100dvh-7.625rem)] relative w-full">
+    <div className="flex h-[calc(100dvh-6.25rem)] relative w-full">
       <div className="w-full h-full relative">
         <div className="grid grid-cols-2 grid-rows-[3fr_7.6fr] 2xl:grid-rows-[3fr_7fr] bg-primary-01 gap-px w-full h-full">
           <div className="bg-primary-03"></div>

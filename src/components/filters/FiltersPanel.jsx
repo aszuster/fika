@@ -90,7 +90,7 @@ const FiltersPanel = ({ isOpen, onApply, onClear, onClose }) => {
       initial={false}
       animate={{ x: isOpen ? 0 : "-100%" }}
       transition={{ duration: 0.35, ease: "easeInOut" }}
-      className="absolute top-0 left-0 w-160 bg-primary-03 h-[calc(100dvh-4.5rem)] border-r border-primary-00 flex flex-col"
+      className="absolute top-0 left-0 w-160 bg-primary-03 h-[calc(100dvh-3.125rem)] border-r border-primary-00 flex flex-col"
     >
       <div className="h-12.5 shrink-0 border-b border-primary-00 flex items-center justify-between px-7.5">
         <p className="hl-xs uppercase border rounded-sm px-1.5">Filtros</p>

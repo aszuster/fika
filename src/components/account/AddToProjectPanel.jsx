@@ -62,7 +62,7 @@ const AddToProjectPanel = ({ isOpen, favorite, projects, onClose }) => {
         animate={{ opacity: isOpen ? 1 : 0 }}
         transition={{ duration: 0.35, ease: "easeInOut" }}
         onClick={onClose}
-        className={`fixed inset-x-0 top-18 bottom-0 z-20 bg-primary-00/40 ${
+        className={`fixed inset-x-0 top-12.5 bottom-0 z-20 bg-primary-00/40 ${
           isOpen ? "pointer-events-auto" : "pointer-events-none"
         }`}
       />
@@ -70,7 +70,7 @@ const AddToProjectPanel = ({ isOpen, favorite, projects, onClose }) => {
         initial={false}
         animate={{ x: isOpen ? 0 : "100%" }}
         transition={{ duration: 0.35, ease: "easeInOut" }}
-        className="fixed top-18 right-0 z-30 w-160 bg-primary-03 h-[calc(100dvh-4.5rem)] border-l border-primary-00 flex flex-col"
+        className="fixed top-12.5 right-0 z-30 w-160 bg-primary-03 h-[calc(100dvh-3.125rem)] border-l border-primary-00 flex flex-col"
       >
         <div className="h-12.5 shrink-0 border-b border-primary-00 flex items-center justify-between px-7.5">
           <p className="hl-xs uppercase">Agregar a proyecto</p>

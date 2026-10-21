@@ -43,7 +43,7 @@ const Navbar = () => {
   }, []);
 
   return (
-    <nav className="sticky top-0 z-20 h-18 px-7.25 border-b border-primary-00 bg-primary-03">
+    <nav className="sticky top-0 z-20 h-12.5 px-7.25 border-b border-primary-00 bg-primary-03">
       <div className="flex justify-between w-full h-full items-center relative">
         <Link href="/">
           <Image src="/img/logo.svg" width={67} height={25} alt="Fika logo" />
@@ -70,7 +70,7 @@ const Navbar = () => {
                 <li key={label} className="relative">
                   <Button copy={label} url={url} variant="secondary" />
                   {active && (
-                    <div className="absolute h-1 w-[70%] bg-primary-00 -bottom-5.5 left-1/2 -translate-x-1/2"></div>
+                    <div className="absolute h-1 w-[70%] bg-primary-00 -bottom-2.5 left-1/2 -translate-x-1/2"></div>
                   )}
                 </li>
               );

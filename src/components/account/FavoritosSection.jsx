@@ -29,7 +29,7 @@ const FavoritosSection = ({ favorites, projects }) => {
 
   if (favorites.length === 0) {
     return (
-      <div className="flex h-[calc(100dvh-7.625rem)] relative w-full">
+      <div className="flex h-[calc(100dvh-6.25rem)] relative w-full">
         <div className="w-full h-full relative">
           <div className="grid grid-cols-2 grid-rows-[3fr_7fr] bg-primary-03 gap-px w-full h-full"></div>
         </div>
@@ -67,7 +67,7 @@ const FavoritosSection = ({ favorites, projects }) => {
   const lastRow = Math.floor((favorites.length + fillerCount - 1) / 3);
 
   return (
-    <div className="flex flex-col w-full min-h-[calc(100dvh-7.625rem)] overflow-x-clip">
+    <div className="flex flex-col w-full min-h-[calc(100dvh-6.25rem)] overflow-x-clip">
       <div className="h-59 w-full grid grid-cols-3 gap-px bg-primary-01">
         <div className="bg-primary-03 "></div>
         <div className="flex items-center justify-center bg-primary-03">

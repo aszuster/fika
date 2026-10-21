@@ -22,6 +22,10 @@ const grids = {
   6: "grid-cols-6",
 };
 
+// Columnas que ofrece el slider de "Vista", de más alejada a más cercana.
+// Por ahora solo 6 y 3; para volver a sumar 4 y 5, agregarlas acá.
+const viewCols = [6, 3];
+
 const titles = {
   3: "hl-lg",
   4: "hl-md",
@@ -30,8 +34,8 @@ const titles = {
 };
 
 const autoRaws = {
-  2: "auto-rows-[calc((100dvh-7.625rem-2px)/2)]",
-  3: "auto-rows-[calc((100dvh-7.625rem-2px)/3)]",
+  2: "auto-rows-[calc((100dvh-6.25rem-2px)/2)]",
+  3: "auto-rows-[calc((100dvh-6.25rem-2px)/3)]",
 };
 
 const emptyFilters = {
@@ -147,8 +151,8 @@ export default function Home() {
     : getGridItems(appliedFilters, appliedFiltersCount > 0, searchQuery);
 
   return (
-    <div className="bg-primary-03 h-[calc(100%-4.5rem)]">
-      <div className="sticky top-18 z-10 w-full bg-primary-03">
+    <div className="bg-primary-03 h-[calc(100%-3.125rem)]">
+      <div className="sticky top-12.5 z-10 w-full bg-primary-03">
         <div className="flex w-full justify-between items-center px-7.25  h-12.5 border-b border-primary-00">
           <div className="flex items-center gap-7.25 h-full">
             <div>
@@ -177,14 +181,15 @@ export default function Home() {
           </div>
 
           <div className="flex h-full items-center gap-8  pl-7.25">
-            <p className="btn-sm">Vista</p>
+            {/* Testing de cambio de tipografía a más chico en 12px */}
+            <p className="font-mono text-[14px] uppercase">Vista</p>
             <input
               type="range"
-              min={3}
-              max={6}
+              min={0}
+              max={viewCols.length - 1}
               step={1}
-              value={9 - cols}
-              onChange={(e) => setCols(9 - Number(e.target.value))}
+              value={viewCols.indexOf(cols)}
+              onChange={(e) => setCols(viewCols[Number(e.target.value)])}
               aria-label="Zoom de la grilla"
               className="range-cols w-34.25"
             />
@@ -195,7 +200,7 @@ export default function Home() {
           animate={{ opacity: isFiltersOpen ? 1 : 0 }}
           transition={{ duration: 0.35, ease: "easeInOut" }}
           onClick={() => setIsFiltersOpen(false)}
-          className={`fixed inset-x-0 top-18 bottom-0 bg-primary-00/40 ${
+          className={`fixed inset-x-0 top-12.5 bottom-0 bg-primary-00/40 ${
             isFiltersOpen ? "pointer-events-auto" : "pointer-events-none"
           }`}
         />
@@ -233,7 +238,7 @@ export default function Home() {
                 href={href}
                 className="flex h-full flex-col items-center"
               >
-                <div className="h-21.75 relative shrink-0 border-b border-primary-01 w-full flex items-center justify-center">
+                <div className={`${cols === 6 ? "h-16.25" : "h-21.75"} relative shrink-0 border-b border-primary-01 w-full flex items-center justify-center`}>
                   <p className={` ${isVariant ? "hl-xs max-w-50 text-center 2xl:max-w-100" : titles[cols]}  uppercase `}>{title} {subtitle}</p>
                                 {isVariant && isLoggedIn && (
                 <FavoriteButton
@@ -243,7 +248,7 @@ export default function Home() {
                 />
               )}
                 </div>
-                <div className="min-h-0 w-full flex-1 p-8">
+                <div className="min-h-0 w-full flex-1 p-12">
                   <div className="relative h-full w-full">
                     <Image
                       src={src}
@@ -268,7 +273,7 @@ export default function Home() {
                     )}
                   </div>
                 </div>
-                {isVariant && isLoggedIn && (
+                {isVariant && (
                 <div className="h-8 py-7 shrink-0 w-full border-t border-primary-01 flex items-center justify-center gap-2">
                   <p className="hl-xs uppercase text-secondary-02">Precio</p>
                   <p className="hl-xs">{priceFormatter.format(price)}</p>

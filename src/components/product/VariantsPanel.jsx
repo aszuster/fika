@@ -65,7 +65,7 @@ const VariantsPanel = ({
         <Breadcrumbs items={breadcrumbs} />
       </div>
 
-      <div className="flex h-[calc(100dvh-7.625rem)] overflow-hidden">
+      <div className="flex h-[calc(100dvh-6.25rem)] overflow-hidden">
         {children}
 
         <ReactLenis
@@ -74,7 +74,7 @@ const VariantsPanel = ({
           options={{ orientation: "vertical" }}
         >
           {selected ? (
-            <div className="grid grid-cols-2 h-[calc(100dvh-7.625rem)]">
+            <div className="grid grid-cols-2 h-[calc(100dvh-6.25rem)]">
               <div className="border-r border-primary-00 relative">
                 <div className="relative h-full px-10 py-15">
                   <Carousel
@@ -162,7 +162,7 @@ const VariantsPanel = ({
                       </div>
                     </div>
                   </div>
-                  {isLoggedIn && (
+                  {/* {isLoggedIn && ( */}
                     <div className="h-8 shrink-0 w-full border-t border-primary-01 flex items-center justify-center gap-2 py-6">
                       <p className="btn-sm text-secondary-02">Precio</p>
                       <p className="btn-sm">
@@ -170,7 +170,7 @@ const VariantsPanel = ({
                       </p>
                       <p className="btn-sm text-secondary-02">X M2</p>
                     </div>
-                  )}
+                  {/* )} */}
                 </div>
                 <div className="border-t border-primary-00">
                   <div className="h-12.5 flex justify-center items-center border-b border-primary-01">
@@ -208,7 +208,7 @@ const VariantsPanel = ({
               </div>
             </div>
           ) : (
-            <div className="grid grid-cols-2 gap-px bg-primary-01 auto-rows-[calc((100dvh-7.625rem-2px)/2)]">
+            <div className="grid grid-cols-2 gap-px bg-primary-01 auto-rows-[calc((100dvh-6.25rem-2px)/2)]">
               {variants.map(({ name, slug, catalogPhoto, price }, index) => (
                 <div
                   key={name}
@@ -246,13 +246,13 @@ const VariantsPanel = ({
                       />
                     </div>
                   </div>
-                  {isLoggedIn && (
+                  {/* {isLoggedIn && ( */}
                     <div className="h-8 py-7 shrink-0 w-full border-t border-primary-01 flex items-center justify-center gap-2">
                       <p className="hl-xs uppercase text-secondary-02">Precio</p>
                       <p className="hl-xs">{priceFormatter.format(price)}</p>
                       <p className="hl-xs uppercase text-secondary-02">X M2</p>
                     </div>
-                  )}
+                  {/* )} */}
                 </div>
               ))}
               <GridFillers items={variants} cols={2} minRows={2} crosses />

@@ -55,7 +55,7 @@ export default function RestablecerContrasenaPage() {
 
   if (done) {
     return (
-      <div className="bg-primary-03 h-[calc(100%-4.5rem)] flex items-center justify-center">
+      <div className="bg-primary-03 h-[calc(100%-3.125rem)] flex items-center justify-center">
         <div className="w-full max-w-90 flex flex-col gap-6 px-7.25 text-center">
           <p className="hl-md uppercase">Contraseña actualizada</p>
           <Button copy="Iniciar sesión" url="/ingresar" variant="primary" />
@@ -66,7 +66,7 @@ export default function RestablecerContrasenaPage() {
 
   if (!ready) {
     return (
-      <div className="bg-primary-03 h-[calc(100%-4.5rem)] flex items-center justify-center">
+      <div className="bg-primary-03 h-[calc(100%-3.125rem)] flex items-center justify-center">
         <div className="w-full max-w-90 flex flex-col gap-6 px-7.25 text-center">
           <p className="by-sm text-secondary-02">
             Este link no es válido o ya expiró. Pedí uno nuevo desde
@@ -83,7 +83,7 @@ export default function RestablecerContrasenaPage() {
   }
 
   return (
-    <div className="bg-primary-03 h-[calc(100%-4.5rem)] flex items-center justify-center">
+    <div className="bg-primary-03 h-[calc(100%-3.125rem)] flex items-center justify-center">
       <form
         onSubmit={handleSubmit}
         className="w-full max-w-90 flex flex-col gap-6 px-7.25"

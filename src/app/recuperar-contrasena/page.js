@@ -28,7 +28,7 @@ export default function RecuperarContrasenaPage() {
 
   if (sent) {
     return (
-      <div className="bg-primary-03 h-[calc(100%-4.5rem)] flex items-center justify-center">
+      <div className="bg-primary-03 h-[calc(100%-3.125rem)] flex items-center justify-center">
         <div className="w-full max-w-90 flex flex-col gap-6 px-7.25 text-center">
           <p className="hl-md uppercase">Revisá tu email</p>
           <p className="by-sm">
@@ -46,7 +46,7 @@ export default function RecuperarContrasenaPage() {
   }
 
   return (
-    <div className="flex h-[calc(100dvh-4.5rem)]  relative">
+    <div className="flex h-[calc(100dvh-3.125rem)]  relative">
       <div className="w-full h-full relative">
         <div className="grid grid-cols-2 bg-primary-01 gap-px w-full h-full">
           <div className="bg-primary-03"></div>

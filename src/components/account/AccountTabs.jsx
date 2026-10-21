@@ -39,7 +39,7 @@ const AccountTabs = ({ profile, favorites, projects, quoteRequests }) => {
 
   if (!activeTab) {
     return (
-      <div className="bg-primary-03 h-[calc(100dvh-4.5rem)] flex flex-col">
+      <div className="bg-primary-03 h-[calc(100dvh-3.125rem)] flex flex-col">
         <TabBar tabs={TABS} activeTab={activeTab} onSelect={setActiveTab} />
 
         <div className="flex flex-1 relative">
@@ -97,7 +97,7 @@ const AccountTabs = ({ profile, favorites, projects, quoteRequests }) => {
   }
 
   return (
-    <div className="bg-primary-03 h-[calc(100%-4.5rem)] flex flex-col">
+    <div className="bg-primary-03 h-[calc(100%-3.125rem)] flex flex-col">
       <TabBar tabs={TABS} activeTab={activeTab} onSelect={setActiveTab} />
 
       <div className="flex-1 overflow-y-auto">
