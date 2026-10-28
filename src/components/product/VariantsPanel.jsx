@@ -14,7 +14,6 @@ import { ReactLenis } from "@/utils/lenis";
 import { priceFormatter } from "@/utils/price";
 import Chevron from "@/svg/Chevron";
 
-
 const setVariantInUrl = (variantSlug, { replace = false } = {}) => {
   const params = new URLSearchParams(window.location.search);
   if (variantSlug) {
@@ -26,7 +25,6 @@ const setVariantInUrl = (variantSlug, { replace = false } = {}) => {
   const url = `${window.location.pathname}${query ? `?${query}` : ""}`;
   window.history[replace ? "replaceState" : "pushState"](null, "", url);
 };
-
 
 const VariantsPanel = ({
   productSlug,
@@ -44,12 +42,10 @@ const VariantsPanel = ({
 
   const { isLoggedIn, isFavorited, toggleFavorite } = useFavorites(productSlug);
 
-
   const goToVariant = (next) =>
-    setVariantInUrl(
-      variants[(next + variants.length) % variants.length].slug,
-      { replace: true },
-    );
+    setVariantInUrl(variants[(next + variants.length) % variants.length].slug, {
+      replace: true,
+    });
 
   const breadcrumbs = [
     { label: "Productos", href: "/" },
@@ -88,14 +84,14 @@ const VariantsPanel = ({
                 </div>
                 <div className="absolute bottom-0 h-7.5 w-full border-t border-primary-01"></div>
               </div>
-              <div className="flex flex-col justify-between h-full">
-                <div className="flex flex-col h-full">
-                  <div className="h-22.5 shrink-0 border-b border-primary-00 flex items-center justify-between px-6.5">
+              <div className="flex flex-col h-full">
+                <div className="flex flex-col">
+                  <div className="h-20 shrink-0 border-b border-primary-01 flex items-center justify-between px-6.5">
                     <button
                       type="button"
                       onClick={() => goToVariant(selectedIndex - 1)}
                       aria-label="Variante anterior"
-                      className="cursor-pointer h-full rotate-180 border-l border-primary-00 pl-6.5"
+                      className="cursor-pointer h-full rotate-180  pl-6.5"
                     >
                       <Chevron />
                     </button>
@@ -117,15 +113,15 @@ const VariantsPanel = ({
                       type="button"
                       onClick={() => goToVariant(selectedIndex + 1)}
                       aria-label="Variante siguiente"
-                      className="cursor-pointer h-full border-l border-primary-00 pl-6.5"
+                      className="cursor-pointer h-full  pl-6.5"
                     >
                       <Chevron />
                     </button>
                   </div>
-                  <div className="relative h-60 w-full shrink-0 grow flex flex-col items-center">
+                  <div className="relative h-auto w-full shrink-0  flex flex-col items-center">
                     {isLoggedIn && (
-                      <div className="h-12 py-2 2xl:py-0 w-full border-b border-primary-00 flex items-center justify-center gap-3">
-                        <p className="uppercase">
+                      <div className="h-10 py-2 2xl:py-0 w-full border-b border-primary-01 flex items-center justify-center gap-3">
+                        <p className="uppercase text-[14px]">
                           {isFavorited(productSlug, selected.slug)
                             ? "Quitar de favoritos"
                             : "Agregar a favoritos"}
@@ -135,12 +131,12 @@ const VariantsPanel = ({
                           onToggle={() =>
                             toggleFavorite(productSlug, selected.slug)
                           }
-                          className="w-5 2xl:w-6"
+                          className="w-5 2xl:w-5 pb-0.5"
                         />
                       </div>
                     )}
-                    <div className="h-full w-full flex justify-center items-center">
-                      <div className="relative w-40 h-full 2xl:h-70 2xl:w-72.75">
+                    <div className="h-full w-full flex justify-center items-center py-12">
+                      <div className="relative w-40 h-full 2xl:h-60 2xl:w-61.25 ">
                         <AnimatePresence mode="wait" initial={false}>
                           <motion.div
                             key={selectedIndex}
@@ -161,15 +157,23 @@ const VariantsPanel = ({
                         </AnimatePresence>
                       </div>
                     </div>
+                    <div className="flex justify-between items-center w-full px-7.5 pb-6.25">
+                      <div className="w-full flex  gap-2 ">
+                        <p className="btn-sm text-secondary-02">
+                          Precio sugerido
+                        </p>
+                        <p className="btn-sm">
+                          {priceFormatter.format(selected.price)}
+                        </p>
+                        <p className="btn-sm text-secondary-02">X M2</p>
+                      </div>
+                      <div className="border border-primary-00 px-1 py-0.5 rounded-sm w-auto h-auto">
+                        <p className="hl-xs uppercase h-auto">Disponible</p>
+                      </div>
+                    </div>
                   </div>
                   {/* {isLoggedIn && ( */}
-                    <div className="h-8 shrink-0 w-full border-t border-primary-01 flex items-center justify-center gap-2 py-6">
-                      <p className="btn-sm text-secondary-02">Precio</p>
-                      <p className="btn-sm">
-                        {priceFormatter.format(selected.price)}
-                      </p>
-                      <p className="btn-sm text-secondary-02">X M2</p>
-                    </div>
+
                   {/* )} */}
                 </div>
                 <div className="border-t border-primary-00">
@@ -179,10 +183,10 @@ const VariantsPanel = ({
                   <div className="grid grid-cols-2 gap-px bg-primary-01">
                     {details.map(({ label, value }) => (
                       <Fragment key={label}>
-                        <div className="pl-1.75 py-0.5 flex items-center bg-primary-03">
+                        <div className="pl-9.75 py-0.5 flex items-center bg-primary-03">
                           <p className="text-secondary-02 by-sm">{label}</p>
                         </div>
-                        <div className="pl-1.75 flex items-center bg-primary-03">
+                        <div className="pl-9.75 flex items-center bg-primary-03">
                           <p className="by-sm">{value}</p>
                         </div>
                       </Fragment>
@@ -190,7 +194,7 @@ const VariantsPanel = ({
                   </div>
                 </div>
                 {selected.downloads.length > 0 && (
-                  <div className="flex w-full justify-center gap-5 bg-primary-03 border-t border-primary-00">
+                  <div className="self-end flex w-full justify-center gap-5 bg-primary-03 border-t border-primary-00">
                     {selected.downloads.map(({ label, href }) => (
                       <a
                         key={label}
@@ -226,7 +230,9 @@ const VariantsPanel = ({
                   {hasTopCross(index, 2) && <GridCross />}
 
                   <div className="h-21.75 relative shrink-0 border-b border-primary-01 w-full flex items-center justify-center">
-                    <p className="hl-sm uppercase max-w-50 text-center 2xl:max-w-100">{name}</p>
+                    <p className="hl-sm uppercase max-w-50 text-center 2xl:max-w-100">
+                      {name}
+                    </p>
                     {isLoggedIn && (
                       <FavoriteButton
                         isFavorited={isFavorited(productSlug, slug)}
@@ -247,11 +253,11 @@ const VariantsPanel = ({
                     </div>
                   </div>
                   {/* {isLoggedIn && ( */}
-                    <div className="h-8 py-7 shrink-0 w-full border-t border-primary-01 flex items-center justify-center gap-2">
-                      <p className="hl-xs uppercase text-secondary-02">Precio</p>
-                      <p className="hl-xs">{priceFormatter.format(price)}</p>
-                      <p className="hl-xs uppercase text-secondary-02">X M2</p>
-                    </div>
+                  <div className="h-8 py-7 shrink-0 w-full border-t border-primary-01 flex items-center justify-center gap-2">
+                    <p className="hl-xs uppercase text-secondary-02">Precio</p>
+                    <p className="hl-xs">{priceFormatter.format(price)}</p>
+                    <p className="hl-xs uppercase text-secondary-02">X M2</p>
+                  </div>
                   {/* )} */}
                 </div>
               ))}

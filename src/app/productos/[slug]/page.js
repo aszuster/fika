@@ -41,11 +41,11 @@ export default async function ProductPage({ params }) {
   ];
 
   const productColumn = (
-    <div className="relative border-r border-primary-00 h-full w-[40%] flex flex-col justify-center items-center shrink-0">
+    <div className="relative border-r border-primary-00 h-full w-1/3 flex flex-col justify-center items-center shrink-0">
       <div className="h-22.5 shrink-0 border-b border-primary-01 flex items-center justify-center px-7.5 w-full">
         <p className="hl-lg uppercase">{title}</p>
       </div>
-      <div className="relative h-full w-113.5">
+      <div className="relative h-full w-100">
         <Image src={image} alt="" fill className="object-contain" />
       </div>
       <div className="absolute bottom-7.5 left-7.5 w-65.5 font-sans text-[10px] leading-3.5">

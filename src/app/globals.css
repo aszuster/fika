@@ -40,14 +40,14 @@
   font-weight: 300;
   line-height: 1.875rem;
 }
-@media screen and (min-width: 1536px) {
+/* @media screen and (min-width: 1536px) {
   .hl-sm {
   font-family: var(--font-mono);
-  font-size: 1.5625rem; /*25px*/
+  font-size: 1.5625rem; //25px
   font-weight: 300;
   line-height: 2.0625rem;
   }
-}
+} */
 .hl-md {
   font-family: var(--font-mono);
   font-size: 2.5rem; /*40px*/
