@@ -1,5 +1,8 @@
 import Catalog from "@/components/catalog/Catalog";
-import FormatChooser, { formatParam } from "@/components/catalog/FormatChooser";
+import FormatChooser, {
+  ALL_FORMATS_PARAM,
+  formatParam,
+} from "@/components/catalog/FormatChooser";
 import { getFilters, getProducts } from "@/data/catalog";
 
 export default async function Home({ searchParams }) {
@@ -13,6 +16,11 @@ export default async function Home({ searchParams }) {
     products.some((product) => product.format === label),
   );
   const selectedFormat = formats.find(({ label }) => formatParam(label) === formato);
+
+  // "Cerrar" en la elección: el catálogo completo, sin filtrar por formato.
+  if (formato === ALL_FORMATS_PARAM) {
+    return <Catalog key="todos" products={products} filterOptions={filterOptions} />;
+  }
 
   if (!selectedFormat) {
     return <FormatChooser formats={formats} />;
