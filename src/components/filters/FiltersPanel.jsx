@@ -14,9 +14,7 @@ const emptySelection = {
   application: [],
 };
 
-// Same treatment as Button's "secondary" variant active state: a border
-// that's already reserved (transparent) so it doesn't shift the text when
-// it turns black on selection.
+
 const wordSelectClass = (isSelected) =>
   `border rounded-[3px] p-1 -m-1 transition-colors duration-300 ease-in-out ${
     isSelected ? "border-primary-00" : "border-transparent"
@@ -63,10 +61,17 @@ function FilterSection({
   );
 }
 
-// Las opciones vienen de Sanity (getFilters en data/catalog).
-const FiltersPanel = ({ options, isOpen, onApply, onClear, onClose }) => {
+
+const FiltersPanel = ({
+  options,
+  initialSelection = emptySelection,
+  isOpen,
+  onApply,
+  onClear,
+  onClose,
+}) => {
   const { colors, materials, formats, applications } = options;
-  const [draft, setDraft] = useState(emptySelection);
+  const [draft, setDraft] = useState(initialSelection);
 
   const toggle = (category, value) => {
     setDraft((prev) => {

@@ -8,9 +8,6 @@ import Close from "@/svg/Close";
 import ScrollArea from "@/components/scrollbar/ScrollArea";
 import { addFavoriteToProject } from "@/app/mi-cuenta/actions";
 
-// Mismo patrón que FiltersPanel: siempre montado, se anima solo con el
-// transform/opacity según isOpen (nunca se desmonta), así el cierre también
-// anima y el contenido (la última variante elegida) no desaparece de golpe.
 const AddToProjectPanel = ({ isOpen, favorite, projects, catalog, onClose }) => {
   const [isPending, startTransition] = useTransition();
   const [isCreating, setIsCreating] = useState(false);
@@ -22,9 +19,7 @@ const AddToProjectPanel = ({ isOpen, favorite, projects, catalog, onClose }) => 
     (v) => v.slug === favorite?.variant_slug
   );
 
-  // Cada favorito que se abre en el panel arranca sin nada marcado como
-  // agregado — si no, al reabrir con otra variante quedaría pegado el
-  // estado "agregado" de la anterior.
+
   useEffect(() => {
     setAddedProjectIds(new Set());
     setIsCreating(false);
@@ -84,7 +79,7 @@ const AddToProjectPanel = ({ isOpen, favorite, projects, catalog, onClose }) => 
           </button>
         </div>
 
-        <div className="h-60 shrink-0 border-b border-primary-00 flex flex-col items-center justify-center py-10.5">
+        <div className="h-59.25 shrink-0 border-b border-primary-00 flex flex-col items-center justify-center py-10.5">
           <div className="relative h-36 w-full">
             {variant && (
               <Image

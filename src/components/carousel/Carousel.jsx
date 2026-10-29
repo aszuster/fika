@@ -4,8 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { animate, motion, useMotionValue } from "motion/react";
 
-// Cuánto hay que arrastrar (fracción del ancho) o qué tan rápido (px/s) para
-// pasar de foto; si no, vuelve a la actual.
+
 const SWIPE_DISTANCE = 0.2;
 const SWIPE_VELOCITY = 500;
 
@@ -18,8 +17,7 @@ const Carousel = ({ images }) => {
   const x = useMotionValue(0);
   const hasMany = images.length > 1;
 
-  // El desplazamiento de la tira se calcula en px, así que necesitamos el
-  // ancho real del contenedor (y actualizarlo si cambia el tamaño).
+
   useEffect(() => {
     const element = containerRef.current;
     if (!element) return;
@@ -50,7 +48,6 @@ const Carousel = ({ images }) => {
     if ((passedDistance || passedVelocity) && next !== index) {
       setIndex(next);
     } else {
-      // No alcanzó para cambiar de foto (o es un extremo): vuelve a su lugar.
       animate(x, -index * width, slideTransition);
     }
   };
@@ -76,6 +73,7 @@ const Carousel = ({ images }) => {
                 alt=""
                 fill
                 sizes="25vw"
+                style={{objectFit: "cover"}}
                 draggable={false}
                 className="object-contain pointer-events-none select-none"
               />
@@ -85,7 +83,7 @@ const Carousel = ({ images }) => {
       </div>
 
       {hasMany && (
-        <div className="shrink-0 flex justify-center gap-2 py-4">
+        <div className="absolute -bottom-13 left-1/2 -translate-0.5 shrink-0 flex justify-center gap-2 py-4">
           {images.map((_, i) => (
             <button
               key={i}

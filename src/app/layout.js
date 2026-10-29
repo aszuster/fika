@@ -4,6 +4,7 @@ import "./globals.css";
 import {ReactLenis} from "@/utils/lenis"
 import Navbar from "@/components/navbar/Navbar";
 import Scrollbar from "@/components/scrollbar/Scrollbar";
+import LenisAutoResize from "@/components/lenis/LenisAutoResize";
 
 
 
@@ -33,6 +34,7 @@ export default function RootLayout({ children }) {
         {children}
         {/* Scroll de la página: arranca debajo del navbar (h-12.5). */}
         <Scrollbar className="fixed top-12.5 right-0 h-[calc(100dvh-3.125rem)]" />
+        <LenisAutoResize />
       </body>
       </ReactLenis>
     </html>

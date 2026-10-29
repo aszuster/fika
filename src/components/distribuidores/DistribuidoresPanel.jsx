@@ -43,12 +43,31 @@ export default function DistribuidoresPanel({ provincias }) {
       <ScrollArea className="col-span-1 border-l border-primary-01 h-full">
         {localidades.length ? (
           <ul className=" flex flex-col">
-            {localidades.map(([localidad, distribuidores]) => (
+            {localidades.map(([localidad, distribuidores], index) => {
+              const isActive = distribuidores.some((d) => d.id === activeId);
+              const isLast = index === localidades.length - 1;
+              return (
               <li key={localidad}>
-                <h3 className="hl-sm uppercase border-b border-primary-01 py-3 px-10">
-                  {localidad}
+                <h3
+                  className={`hl-sm uppercase py-3 px-10 border-b ${index > 0 ? "border-t" : ""} ${
+                    isActive ? "border-primary-00" : "border-primary-01"
+                  }`}
+                >
+                  <span
+                    className={`inline-block border rounded-sm px-2.5 py-0.5 -mx-2.5 -my-0.5 ${
+                      isActive
+                        ? "border-primary-00"
+                        : "border-transparent"
+                    }`}
+                  >
+                    {localidad}
+                  </span>
                 </h3>
-                <ul className="flex flex-col gap-5 px-10 py-5 border-b border-primary-01">
+                <ul
+                  className={`flex flex-col gap-5 px-10 py-5 ${
+                    isLast ? "border-b border-primary-01" : ""
+                  }`}
+                >
                   {distribuidores.map((d) => (
                     <li key={d.id}>
                       <button
@@ -78,7 +97,8 @@ export default function DistribuidoresPanel({ provincias }) {
                   ))}
                 </ul>
               </li>
-            ))}
+              );
+            })}
           </ul>
         ) : (
           <p className="py-7 px-10">No hay distribuidores en esta provincia.</p>

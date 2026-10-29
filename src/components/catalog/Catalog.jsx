@@ -9,6 +9,7 @@ import GridFillers from "@/components/grid/GridFillers";
 import GridCross, { hasTopCross } from "@/components/grid/GridCross";
 import FiltersPanel from "@/components/filters/FiltersPanel";
 import FavoriteButton from "@/components/product/FavoriteButton";
+import SignupModal from "@/components/modals/SignupModal";
 import useFavorites from "@/hooks/useFavorites";
 import { priceFormatter } from "@/utils/price";
 import Search from "@/svg/Search";
@@ -21,8 +22,7 @@ const grids = {
   6: "grid-cols-6",
 };
 
-// Columnas que ofrece el slider de "Vista", de más alejada a más cercana.
-// Por ahora solo 6 y 3; para volver a sumar 4 y 5, agregarlas acá.
+
 const viewCols = [6, 3];
 
 const titles = {
@@ -44,8 +44,7 @@ const emptyFilters = {
   application: [],
 };
 
-// Color, material y aplicación son de cada variante (una variante puede
-// tener más de un color); el formato es del producto.
+
 const variantMatchesFilters = (product, variant, filters) =>
   Object.entries(filters).every(([key, values]) => {
     if (values.length === 0) return true;
@@ -55,7 +54,6 @@ const variantMatchesFilters = (product, variant, filters) =>
     return values.includes(variant[key]);
   });
 
-// Minúsculas y sin tildes, para que "concavo" encuentre "Stone cóncavo".
 const normalize = (text) =>
   text
     .toLowerCase()
@@ -64,8 +62,7 @@ const normalize = (text) =>
 
 const getSearchTerms = (query) => normalize(query).split(/\s+/).filter(Boolean);
 
-// Cada palabra buscada tiene que aparecer en alguno de los datos de la
-// variante: "blanco piso" devuelve las variantes blancas aptas para piso.
+
 const variantMatchesSearch = (product, variant, terms) => {
   const searchable = normalize(
     [
@@ -81,13 +78,17 @@ const variantMatchesSearch = (product, variant, terms) => {
   return terms.every((term) => searchable.includes(term));
 };
 
-// Sin filtros ni búsqueda la grilla muestra productos; con filtros o
-// búsqueda, las variantes que coinciden. Ambos se normalizan al mismo
-// formato de tarjeta.
-const getGridItems = (products, filters, hasFilters, query) => {
-  const terms = getSearchTerms(query);
 
-  if (!hasFilters && terms.length === 0) {
+const getGridItems = (allProducts, filters, query) => {
+  const terms = getSearchTerms(query);
+  const products =
+    filters.format.length > 0
+      ? allProducts.filter((product) => filters.format.includes(product.format))
+      : allProducts;
+  const hasVariantFilters =
+    filters.color.length + filters.material.length + filters.application.length > 0;
+
+  if (!hasVariantFilters && terms.length === 0) {
     return products.map(({ title, slug, image, hoverImage }) => ({
         key: slug,
         href: `/productos/${slug}`,
@@ -112,25 +113,25 @@ const getGridItems = (products, filters, hasFilters, query) => {
         price: variant.price,
         title: product.title,
         subtitle: variant.name,
-        // Sin hoverImage: en la grilla de variantes el hover es gris claro,
-        // así que la foto no cambia a la versión "-white".
         image: variant.catalogPhoto,
       })),
   );
 };
 
-export default function Catalog({ products, filterOptions }) {
+export default function Catalog({ products, filterOptions, initialFormat }) {
+  const initialFilters = initialFormat
+    ? { ...emptyFilters, format: [initialFormat] }
+    : emptyFilters;
+
   const [cols, setCols] = useState(3);
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
-  const [appliedFilters, setAppliedFilters] = useState(emptyFilters);
+  const [appliedFilters, setAppliedFilters] = useState(initialFilters);
   const [searchQuery, setSearchQuery] = useState("");
   const imageSizes = `${Math.ceil(100 / cols)}vw`;
   const visibleRows = cols === 6 ? 3 : 2;
   const lenis = useLenis();
   const { isLoggedIn, isFavorited, toggleFavorite } = useFavorites();
 
-  // Con el panel abierto, la página queda fija y solo scrollea el panel
-  // (que tiene data-lenis-prevent para que Lenis no lo bloquee).
   useEffect(() => {
     if (!lenis) return;
     if (isFiltersOpen) {
@@ -146,11 +147,10 @@ export default function Catalog({ products, filterOptions }) {
     0,
   );
 
-  // Con el panel abierto la grilla queda vacía: solo las celdas con sus
-  // líneas, hasta que se apliquen (o se cierren) los filtros.
+
   const gridItems = isFiltersOpen
     ? []
-    : getGridItems(products, appliedFilters, appliedFiltersCount > 0, searchQuery);
+    : getGridItems(products, appliedFilters, searchQuery);
 
   return (
     <div className="bg-primary-03 h-[calc(100%-3.125rem)]">
@@ -208,6 +208,7 @@ export default function Catalog({ products, filterOptions }) {
         />
         <FiltersPanel
           options={filterOptions}
+          initialSelection={initialFilters}
           isOpen={isFiltersOpen}
           onApply={(filters) => {
             setAppliedFilters(filters);
@@ -295,6 +296,8 @@ export default function Catalog({ products, filterOptions }) {
           />
         </div>
       </div>
+
+      <SignupModal />
     </div>
   );
 }

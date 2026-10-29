@@ -27,6 +27,37 @@ const setVariantInUrl = (variantSlug, { replace = false } = {}) => {
   window.history[replace ? "replaceState" : "pushState"](null, "", url);
 };
 
+const MOCKUP_PRICE = 68000;
+const MOCKUP_DOWNLOADS = [
+  { label: "Plano DWG", href: null },
+  { label: "Ficha", href: null },
+  { label: "3D SKP", href: null },
+];
+const isAvailable = (variant, index) => variant.available ?? index % 2 === 0;
+
+const PriceAndAvailability = ({ variant, index, className = "" }) => {
+  const available = isAvailable(variant, index);
+
+  return (
+    <div className={`flex justify-between items-center w-full ${className}`}>
+      <div className="w-full flex gap-2">
+        <p className="btn-sm text-secondary-02">Precio sugerido</p>
+        <p className="btn-sm">
+          {priceFormatter.format(variant.price ?? MOCKUP_PRICE)}
+        </p>
+        <p className="btn-sm text-secondary-02">X M2</p>
+      </div>
+      <div
+        className={`${available ? "border border-primary-00 px-1" : "bg-primary-01 px-2"} py-0.5 rounded-sm w-auto h-auto`}
+      >
+        <p className="hl-xs uppercase h-auto whitespace-nowrap">
+          {available ? "Disponible" : "A consultar"}
+        </p>
+      </div>
+    </div>
+  );
+};
+
 const VariantsPanel = ({
   productSlug,
   productTitle,
@@ -71,8 +102,8 @@ const VariantsPanel = ({
         >
           {selected ? (
             <div className="grid grid-cols-2 h-[calc(100dvh-6.25rem)]">
-              <div className="border-r border-primary-00 relative">
-                <div className="relative h-full px-10 py-15">
+              <div className="border-r border-primary-00 relative flex flex-col">
+                <div className="relative h-full w-full">
                   <Carousel
                     key={selectedIndex}
                     images={
@@ -82,7 +113,7 @@ const VariantsPanel = ({
                     }
                   />
                 </div>
-                <div className="absolute bottom-0 h-7.5 w-full border-t border-primary-01"></div>
+                <div className="h-16.25 w-full shrink-0 border-t border-primary-00"></div>
               </div>
               <div className="flex flex-col h-full">
                 <div className="flex flex-col">
@@ -157,24 +188,11 @@ const VariantsPanel = ({
                         </AnimatePresence>
                       </div>
                     </div>
-                    <div className="flex justify-between items-center w-full px-7.5 pb-6.25">
-                      <div className="w-full flex  gap-2 ">
-                        {selected.price != null && (
-                          <>
-                            <p className="btn-sm text-secondary-02">
-                              Precio sugerido
-                            </p>
-                            <p className="btn-sm">
-                              {priceFormatter.format(selected.price)}
-                            </p>
-                            <p className="btn-sm text-secondary-02">X M2</p>
-                          </>
-                        )}
-                      </div>
-                      <div className="border border-primary-00 px-1 py-0.5 rounded-sm w-auto h-auto">
-                        <p className="hl-xs uppercase h-auto">Disponible</p>
-                      </div>
-                    </div>
+                    <PriceAndAvailability
+                      variant={selected}
+                      index={selectedIndex}
+                      className="px-7.5 pb-6.25"
+                    />
                   </div>
                   {/* {isLoggedIn && ( */}
 
@@ -184,40 +202,45 @@ const VariantsPanel = ({
                   <div className="h-12.5 flex justify-center items-center border-b border-primary-01">
                     <p className="hl-xs uppercase">Ficha técnica</p>
                   </div>
-                  <div className="grid grid-cols-2 gap-px bg-primary-01">
-                    {getProductDetails(specs, selected).map(({ label, value }) => (
-                      <Fragment key={label}>
-                        <div className="pl-9.75 py-0.5 flex items-center bg-primary-03">
-                          <p className="text-secondary-02 by-sm">{label}</p>
-                        </div>
-                        <div className="pl-9.75 flex items-center bg-primary-03">
-                          <p className="by-sm">{value}</p>
-                        </div>
-                      </Fragment>
-                    ))}
+                  <div className="grid grid-cols-2 gap-px bg-primary-01 border-b border-primary-01">
+                    {getProductDetails(specs, selected).map(
+                      ({ label, value }) => (
+                        <Fragment key={label}>
+                          <div className="pl-9.75 py-0.5 flex items-center bg-primary-03">
+                            <p className="text-secondary-02 by-sm">{label}</p>
+                          </div>
+                          <div className="pl-9.75 flex items-center bg-primary-03">
+                            <p className="by-sm">{value}</p>
+                          </div>
+                        </Fragment>
+                      ),
+                    )}
                   </div>
                 </div>
-                {selected.downloads.length > 0 && (
-                  <div className="self-end flex w-full justify-center gap-5 bg-primary-03 border-t border-primary-00">
-                    {selected.downloads.map(({ label, href }) => (
-                      <a
-                        key={label}
-                        href={href ?? undefined}
-                        download={href ? true : undefined}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="cursor-pointer underline h-15 flex items-center justify-center  btn-sm uppercase text-primary-00 hover:text-secondary-01 transition-colors duration-300 ease-in-out"
-                      >
-                        {label}
-                      </a>
-                    ))}
-                  </div>
-                )}
+                <div className="mt-auto w-full h-16.25 shrink-0 border-t border-primary-00 flex justify-center gap-5">
+                  {(selected.downloads.length > 0
+                    ? selected.downloads
+                    : MOCKUP_DOWNLOADS
+                  ).map(({ label, href }) => (
+                    <a
+                      key={label}
+                      href={href ?? undefined}
+                      download={href ? true : undefined}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="cursor-pointer underline h-full flex items-center justify-center btn-sm uppercase text-primary-00 hover:text-secondary-01 transition-colors duration-300 ease-in-out"
+                    >
+                      {label}
+                    </a>
+                  ))}
+                </div>
               </div>
             </div>
           ) : (
             <div className="grid grid-cols-2 gap-px bg-primary-01 auto-rows-[calc((100dvh-6.25rem-2px)/2)]">
-              {variants.map(({ name, slug, catalogPhoto, price }, index) => (
+              {variants.map((variant, index) => {
+                const { name, slug, catalogPhoto } = variant;
+                return (
                 <div
                   key={name}
                   role="button"
@@ -257,16 +280,15 @@ const VariantsPanel = ({
                     </div>
                   </div>
                   {/* {isLoggedIn && ( */}
-                  {price != null && (
-                  <div className="h-8 py-7 shrink-0 w-full border-t border-primary-01 flex items-center justify-center gap-2">
-                    <p className="hl-xs uppercase text-secondary-02">Precio</p>
-                    <p className="hl-xs">{priceFormatter.format(price)}</p>
-                    <p className="hl-xs uppercase text-secondary-02">X M2</p>
-                  </div>
-                  )}
+                  <PriceAndAvailability
+                    variant={variant}
+                    index={index}
+                    className="h-8 py-7 shrink-0 px-7.5 "
+                  />
                   {/* )} */}
                 </div>
-              ))}
+                );
+              })}
               <GridFillers items={variants} cols={2} minRows={2} crosses />
             </div>
           )}

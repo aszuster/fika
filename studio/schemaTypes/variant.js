@@ -51,6 +51,12 @@ export const variant = defineType({
       validation: (rule) => rule.min(0),
     }),
     defineField({
+      name: "available",
+      title: "Disponible",
+      type: "boolean",
+      description: "Activado = se muestra \"Disponible\". Desactivado = \"A consultar\".",
+    }),
+    defineField({
       name: "material",
       title: "Material",
       type: "reference",

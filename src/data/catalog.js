@@ -51,6 +51,7 @@ const productsQuery = `*[_type == "product" && defined(slug.current)] | order(or
     code,
     "colors": coalesce(colors[]->label, []),
     price,
+    available,
     "material": coalesce(material->label, ^.material->label),
     "application": coalesce(application->label, ^.application->label),
     "catalogPhoto": coalesce(catalogPhoto.asset->url, ^.image.asset->url),
@@ -65,10 +66,15 @@ const productsQuery = `*[_type == "product" && defined(slug.current)] | order(or
 
 const m2Formatter = new Intl.NumberFormat("es-AR");
 
+// Mockup: mientras los productos no tengan formato en el CMS, se reparten
+// entre estos dos para poder revisar la página de elección y el filtro.
+const MOCKUP_FORMATS = ["Mosaik", "Brik"];
+
 export const getProducts = cache(async () => {
   const products = await sanityFetch(productsQuery);
-  return products.map((product) => ({
+  return products.map((product, index) => ({
     ...product,
+    format: product.format ?? MOCKUP_FORMATS[index % MOCKUP_FORMATS.length],
     // En Sanity es un número (0.98); en el sitio se muestra con coma.
     m2PerBox: product.m2PerBox == null ? null : m2Formatter.format(product.m2PerBox),
     variants: product.variants ?? [],
