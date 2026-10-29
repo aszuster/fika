@@ -5,44 +5,30 @@ import Button from "@/components/buttons/Button";
 import VariantsPanel, {
   VariantsPanelFromUrl,
 } from "@/components/product/VariantsPanel";
-import { products, getProductBySlug } from "@/data/products";
+import { getProducts, getProductBySlug } from "@/data/catalog";
 
-export function generateStaticParams() {
-  return products.map((product) => ({ slug: product.slug }));
+export async function generateStaticParams() {
+  return (await getProducts()).map((product) => ({ slug: product.slug }));
 }
 
 export default async function ProductPage({ params }) {
   const { slug } = await params;
-  const product = getProductBySlug(slug);
+  const product = await getProductBySlug(slug);
 
   if (!product) {
     notFound();
   }
 
-  const {
-    title,
-    image,
-    code,
-    chipSize,
-    meshSize,
-    meshesPerBox,
-    m2PerBox,
-    application,
-    variants,
-  } = product;
+  const { title, image, chipSize, meshSize, meshesPerBox, m2PerBox, variants } =
+    product;
 
-  const details = [
-    { label: "Código", value: code },
-    { label: "Medida chip", value: chipSize },
-    { label: "Medida malla", value: meshSize },
-    { label: "Mallas por caja", value: meshesPerBox },
-    { label: "M2/caja", value: m2PerBox },
-    { label: "Aplicación", value: application },
-  ];
+  // Solo lo que necesita la ficha técnica: el panel la arma junto con los
+  // datos de la variante elegida.
+  const specs = { chipSize, meshSize, meshesPerBox, m2PerBox };
 
   const productColumn = (
-    <div className="relative border-r border-primary-00 h-full w-1/3 flex flex-col justify-center items-center shrink-0">
-      <div className="h-22.5 shrink-0 border-b border-primary-01 flex items-center justify-center px-7.5 w-full">
+    <div className="relative border-r border-primary-00 h-full min-w-0 flex flex-col justify-center items-center">
+      <div className="h-21.75 shrink-0 border-b border-primary-01 flex items-center justify-center px-7.5 w-full">
         <p className="hl-lg uppercase">{title}</p>
       </div>
       <div className="relative h-full w-100">
@@ -66,7 +52,7 @@ export default async function ProductPage({ params }) {
     productSlug: slug,
     productTitle: title,
     variants,
-    details,
+    specs,
   };
 
   return (

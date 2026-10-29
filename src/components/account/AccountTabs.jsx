@@ -3,6 +3,7 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import Button from "@/components/buttons/Button";
 import { createClient } from "@/utils/supabase/client";
+import ScrollArea from "@/components/scrollbar/ScrollArea";
 import TabBar from "./TabBar";
 import PerfilSection from "./PerfilSection";
 import FavoritosSection from "./FavoritosSection";
@@ -14,7 +15,7 @@ const TABS = [
   { key: "proyectos", label: "Proyectos" },
 ];
 
-const AccountTabs = ({ profile, favorites, projects, quoteRequests }) => {
+const AccountTabs = ({ profile, favorites, projects, quoteRequests, catalog }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const requestedTab = searchParams.get("tab");
@@ -100,15 +101,19 @@ const AccountTabs = ({ profile, favorites, projects, quoteRequests }) => {
     <div className="bg-primary-03 h-[calc(100%-3.125rem)] flex flex-col">
       <TabBar tabs={TABS} activeTab={activeTab} onSelect={setActiveTab} />
 
-      <div className="flex-1 overflow-y-auto">
+      <ScrollArea className="flex-1">
         {activeTab === "perfil" && <PerfilSection profile={profile} />}
         {activeTab === "favoritos" && (
-          <FavoritosSection favorites={favorites} projects={projects} />
+          <FavoritosSection favorites={favorites} projects={projects} catalog={catalog} />
         )}
         {activeTab === "proyectos" && (
-          <ProyectosSection projects={projects} quoteRequests={quoteRequests} />
+          <ProyectosSection
+            projects={projects}
+            quoteRequests={quoteRequests}
+            catalog={catalog}
+          />
         )}
-      </div>
+      </ScrollArea>
     </div>
   );
 };

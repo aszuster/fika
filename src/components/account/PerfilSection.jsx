@@ -8,6 +8,7 @@ import AccessDataForm from "./AccessDataForm";
 import { updateProfile } from "@/app/mi-cuenta/actions";
 import { PROFESSIONAL_ACTIVITIES } from "@/data/profile";
 import Select from "@/components/forms/Select";
+import ScrollArea from "@/components/scrollbar/ScrollArea";
 
 const SUB_TABS = [
   { key: "personal-data", label: "Datos personales" },
@@ -76,7 +77,7 @@ const PerfilSection = ({ profile }) => {
         <div className="h-[20%] 2xl:h-[30%] shrink-0 flex flex-col justify-center items-center">
           <h2 className="hl-lg uppercase">Perfil</h2>
         </div>
-        <div className="flex-1 min-h-0 w-full overflow-y-auto flex flex-col ">
+        <ScrollArea className="flex-1 w-full" viewportClassName="flex flex-col">
           <TabBar
             tabs={SUB_TABS}
             activeTab={activeSubTab}
@@ -159,7 +160,7 @@ const PerfilSection = ({ profile }) => {
               )}
             </div>
           )}
-        </div>
+        </ScrollArea>
       </div>
       <div className="w-full h-full relative">
         <div className="grid grid-cols-2 grid-rows-[3fr_7.6fr] 2xl:grid-rows-[3fr_7fr] bg-primary-01 gap-px w-full h-full">

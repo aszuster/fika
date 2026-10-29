@@ -10,8 +10,9 @@ import Carousel from "@/components/carousel/Carousel";
 import Breadcrumbs from "@/components/product/Breadcrumbs";
 import FavoriteButton from "@/components/product/FavoriteButton";
 import useFavorites from "@/hooks/useFavorites";
-import { ReactLenis } from "@/utils/lenis";
+import ScrollArea from "@/components/scrollbar/ScrollArea";
 import { priceFormatter } from "@/utils/price";
+import { getProductDetails } from "@/utils/productDetails";
 import Chevron from "@/svg/Chevron";
 
 const setVariantInUrl = (variantSlug, { replace = false } = {}) => {
@@ -30,7 +31,7 @@ const VariantsPanel = ({
   productSlug,
   productTitle,
   variants,
-  details,
+  specs,
   selectedVariantSlug = null,
   children,
 }) => {
@@ -61,13 +62,12 @@ const VariantsPanel = ({
         <Breadcrumbs items={breadcrumbs} />
       </div>
 
-      <div className="flex h-[calc(100dvh-6.25rem)] overflow-hidden">
+      <div className="grid grid-cols-3 h-[calc(100dvh-6.25rem)] overflow-hidden">
         {children}
 
-        <ReactLenis
-          className="flex-1 overflow-y-auto"
-          data-lenis-prevent
-          options={{ orientation: "vertical" }}
+        <ScrollArea
+          className="col-span-2"
+          lenisOptions={{ orientation: "vertical" }}
         >
           {selected ? (
             <div className="grid grid-cols-2 h-[calc(100dvh-6.25rem)]">
@@ -159,13 +159,17 @@ const VariantsPanel = ({
                     </div>
                     <div className="flex justify-between items-center w-full px-7.5 pb-6.25">
                       <div className="w-full flex  gap-2 ">
-                        <p className="btn-sm text-secondary-02">
-                          Precio sugerido
-                        </p>
-                        <p className="btn-sm">
-                          {priceFormatter.format(selected.price)}
-                        </p>
-                        <p className="btn-sm text-secondary-02">X M2</p>
+                        {selected.price != null && (
+                          <>
+                            <p className="btn-sm text-secondary-02">
+                              Precio sugerido
+                            </p>
+                            <p className="btn-sm">
+                              {priceFormatter.format(selected.price)}
+                            </p>
+                            <p className="btn-sm text-secondary-02">X M2</p>
+                          </>
+                        )}
                       </div>
                       <div className="border border-primary-00 px-1 py-0.5 rounded-sm w-auto h-auto">
                         <p className="hl-xs uppercase h-auto">Disponible</p>
@@ -181,7 +185,7 @@ const VariantsPanel = ({
                     <p className="hl-xs uppercase">Ficha técnica</p>
                   </div>
                   <div className="grid grid-cols-2 gap-px bg-primary-01">
-                    {details.map(({ label, value }) => (
+                    {getProductDetails(specs, selected).map(({ label, value }) => (
                       <Fragment key={label}>
                         <div className="pl-9.75 py-0.5 flex items-center bg-primary-03">
                           <p className="text-secondary-02 by-sm">{label}</p>
@@ -253,18 +257,20 @@ const VariantsPanel = ({
                     </div>
                   </div>
                   {/* {isLoggedIn && ( */}
+                  {price != null && (
                   <div className="h-8 py-7 shrink-0 w-full border-t border-primary-01 flex items-center justify-center gap-2">
                     <p className="hl-xs uppercase text-secondary-02">Precio</p>
                     <p className="hl-xs">{priceFormatter.format(price)}</p>
                     <p className="hl-xs uppercase text-secondary-02">X M2</p>
                   </div>
+                  )}
                   {/* )} */}
                 </div>
               ))}
               <GridFillers items={variants} cols={2} minRows={2} crosses />
             </div>
           )}
-        </ReactLenis>
+        </ScrollArea>
       </div>
     </>
   );

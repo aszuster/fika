@@ -4,8 +4,8 @@ import { useState } from "react";
 import { motion } from "motion/react";
 import Button from "@/components/buttons/Button";
 import GridFillers from "@/components/grid/GridFillers";
+import ScrollArea from "@/components/scrollbar/ScrollArea";
 import Close from "@/svg/Close";
-import { colors, materials, formats, applications } from "@/data/filters";
 
 const emptySelection = {
   color: [],
@@ -63,7 +63,9 @@ function FilterSection({
   );
 }
 
-const FiltersPanel = ({ isOpen, onApply, onClear, onClose }) => {
+// Las opciones vienen de Sanity (getFilters en data/catalog).
+const FiltersPanel = ({ options, isOpen, onApply, onClear, onClose }) => {
+  const { colors, materials, formats, applications } = options;
   const [draft, setDraft] = useState(emptySelection);
 
   const toggle = (category, value) => {
@@ -103,7 +105,7 @@ const FiltersPanel = ({ isOpen, onApply, onClear, onClose }) => {
           <Close />
         </button>
       </div>
-      <div className="flex-1 min-h-0 overflow-y-auto" data-lenis-prevent>
+      <ScrollArea className="flex-1">
         <div className="border-b border-primary-00">
         <FilterSection
           title="Color"
@@ -167,7 +169,7 @@ const FiltersPanel = ({ isOpen, onApply, onClear, onClose }) => {
           )}
         />
         </div>
-      </div>
+      </ScrollArea>
       <div className="w-full h-18 shrink-0 border-t border-primary-00 flex">
         <div className="w-full flex justify-center items-center border-r border-primary-00">
           <Button copy="Borrar" variant="tertiary" onClick={handleClear} />

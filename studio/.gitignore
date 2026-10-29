@@ -1,0 +1,8 @@
+/node_modules
+/dist
+/.sanity
+.env
+
+# Imágenes y archivos bajados de WordPress para la carga inicial (pesan
+# cientos de MB; se regeneran con npm run extraer-wordpress).
+/carga-inicial/archivos

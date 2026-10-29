@@ -5,8 +5,9 @@ import Image from "next/image";
 import Button from "@/components/buttons/Button";
 import { getFillerCount } from "@/components/grid/GridFillers";
 import AddToProjectPanel from "@/components/account/AddToProjectPanel";
+import ScrollArea from "@/components/scrollbar/ScrollArea";
 import { removeFavorite } from "@/app/mi-cuenta/actions";
-import { getProductBySlug } from "@/data/products";
+import { getProductDetails } from "@/utils/productDetails";
 
 const Cross = ({ position }) => (
   <Image
@@ -22,7 +23,7 @@ const Cross = ({ position }) => (
   />
 );
 
-const FavoritosSection = ({ favorites, projects }) => {
+const FavoritosSection = ({ favorites, projects, catalog }) => {
   const [isPending, startTransition] = useTransition();
   const [addToProjectFavorite, setAddToProjectFavorite] = useState(null);
   const [isAddPanelOpen, setIsAddPanelOpen] = useState(false);
@@ -37,7 +38,7 @@ const FavoritosSection = ({ favorites, projects }) => {
           <div className="h-[33%] shrink-0 flex flex-col justify-center items-center">
             <h2 className="hl-lg uppercase">Favoritos</h2>
           </div>
-          <div className="flex-1 min-h-0 w-full overflow-y-auto flex flex-col ">
+          <ScrollArea className="flex-1 w-full" viewportClassName="flex flex-col">
             <div className="h-full border-y border-primary-00 flex justify-center items-center">
               <p className="by-sm text-secondary-01 font-normal! text-center max-w-70">
                 Guardá tus productos favoritos para encontrarlos fácilmente y
@@ -54,7 +55,7 @@ const FavoritosSection = ({ favorites, projects }) => {
                 />
               </div>
             </div>
-          </div>
+          </ScrollArea>
         </div>
         <div className="w-full h-full relative">
           <div className="grid grid-cols-2 grid-rows-[3fr_7fr] bg-primary-03 gap-px w-full h-full"></div>
@@ -77,21 +78,14 @@ const FavoritosSection = ({ favorites, projects }) => {
       </div>
       <div className="relative z-1 grid grid-cols-3 gap-px bg-primary-00 border-t border-primary-01">
         {favorites.map((favorite, index) => {
-          const product = getProductBySlug(favorite.product_slug);
+          const product = catalog[favorite.product_slug];
           const variant = product?.variants.find(
             (v) => v.slug === favorite.variant_slug,
           );
           const row = Math.floor(index / 3);
           const col = index % 3;
 
-          const details = [
-            { label: "Código", value: product?.code },
-            { label: "Medida chip", value: product?.chipSize },
-            { label: "Medida malla", value: product?.meshSize },
-            { label: "Mallas por caja", value: product?.meshesPerBox },
-            { label: "M2/caja", value: product?.m2PerBox },
-            { label: "Aplicación", value: product?.application },
-          ];
+          const details = getProductDetails(product, variant);
 
           return (
             <div
@@ -179,6 +173,7 @@ const FavoritosSection = ({ favorites, projects }) => {
         isOpen={isAddPanelOpen}
         favorite={addToProjectFavorite}
         projects={projects}
+        catalog={catalog}
         onClose={() => setIsAddPanelOpen(false)}
       />
     </div>

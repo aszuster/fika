@@ -5,19 +5,19 @@ import Image from "next/image";
 import { motion } from "motion/react";
 import Button from "@/components/buttons/Button";
 import Close from "@/svg/Close";
+import ScrollArea from "@/components/scrollbar/ScrollArea";
 import { addFavoriteToProject } from "@/app/mi-cuenta/actions";
-import { getProductBySlug } from "@/data/products";
 
 // Mismo patrón que FiltersPanel: siempre montado, se anima solo con el
 // transform/opacity según isOpen (nunca se desmonta), así el cierre también
 // anima y el contenido (la última variante elegida) no desaparece de golpe.
-const AddToProjectPanel = ({ isOpen, favorite, projects, onClose }) => {
+const AddToProjectPanel = ({ isOpen, favorite, projects, catalog, onClose }) => {
   const [isPending, startTransition] = useTransition();
   const [isCreating, setIsCreating] = useState(false);
   const [newProjectName, setNewProjectName] = useState("");
   const [addedProjectIds, setAddedProjectIds] = useState(new Set());
 
-  const product = favorite ? getProductBySlug(favorite.product_slug) : null;
+  const product = favorite ? catalog[favorite.product_slug] : null;
   const variant = product?.variants.find(
     (v) => v.slug === favorite?.variant_slug
   );
@@ -102,7 +102,7 @@ const AddToProjectPanel = ({ isOpen, favorite, projects, onClose }) => {
           <p className="by-sm font-normal! text-secondary-02">Agregá este producto a tus proyectos</p>
         </div>
 
-        <div className="flex-1 min-h-0 overflow-y-auto flex flex-col">
+        <ScrollArea className="flex-1" viewportClassName="flex flex-col">
           {projects.map((project) => (
             <div
               key={project.id}
@@ -141,7 +141,7 @@ const AddToProjectPanel = ({ isOpen, favorite, projects, onClose }) => {
               />
             </div>
           )}
-        </div>
+        </ScrollArea>
         <div className="h-24.25 shrink-0 border-t border-primary-00 flex items-center justify-center px-7.5">
           <Button
             copy="Crear nuevo proyecto"

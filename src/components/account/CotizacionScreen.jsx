@@ -4,8 +4,8 @@ import { useState, useTransition } from "react";
 import Image from "next/image";
 import Button from "@/components/buttons/Button";
 import Arrow from "@/svg/Arrow";
+import ScrollArea from "@/components/scrollbar/ScrollArea";
 import { requestQuote } from "@/app/mi-cuenta/actions";
-import { getProductBySlug } from "@/data/products";
 
 const priceFormatter = new Intl.NumberFormat("es-AR", {
   style: "currency",
@@ -13,7 +13,7 @@ const priceFormatter = new Intl.NumberFormat("es-AR", {
   maximumFractionDigits: 0,
 });
 
-const CotizacionScreen = ({ project, onClose, onRequested }) => {
+const CotizacionScreen = ({ project, catalog, onClose, onRequested }) => {
   const [isPending, startTransition] = useTransition();
   const [quantities, setQuantities] = useState({});
   const [removedIds, setRemovedIds] = useState(new Set());
@@ -70,9 +70,9 @@ const CotizacionScreen = ({ project, onClose, onRequested }) => {
           <p className="hl-md uppercase text-center ">{project.name}</p>
         </div>
 
-        <div className="overflow-y-auto col-span-2">
+        <ScrollArea className="col-span-2">
           {items.map((item) => {
-            const product = getProductBySlug(item.product_slug);
+            const product = catalog[item.product_slug];
             const variant = product?.variants.find(
               (v) => v.slug === item.variant_slug,
             );
@@ -144,7 +144,7 @@ const CotizacionScreen = ({ project, onClose, onRequested }) => {
               </div>
             );
           })}
-        </div>
+        </ScrollArea>
       </div>
 
       <div className="h-24.25 shrink-0 bg-primary-03 border-t border-primary-00 flex items-center justify-between gap-4 pl-12.5">

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import dynamic from "next/dynamic";
+import ScrollArea from "@/components/scrollbar/ScrollArea";
 
 const DistribuidoresMap = dynamic(() => import("./DistribuidoresMap"), {
   ssr: false,
@@ -23,10 +24,7 @@ export default function DistribuidoresPanel({ provincias }) {
 
   return (
     <>
-      <div
-        className="col-span-1  h-full min-h-0 overflow-y-auto"
-        data-lenis-prevent
-      >
+      <ScrollArea className="col-span-1 h-full">
         <ul className="hl-md uppercase p-7 flex flex-col gap-1 ">
           {provincias.map(({ provincia }) => (
             <li key={provincia}>
@@ -41,11 +39,8 @@ export default function DistribuidoresPanel({ provincias }) {
             </li>
           ))}
         </ul>
-      </div>
-      <div
-        className="col-span-1 border-l border-primary-01 h-full min-h-0 overflow-y-auto"
-        data-lenis-prevent
-      >
+      </ScrollArea>
+      <ScrollArea className="col-span-1 border-l border-primary-01 h-full">
         {localidades.length ? (
           <ul className=" flex flex-col">
             {localidades.map(([localidad, distribuidores]) => (
@@ -88,7 +83,7 @@ export default function DistribuidoresPanel({ provincias }) {
         ) : (
           <p className="py-7 px-10">No hay distribuidores en esta provincia.</p>
         )}
-      </div>
+      </ScrollArea>
       <div className="col-span-2 h-full">
         <DistribuidoresMap
           provincias={provincias}

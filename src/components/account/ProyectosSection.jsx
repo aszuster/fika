@@ -5,6 +5,7 @@ import Image from "next/image";
 import Button from "@/components/buttons/Button";
 import { getFillerCount } from "@/components/grid/GridFillers";
 import Pencil from "@/svg/Pencil";
+import ScrollArea from "@/components/scrollbar/ScrollArea";
 import CotizacionScreen from "@/components/account/CotizacionScreen";
 import {
   createProject,
@@ -31,7 +32,7 @@ const dateFormatter = new Intl.DateTimeFormat("es-AR", {
   timeStyle: "short",
 });
 
-const ProyectosSection = ({ projects, quoteRequests }) => {
+const ProyectosSection = ({ projects, quoteRequests, catalog }) => {
   const [isPending, startTransition] = useTransition();
   const [newName, setNewName] = useState("");
   const [isCreating, setIsCreating] = useState(false);
@@ -109,7 +110,7 @@ const ProyectosSection = ({ projects, quoteRequests }) => {
           <div className="h-[33%] shrink-0 flex flex-col justify-center items-center">
             <h2 className="hl-lg uppercase">Proyectos</h2>
           </div>
-          <div className="flex-1 min-h-0 w-full overflow-y-auto flex flex-col ">
+          <ScrollArea className="flex-1 w-full" viewportClassName="flex flex-col">
             <div className="h-full border-y border-primary-00 flex justify-center items-center">
               <p className="by-sm text-secondary-01 font-normal! text-center max-w-70">
                 Creá tu proyecto, sumá productos desde Favoritos y solicitá un presupuesto cuando completes tu selección.
@@ -125,7 +126,7 @@ const ProyectosSection = ({ projects, quoteRequests }) => {
               />
               </div>
             </div>
-          </div>
+          </ScrollArea>
         </div>
         <div className="w-full h-full relative">
           <div className="grid grid-cols-2 grid-rows-[3fr_7fr] bg-primary-03 gap-px w-full h-full">
@@ -353,6 +354,7 @@ const ProyectosSection = ({ projects, quoteRequests }) => {
         <CotizacionScreen
           key={confirmingProject.id}
           project={confirmingProject}
+          catalog={catalog}
           onClose={() => setConfirmingProject(null)}
           onRequested={handleQuoteRequested}
         />

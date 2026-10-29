@@ -117,6 +117,15 @@
   text-transform: uppercase;
 }
 
+/* Scroll sin scrollbar visible, para que no le reste ancho a las columnas.
+   En <html> lo reemplaza CustomScrollbar, que se dibuja encima del contenido. */
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 /* Lenis styles */
 
 /* html.lenis,
