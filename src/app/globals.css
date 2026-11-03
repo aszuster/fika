@@ -60,14 +60,17 @@
   font-weight: 300;
    line-height: 3rem;
 }
+
+/* 
+size 50px
 @media screen and (min-width: 1536px) {
   .hl-lg {
     font-family: var(--font-mono);
-    font-size: 3.125rem; /*50px*/
+    font-size: 3.125rem; 
     font-weight: 300;
     line-height: 4.125rem;
   }
-}
+} */
 .hl-xl {
   font-family: var(--font-mono);
   font-size: 5rem; /*80px*/
