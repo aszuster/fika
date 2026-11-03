@@ -2,12 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 
-// Alto mínimo del thumb, para que se pueda agarrar en contenidos muy largos.
 const MIN_THUMB_HEIGHT = 40;
 
-// Sin target, sigue el scroll de la página; con target (ref a un elemento),
-// el de ese elemento. Lenis acompaña el scroll nativo, así que el arrastre
-// mueve el scroll directo.
 const getScroll = (target) => {
   if (!target) {
     const { scrollHeight, clientHeight } = document.documentElement;
@@ -22,9 +18,7 @@ const setScroll = (target, y) => {
   else window.scrollTo(0, y);
 };
 
-// Scrollbar dibujado encima del contenido (el nativo se oculta con
-// no-scrollbar), así no le resta ancho a las columnas. La posición y el alto
-// del track los define className.
+
 export default function Scrollbar({ targetRef, className = "" }) {
   const trackRef = useRef(null);
   const dragStart = useRef(null);
@@ -68,11 +62,13 @@ export default function Scrollbar({ targetRef, className = "" }) {
     scroller.addEventListener("scroll", update, { passive: true });
     window.addEventListener("resize", update);
 
-    // El alto del contenido cambia sin resize (filtros, vista, pestañas…).
+    // El alto del contenido cambia sin resize (filtros, vista, pestañas…), y
+    // el del track también (su top depende de la página).
     const content = target ?? document.body;
     const resizeObserver = new ResizeObserver(update);
     const observeChildren = () => {
       resizeObserver.disconnect();
+      resizeObserver.observe(trackRef.current);
       resizeObserver.observe(content);
       for (const child of content.children) resizeObserver.observe(child);
     };
@@ -110,7 +106,6 @@ export default function Scrollbar({ targetRef, className = "" }) {
     setIsDragging(false);
   };
 
-  // Click en el track: salta a esa posición, centrando el thumb.
   const handleTrackClick = (event) => {
     if (event.target !== event.currentTarget) return;
     const { target, maxScroll, maxThumbTop, thumbHeight } = getMetrics();
@@ -140,7 +135,7 @@ export default function Scrollbar({ targetRef, className = "" }) {
         className={`absolute right-0.5 w-1.5 rounded-full cursor-grab transition-[width,background-color] duration-200 ease-in-out group-hover:w-2 ${
           isDragging
             ? "w-2 bg-primary-00 cursor-grabbing"
-            : "bg-primary-00/40 hover:bg-primary-00/70"
+            : "bg-primary-00 hover:bg-primary-00"
         }`}
       />
     </div>

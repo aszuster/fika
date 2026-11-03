@@ -32,8 +32,8 @@ export default function RootLayout({ children }) {
       <body className="min-h-full flex flex-col">
         <Navbar />
         {children}
-        {/* Scroll de la página: arranca debajo del navbar (h-12.5). */}
-        <Scrollbar className="fixed top-12.5 right-0 h-[calc(100dvh-3.125rem)]" />
+        {/* Scroll de la página: arranca donde indica --page-scrollbar-top (globals.css). */}
+        <Scrollbar className="fixed top-(--page-scrollbar-top) right-0 h-[calc(100dvh-var(--page-scrollbar-top))]" />
         <LenisAutoResize />
       </body>
       </ReactLenis>

@@ -154,7 +154,7 @@ export default function Catalog({ products, filterOptions, initialFormat }) {
 
   return (
     <div className="bg-primary-03 h-[calc(100%-3.125rem)]">
-      <div className="sticky top-12.5 z-10 w-full bg-primary-03">
+      <div data-catalog-toolbar className="sticky top-12.5 z-10 w-full bg-primary-03">
         <div className="flex w-full justify-between items-center px-7.25  h-12.5 border-b border-primary-00">
           <div className="flex items-center gap-7.25 h-full">
             <div>
