@@ -205,11 +205,11 @@ html.lenis body {
     --viewport-height: 100lvh;
   }
 
-  /* Dónde arranca el scrollbar de la página: debajo del navbar (h-12.5). */
+  /* Scrollbar from top minus navbar */
   --page-scrollbar-top: 3.125rem;
 }
 
-/* En el catálogo arranca también debajo de la barra de filtros y vista (h-12.5). */
+/* If there's a second bar */
 :root:has([data-catalog-toolbar]) {
   --page-scrollbar-top: 6.25rem;
 }

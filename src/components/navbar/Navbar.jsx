@@ -20,6 +20,7 @@ const navItems = [
   { label: "Distribuidores", url: "/distribuidores" },
   { label: "Nosotros", url: "/nosotros" },
   { label: "Boxes", disabled: true },
+  { label: "Descargas", url: "/descargas" },
 ];
 
 const Navbar = () => {
