@@ -6,6 +6,7 @@ import Link from "next/link";
 import Arrow from "@/svg/Arrow";
 import Carousel from "@/components/carousel/Carousel";
 import BackToTop from "@/components/buttons/BackToTop";
+import ProjectImageTransition from "@/components/transitions/ProjectImageTransition";
 
 // Mockup de la galería: por ahora una sola foto repetida para ver el
 // carrusel funcionando; más adelante viene del CMS.
@@ -44,15 +45,18 @@ export default async function ProyectoPage({ params }) {
   return (
     <>
       <div className="bg-primary-03 h-[calc(100dvh-3.125rem)] flex shrink-0">
-        <div className="relative flex-1 min-w-0 h-full">
-          <Image
-            src="/img/proyectos/jorgelina.webp"
-            alt=""
-            fill
-            sizes="50vw"
-            className="object-cover"
-          />
-        </div>
+        <ProjectImageTransition slug={slug}>
+          <div className="relative flex-1 min-w-0 h-full">
+            <Image
+              src={project.image}
+              alt=""
+              fill
+              sizes="50vw"
+              loading="eager"
+              className="object-cover"
+            />
+          </div>
+        </ProjectImageTransition>
         <div className="flex-1 min-w-0 h-full bg-primary-03 flex flex-col items-center justify-between shrink-0">
           <div className="flex flex-col h-full gap-25 justify-center">
             <h2 className="text-center hl-xl uppercase mx-auto max-w-151">
@@ -145,14 +149,14 @@ export default async function ProyectoPage({ params }) {
         <div className="relative w-13 border-r border-primary-00 py-7.5"></div>
         <Link
           href="/proyectos"
-          className="group w-full py-7.5 flex justify-center items-center gap-5.75 bg-primary-03 hover:bg-primary-00 hover:text-primary-03 transition-colors duration-300 ease-in-out"
+          className="group w-full py-7.5 flex justify-center items-center gap-5.75 bg-primary-03  duration-300 ease-in-out"
         >
-          <p className="font-mono text-[40px] font-light uppercase group-hover:text-primary-01 transition-colors duration-300 ease-in-out">
+          <p className="font-mono text-[40px] font-light uppercase group-hover:text-secondary-01 transition-all duration-300 ease-in-out">
             Ver todos los proyectos
           </p>
           <Arrow
             color="currentColor"
-            className="group-hover:text-primary-01 transition-colors duration-300 ease-in-out"
+            className="group-hover:translate-x-1.5 transition-all duration-300 ease-in-out"
           />
         </Link>
         <div className="w-13 py-7.5 border-l border-primary-00"></div>

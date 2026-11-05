@@ -2,6 +2,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { getFillerCount } from "@/components/grid/GridFillers";
 import GridCross from "@/components/grid/GridCross";
+import ProjectImageTransition, {
+  PROJECT_OPEN_TRANSITION,
+} from "@/components/transitions/ProjectImageTransition";
 import { projects } from "@/data/projects";
 
 const cols = 3;
@@ -25,24 +28,29 @@ export default async function Proyectos() {
           <Link
             key={slug}
             href={`/proyectos/${slug}`}
+            transitionTypes={[PROJECT_OPEN_TRANSITION]}
             className="group bg-primary-03 flex flex-col"
           >
             <div className="h-20 shrink-0 border-b border-primary-01 w-full flex items-center justify-center">
               <p className="hl-sm uppercase">{title}</p>
             </div>
-            <div className="relative min-h-0 w-full flex-1 [container-type:size]">
-              <Image
-                src={image}
-                alt={title}
-                fill
-                sizes="34vw"
-                className={`object-cover ${imageHover} ${hoverTransition}`}
-                loading={index < cols ? "eager" : undefined}
-              />
-              <div
-                className={`absolute top-1/2 left-1/2 size-12.5 -translate-1/2 rounded-full bg-primary-03 scale-0 group-hover:scale-100 group-focus-visible:scale-100 transition-[scale] ${hoverTransition}`}
-              />
-            </div>
+            <ProjectImageTransition slug={slug}>
+              <div className="relative min-h-0 w-full flex-1 [container-type:size]">
+                {/* Mismo sizes que en la página de proyecto: así es el mismo
+                    archivo y ya está cargado cuando arranca la transición. */}
+                <Image
+                  src={image}
+                  alt={title}
+                  fill
+                  sizes="50vw"
+                  className={`object-cover ${imageHover} ${hoverTransition}`}
+                  loading={index < cols ? "eager" : undefined}
+                />
+                <div
+                  className={`absolute top-1/2 left-1/2 size-12.5 -translate-1/2 rounded-full bg-primary-03 scale-0 group-hover:scale-100 group-focus-visible:scale-100 transition-[scale] ${hoverTransition}`}
+                />
+              </div>
+            </ProjectImageTransition>
           </Link>
         ))}
 
