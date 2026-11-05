@@ -350,3 +350,50 @@ select:open {
     color: var(--color-primary-03);
   }
 }
+
+/* Transición entre páginas (PageTransition): primero sale una, después entra la otra. */
+::view-transition-old(.page-fade-out) {
+  animation: page-fade-out 200ms ease-in both;
+}
+
+::view-transition-new(.page-fade-in) {
+  animation: page-fade-in 300ms ease-out 200ms both;
+}
+
+@keyframes page-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes page-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+/* La navbar y el scroll tienen capa propia: quedan fijos y por encima del fade. */
+::view-transition-group(site-navbar),
+::view-transition-group(page-scrollbar) {
+  animation: none;
+  z-index: 1;
+}
+
+::view-transition-old(site-navbar),
+::view-transition-old(page-scrollbar) {
+  display: none;
+}
+
+::view-transition-new(site-navbar),
+::view-transition-new(page-scrollbar) {
+  animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-group(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+  }
+}
