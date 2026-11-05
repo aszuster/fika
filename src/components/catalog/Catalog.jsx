@@ -11,6 +11,7 @@ import FiltersPanel from "@/components/filters/FiltersPanel";
 import FavoriteButton from "@/components/product/FavoriteButton";
 import SignupModal from "@/components/modals/SignupModal";
 import useFavorites from "@/hooks/useFavorites";
+import { getCatalogView, saveCatalogView } from "@/utils/catalogView";
 import { priceFormatter } from "@/utils/price";
 import Search from "@/svg/Search";
 import { useLenis } from "@/utils/lenis";
@@ -119,18 +120,24 @@ const getGridItems = (allProducts, filters, query) => {
 };
 
 export default function Catalog({ products, filterOptions, initialFormat }) {
-  const initialFilters = initialFormat
-    ? { ...emptyFilters, format: [initialFormat] }
-    : emptyFilters;
+  // Lo que estaba puesto al salir del catálogo gana sobre el formato de la URL.
+  const savedView = getCatalogView();
+  const initialFilters =
+    savedView?.filters ??
+    (initialFormat ? { ...emptyFilters, format: [initialFormat] } : emptyFilters);
 
   const [cols, setCols] = useState(3);
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
   const [appliedFilters, setAppliedFilters] = useState(initialFilters);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState(savedView?.searchQuery ?? "");
   const imageSizes = `${Math.ceil(100 / cols)}vw`;
   const visibleRows = cols === 6 ? 3 : 2;
   const lenis = useLenis();
   const { isLoggedIn, isFavorited, toggleFavorite } = useFavorites();
+
+  useEffect(() => {
+    saveCatalogView({ filters: appliedFilters, searchQuery });
+  }, [appliedFilters, searchQuery]);
 
   useEffect(() => {
     if (!lenis) return;

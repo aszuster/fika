@@ -1,10 +1,13 @@
 import Link from "next/link";
 import GridCross from "@/components/grid/GridCross";
 import Button from "@/components/buttons/Button";
+import RememberFormatChooser from "@/components/catalog/RememberFormatChooser";
 
 export const formatParam = (label) => label.toLowerCase();
 // /?formato=todos: el catálogo completo, sin elegir formato.
 export const ALL_FORMATS_PARAM = "todos";
+// Con esta cookie la home ya no muestra la elección: va al catálogo completo.
+export const FORMAT_CHOOSER_SEEN_COOKIE = "fika-format-chooser-seen";
 
 // Grilla de fondo de cada formato (columnas x filas); la escala del formato
 // se lee en el tamaño de las celdas. Las filas deben ser pares: la línea del
@@ -81,12 +84,13 @@ const HalfGrid = ({ cols, rows, dashedRows }) => (
 export default function FormatChooser({ formats }) {
   return (
     <div
-      className="relative bg-primary-00 h-[calc(100dvh-3.125rem)] grid gap-px"
+      className="fixed inset-0 z-40 bg-primary-00 grid gap-px"
       style={{ gridTemplateColumns: `repeat(${formats.length}, minmax(0, 1fr))` }}
     >
+      <RememberFormatChooser cookieName={FORMAT_CHOOSER_SEEN_COOKIE} />
       {/* Saltea la elección y va al catálogo completo. */}
       <div className="absolute top-0 right-0 z-20  flex items-center  bg-primary-03 p-7.25">
-        <Button copy="Cerrar" url={`/?formato=${ALL_FORMATS_PARAM}`} variant="tertiary" className="text-[15px]!" />
+        <Button copy="Cerrar" url={`/?formato=${ALL_FORMATS_PARAM}`} variant="tertiary" className="text-[15px]!" replace />
       </div>
       {formats.map(({ label, note }, formatIndex) => {
         const {
@@ -101,6 +105,7 @@ export default function FormatChooser({ formats }) {
           <Link
             key={label}
             href={`/?formato=${encodeURIComponent(formatParam(label))}`}
+            replace
             className="group relative flex flex-col"
           >
             <HalfGrid
