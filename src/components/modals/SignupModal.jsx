@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import Button from "@/components/buttons/Button";
 import { createClient } from "@/utils/supabase/client";
+import { useIntroPlaying } from "@/utils/intro";
 import { useLenis } from "@/utils/lenis";
 import Close from "@/svg/Close";
 
@@ -22,9 +23,11 @@ const wasDismissed = () => {
 export default function SignupModal() {
   const [isOpen, setIsOpen] = useState(false);
   const lenis = useLenis();
+  const isIntroPlaying = useIntroPlaying();
 
+  // La demora empieza a contar cuando termina el intro.
   useEffect(() => {
-    if (wasDismissed()) return;
+    if (isIntroPlaying || wasDismissed()) return;
 
     const timer = setTimeout(async () => {
       const { data } = await createClient().auth.getSession();
@@ -32,7 +35,7 @@ export default function SignupModal() {
     }, DELAY_MS);
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [isIntroPlaying]);
 
   useEffect(() => {
     if (!isOpen) return;

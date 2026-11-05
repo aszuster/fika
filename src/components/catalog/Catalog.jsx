@@ -14,6 +14,7 @@ import useFavorites from "@/hooks/useFavorites";
 import { getCatalogView, saveCatalogView } from "@/utils/catalogView";
 import { priceFormatter } from "@/utils/price";
 import Search from "@/svg/Search";
+import { useIntroPlaying } from "@/utils/intro";
 import { useLenis } from "@/utils/lenis";
 
 const grids = {
@@ -133,6 +134,7 @@ export default function Catalog({ products, filterOptions, initialFormat }) {
   const imageSizes = `${Math.ceil(100 / cols)}vw`;
   const visibleRows = cols === 6 ? 3 : 2;
   const lenis = useLenis();
+  const isIntroPlaying = useIntroPlaying();
   const { isLoggedIn, isFavorited, toggleFavorite } = useFavorites();
 
   useEffect(() => {
@@ -141,13 +143,13 @@ export default function Catalog({ products, filterOptions, initialFormat }) {
 
   useEffect(() => {
     if (!lenis) return;
-    if (isFiltersOpen) {
+    if (isFiltersOpen || isIntroPlaying) {
       lenis.stop();
     } else {
       lenis.start();
     }
     return () => lenis.start();
-  }, [lenis, isFiltersOpen]);
+  }, [lenis, isFiltersOpen, isIntroPlaying]);
 
   const appliedFiltersCount = Object.values(appliedFilters).reduce(
     (count, values) => count + values.length,
