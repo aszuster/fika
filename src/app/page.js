@@ -6,6 +6,7 @@ import FormatChooser, {
   FORMAT_CHOOSER_SEEN_COOKIE,
   formatParam,
 } from "@/components/catalog/FormatChooser";
+import FormatChooserPresence from "@/components/catalog/FormatChooserPresence";
 import Intro from "@/components/intro/Intro";
 import { getFilters, getProducts } from "@/data/catalog";
 
@@ -59,28 +60,28 @@ async function HomeContent({ searchParams }) {
   );
   const selectedFormat = formats.find(({ label }) => formatParam(label) === formato);
 
-  if (isHardReload(requestHeaders)) {
-    return <FormatChooser formats={formats} />;
-  }
-
   const chooserSeen = cookieStore.has(FORMAT_CHOOSER_SEEN_COOKIE);
 
   // "Cerrar" en la elección, o volver a la home después de haberla visto: el
   // catálogo completo, sin filtrar por formato.
-  if (formato === ALL_FORMATS_PARAM || (!selectedFormat && chooserSeen)) {
-    return <Catalog key="todos" products={products} filterOptions={filterOptions} />;
-  }
-
-  if (!selectedFormat) {
-    return <FormatChooser formats={formats} />;
-  }
+  const showAllFormats =
+    formato === ALL_FORMATS_PARAM || (!selectedFormat && chooserSeen);
+  const showChooser =
+    isHardReload(requestHeaders) || (!selectedFormat && !showAllFormats);
 
   return (
-    <Catalog
-      key={selectedFormat.label}
-      products={products}
-      filterOptions={filterOptions}
-      initialFormat={selectedFormat.label}
-    />
+    <>
+      <FormatChooserPresence>
+        {showChooser && <FormatChooser formats={formats} />}
+      </FormatChooserPresence>
+      {!showChooser && (
+        <Catalog
+          key={selectedFormat?.label ?? "todos"}
+          products={products}
+          filterOptions={filterOptions}
+          initialFormat={selectedFormat?.label}
+        />
+      )}
+    </>
   );
 }
