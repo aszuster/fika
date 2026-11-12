@@ -4,8 +4,8 @@ import { useState } from "react";
 import { motion } from "motion/react";
 import Button from "@/components/buttons/Button";
 import GridFillers from "@/components/grid/GridFillers";
+import ScrollArea from "@/components/scrollbar/ScrollArea";
 import Close from "@/svg/Close";
-import { colors, materials, formats, applications } from "@/data/filters";
 
 const emptySelection = {
   color: [],
@@ -14,9 +14,7 @@ const emptySelection = {
   application: [],
 };
 
-// Same treatment as Button's "secondary" variant active state: a border
-// that's already reserved (transparent) so it doesn't shift the text when
-// it turns black on selection.
+
 const wordSelectClass = (isSelected) =>
   `border rounded-[3px] p-1 -m-1 transition-colors duration-300 ease-in-out ${
     isSelected ? "border-primary-00" : "border-transparent"
@@ -63,8 +61,17 @@ function FilterSection({
   );
 }
 
-const FiltersPanel = ({ isOpen, onApply, onClear, onClose }) => {
-  const [draft, setDraft] = useState(emptySelection);
+
+const FiltersPanel = ({
+  options,
+  initialSelection = emptySelection,
+  isOpen,
+  onApply,
+  onClear,
+  onClose,
+}) => {
+  const { colors, materials, formats, applications } = options;
+  const [draft, setDraft] = useState(initialSelection);
 
   const toggle = (category, value) => {
     setDraft((prev) => {
@@ -90,7 +97,7 @@ const FiltersPanel = ({ isOpen, onApply, onClear, onClose }) => {
       initial={false}
       animate={{ x: isOpen ? 0 : "-100%" }}
       transition={{ duration: 0.35, ease: "easeInOut" }}
-      className="absolute top-0 left-0 w-160 bg-primary-03 h-[calc(100dvh-4.5rem)] border-r border-primary-00 flex flex-col"
+      className="absolute top-0 left-0 w-160 bg-primary-03 h-[calc(100dvh-3.125rem)] border-r border-primary-00 flex flex-col"
     >
       <div className="h-12.5 shrink-0 border-b border-primary-00 flex items-center justify-between px-7.5">
         <p className="hl-xs uppercase border rounded-sm px-1.5">Filtros</p>
@@ -103,7 +110,7 @@ const FiltersPanel = ({ isOpen, onApply, onClear, onClose }) => {
           <Close />
         </button>
       </div>
-      <div className="flex-1 min-h-0 overflow-y-auto" data-lenis-prevent>
+      <ScrollArea className="flex-1">
         <div className="border-b border-primary-00">
         <FilterSection
           title="Color"
@@ -167,7 +174,7 @@ const FiltersPanel = ({ isOpen, onApply, onClear, onClose }) => {
           )}
         />
         </div>
-      </div>
+      </ScrollArea>
       <div className="w-full h-18 shrink-0 border-t border-primary-00 flex">
         <div className="w-full flex justify-center items-center border-r border-primary-00">
           <Button copy="Borrar" variant="tertiary" onClick={handleClear} />

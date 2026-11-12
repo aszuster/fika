@@ -11,6 +11,7 @@ export default function Arrow({
       height={height}
       viewBox={`0 0 ${width} ${height}`}
       fill="none"
+      className={className}
     >
 <path d="M12 0.353515L24 12.3535L12 24.3535" stroke={color}/>
 <path d="M24 12.3535L-3.57628e-07 12.3535" stroke={color}/>

@@ -5,26 +5,21 @@ import Image from "next/image";
 import { motion } from "motion/react";
 import Button from "@/components/buttons/Button";
 import Close from "@/svg/Close";
+import ScrollArea from "@/components/scrollbar/ScrollArea";
 import { addFavoriteToProject } from "@/app/mi-cuenta/actions";
-import { getProductBySlug } from "@/data/products";
 
-// Mismo patrón que FiltersPanel: siempre montado, se anima solo con el
-// transform/opacity según isOpen (nunca se desmonta), así el cierre también
-// anima y el contenido (la última variante elegida) no desaparece de golpe.
-const AddToProjectPanel = ({ isOpen, favorite, projects, onClose }) => {
+const AddToProjectPanel = ({ isOpen, favorite, projects, catalog, onClose }) => {
   const [isPending, startTransition] = useTransition();
   const [isCreating, setIsCreating] = useState(false);
   const [newProjectName, setNewProjectName] = useState("");
   const [addedProjectIds, setAddedProjectIds] = useState(new Set());
 
-  const product = favorite ? getProductBySlug(favorite.product_slug) : null;
+  const product = favorite ? catalog[favorite.product_slug] : null;
   const variant = product?.variants.find(
     (v) => v.slug === favorite?.variant_slug
   );
 
-  // Cada favorito que se abre en el panel arranca sin nada marcado como
-  // agregado — si no, al reabrir con otra variante quedaría pegado el
-  // estado "agregado" de la anterior.
+
   useEffect(() => {
     setAddedProjectIds(new Set());
     setIsCreating(false);
@@ -62,7 +57,7 @@ const AddToProjectPanel = ({ isOpen, favorite, projects, onClose }) => {
         animate={{ opacity: isOpen ? 1 : 0 }}
         transition={{ duration: 0.35, ease: "easeInOut" }}
         onClick={onClose}
-        className={`fixed inset-x-0 top-18 bottom-0 z-20 bg-primary-00/40 ${
+        className={`fixed inset-x-0 top-12.5 bottom-0 z-20 bg-primary-00/40 ${
           isOpen ? "pointer-events-auto" : "pointer-events-none"
         }`}
       />
@@ -70,7 +65,7 @@ const AddToProjectPanel = ({ isOpen, favorite, projects, onClose }) => {
         initial={false}
         animate={{ x: isOpen ? 0 : "100%" }}
         transition={{ duration: 0.35, ease: "easeInOut" }}
-        className="fixed top-18 right-0 z-30 w-160 bg-primary-03 h-[calc(100dvh-4.5rem)] border-l border-primary-00 flex flex-col"
+        className="fixed top-12.5 right-0 z-30 w-160 bg-primary-03 h-[calc(100dvh-3.125rem)] border-l border-primary-00 flex flex-col"
       >
         <div className="h-12.5 shrink-0 border-b border-primary-00 flex items-center justify-between px-7.5">
           <p className="hl-xs uppercase">Agregar a proyecto</p>
@@ -84,7 +79,7 @@ const AddToProjectPanel = ({ isOpen, favorite, projects, onClose }) => {
           </button>
         </div>
 
-        <div className="h-60 shrink-0 border-b border-primary-00 flex flex-col items-center justify-center py-10.5">
+        <div className="h-59.25 shrink-0 border-b border-primary-00 flex flex-col items-center justify-center py-10.5">
           <div className="relative h-36 w-full">
             {variant && (
               <Image
@@ -102,7 +97,7 @@ const AddToProjectPanel = ({ isOpen, favorite, projects, onClose }) => {
           <p className="by-sm font-normal! text-secondary-02">Agregá este producto a tus proyectos</p>
         </div>
 
-        <div className="flex-1 min-h-0 overflow-y-auto flex flex-col">
+        <ScrollArea className="flex-1" viewportClassName="flex flex-col">
           {projects.map((project) => (
             <div
               key={project.id}
@@ -141,7 +136,7 @@ const AddToProjectPanel = ({ isOpen, favorite, projects, onClose }) => {
               />
             </div>
           )}
-        </div>
+        </ScrollArea>
         <div className="h-24.25 shrink-0 border-t border-primary-00 flex items-center justify-center px-7.5">
           <Button
             copy="Crear nuevo proyecto"

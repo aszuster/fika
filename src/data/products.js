@@ -59,31 +59,38 @@ const productVariants = {
   "stone-convexo": [
     {
       name: "Carrara white",
-      color: "Blanco",
+      code: "ZMN4202",
+      colors: ["Blanco"],
       catalogPhoto: `${stoneConvexoImg}/carrara-white.png`,
       samplePhotos: stoneConvexoSamples,
     },
     {
       name: "Carrara brown",
-      color: "Marrón",
+      code: "YDYHDSC3",
+      colors: ["Marrón"],
       catalogPhoto: `${stoneConvexoImg}/carrara-brown.png`,
       samplePhotos: stoneConvexoSamples,
     },
     {
       name: "Travertino",
-      color: "Beige",
+      code: "ZMN4502",
+      colors: ["Beige"],
       catalogPhoto: `${stoneConvexoImg}/travertino.png`,
       samplePhotos: stoneConvexoSamples,
     },
     {
       name: "Carrara emerald",
-      color: "Verde",
+      code: "ZMN4702",
+      colors: ["Verde"],
       catalogPhoto: `${stoneConvexoImg}/carrara-emerald.png`,
       samplePhotos: stoneConvexoSamples,
     },
     {
       name: "Carrara dark green emerald",
-      color: "Verde",
+      code: "YDYHDSC2",
+      colors: ["Verde"],
+      // La aplicación de la variante pisa la del producto.
+      application: "Pared",
       catalogPhoto: `${stoneConvexoImg}/carrara-dark-green-emerald.png`,
       samplePhotos: stoneConvexoSamples,
     },
@@ -100,13 +107,22 @@ export const products = names.map((title, index) => {
   const hoverImage = withoutHoverImage.includes(slug)
     ? src
     : `/img/productos/${slug}-white.png`;
+  // Valores por defecto del producto: cada variante puede pisarlos.
+  const material = materials[index % materials.length];
+  const application = applications[index % applications.length];
   const variants = (
     productVariants[slug] ?? [
-      { name: "Estándar", color: colors[index % colors.length].label },
+      {
+        name: "Estándar",
+        code: `ZMN${4500 + index}`,
+        colors: [colors[index % colors.length].label],
+      },
     ]
   ).map((variant, variantIndex) => ({
     catalogPhoto: src,
     samplePhotos: [],
+    material,
+    application,
     slug: slugify(variant.name),
     // Precio de ejemplo — reemplazar por el precio real cuando exista.
     price: 12000 + index * 850 + variantIndex * 350,
@@ -125,14 +141,11 @@ export const products = names.map((title, index) => {
     slug,
     image: src,
     hoverImage,
-    code: `ZMN4502`,
     chipSize: `150x20 mm`,
     meshSize: "302x310 mm",
     meshesPerBox: 6,
     m2PerBox: "0,5",
-    material: materials[index % materials.length],
     format: formats[index % formats.length].label,
-    application: "Apto para piso",
     variants,
   };
 });

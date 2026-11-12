@@ -1,0 +1,24 @@
+{
+  "name": "fika-studio",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "sanity dev",
+    "build": "sanity build",
+    "deploy": "sanity deploy",
+    "extraer-wordpress": "node scripts/extraer-wordpress.mjs",
+    "importar": "sanity exec scripts/importar-excel.mjs --with-user-token --"
+  },
+  "dependencies": {
+    "@sanity/locale-es-es": "^1.2.39",
+    "@sanity/vision": "^6.20.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "sanity": "^6.20.0",
+    "styled-components": "^6.6.0"
+  },
+  "devDependencies": {
+    "exceljs": "^4.4.0"
+  }
+}

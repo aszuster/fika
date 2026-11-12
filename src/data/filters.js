@@ -22,6 +22,9 @@ export const materials = [
   "Porcelanato monomasa",
 ];
 
+// El formato es también el filtro inicial del catálogo (la escala). Skala
+// todavía no tiene productos: la página de elección debería mostrar solo los
+// formatos que tengan al menos uno, así aparece solo cuando se cargue.
 export const formats = [
   { label: "Mosaik", note: "(Pequeña escala)" },
   { label: "Brik", note: "(Mediana escala)" },

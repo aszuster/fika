@@ -4,22 +4,26 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { animate, motion, useMotionValue } from "motion/react";
 
-// Cuánto hay que arrastrar (fracción del ancho) o qué tan rápido (px/s) para
-// pasar de foto; si no, vuelve a la actual.
+
 const SWIPE_DISTANCE = 0.2;
 const SWIPE_VELOCITY = 500;
 
 const slideTransition = { duration: 0.35, ease: "easeInOut" };
 
-const Carousel = ({ images }) => {
+// dotsClassName: posición de los puntitos; por defecto la de la ficha de
+// producto, debajo del carrusel.
+const Carousel = ({
+  images,
+  sizes = "25vw",
+  dotsClassName = "absolute -bottom-13 left-1/2 -translate-0.5 shrink-0 py-4",
+}) => {
   const [index, setIndex] = useState(0);
   const [width, setWidth] = useState(0);
   const containerRef = useRef(null);
   const x = useMotionValue(0);
   const hasMany = images.length > 1;
 
-  // El desplazamiento de la tira se calcula en px, así que necesitamos el
-  // ancho real del contenedor (y actualizarlo si cambia el tamaño).
+
   useEffect(() => {
     const element = containerRef.current;
     if (!element) return;
@@ -50,7 +54,6 @@ const Carousel = ({ images }) => {
     if ((passedDistance || passedVelocity) && next !== index) {
       setIndex(next);
     } else {
-      // No alcanzó para cambiar de foto (o es un extremo): vuelve a su lugar.
       animate(x, -index * width, slideTransition);
     }
   };
@@ -75,7 +78,8 @@ const Carousel = ({ images }) => {
                 src={src}
                 alt=""
                 fill
-                sizes="25vw"
+                sizes={sizes}
+                style={{objectFit: "cover"}}
                 draggable={false}
                 className="object-contain pointer-events-none select-none"
               />
@@ -85,7 +89,7 @@ const Carousel = ({ images }) => {
       </div>
 
       {hasMany && (
-        <div className="shrink-0 flex justify-center gap-2 py-4">
+        <div className={`${dotsClassName} flex justify-center gap-2`}>
           {images.map((_, i) => (
             <button
               key={i}

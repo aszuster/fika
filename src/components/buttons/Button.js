@@ -11,6 +11,7 @@ const Button = ({
   onClick,
   disabled = false,
   variant = "primary",
+  replace = false,
 }) => {
   const isDisabled = disabled;
 
@@ -32,7 +33,8 @@ const Button = ({
     ? {
         href: url,
         target,
-        rel: target === "_blank" ? "noopener noreferrer" : undefined
+        rel: target === "_blank" ? "noopener noreferrer" : undefined,
+        ...(isInternal && { replace }),
       }
     : {
         type: type === "submit" ? "submit" : "button",

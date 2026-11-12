@@ -41,7 +41,7 @@ export default function IngresarPage() {
   };
 
   return (
-    <div className="flex h-[calc(100dvh-4.5rem)] relative">
+    <div className="flex h-[calc(100dvh-3.125rem)] relative">
       <div className="w-full h-full relative">
         <div className="grid grid-cols-2 bg-primary-01 gap-px w-full h-full">
           <div className="bg-primary-03"></div>
@@ -104,7 +104,7 @@ export default function IngresarPage() {
                     onClick={() => setShowPassword((value) => !value)}
                     className="by-sm text-secondary-02 cursor-pointer pr-5 whitespace-nowrap"
                   >
-                    {showPassword ? <Hidden/> : <Visible/>}
+                    {showPassword ? <Visible/> : <Hidden/>}
                   </button>
                 </div>
 

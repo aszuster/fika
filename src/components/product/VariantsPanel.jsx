@@ -10,10 +10,10 @@ import Carousel from "@/components/carousel/Carousel";
 import Breadcrumbs from "@/components/product/Breadcrumbs";
 import FavoriteButton from "@/components/product/FavoriteButton";
 import useFavorites from "@/hooks/useFavorites";
-import { ReactLenis } from "@/utils/lenis";
+import ScrollArea from "@/components/scrollbar/ScrollArea";
 import { priceFormatter } from "@/utils/price";
+import { getProductDetails } from "@/utils/productDetails";
 import Chevron from "@/svg/Chevron";
-
 
 const setVariantInUrl = (variantSlug, { replace = false } = {}) => {
   const params = new URLSearchParams(window.location.search);
@@ -27,12 +27,42 @@ const setVariantInUrl = (variantSlug, { replace = false } = {}) => {
   window.history[replace ? "replaceState" : "pushState"](null, "", url);
 };
 
+const MOCKUP_PRICE = 68000;
+const MOCKUP_DOWNLOADS = [
+  { label: "Plano DWG", href: null },
+  { label: "Ficha", href: null },
+  { label: "3D SKP", href: null },
+];
+const isAvailable = (variant, index) => variant.available ?? index % 2 === 0;
+
+const PriceAndAvailability = ({ variant, index, className = "" }) => {
+  const available = isAvailable(variant, index);
+
+  return (
+    <div className={`flex justify-between items-center w-full ${className}`}>
+      <div className="w-full flex gap-2">
+        <p className="btn-sm text-secondary-02">Precio sugerido</p>
+        <p className="btn-sm">
+          {priceFormatter.format(variant.price ?? MOCKUP_PRICE)}
+        </p>
+        <p className="btn-sm text-secondary-02">X M2</p>
+      </div>
+      <div
+        className={`${available ? "border border-primary-00 px-1" : "bg-primary-01 px-2"} py-0.5 rounded-sm w-auto h-auto`}
+      >
+        <p className="hl-xs uppercase h-auto whitespace-nowrap">
+          {available ? "Disponible" : "A consultar"}
+        </p>
+      </div>
+    </div>
+  );
+};
 
 const VariantsPanel = ({
   productSlug,
   productTitle,
   variants,
-  details,
+  specs,
   selectedVariantSlug = null,
   children,
 }) => {
@@ -44,12 +74,10 @@ const VariantsPanel = ({
 
   const { isLoggedIn, isFavorited, toggleFavorite } = useFavorites(productSlug);
 
-
   const goToVariant = (next) =>
-    setVariantInUrl(
-      variants[(next + variants.length) % variants.length].slug,
-      { replace: true },
-    );
+    setVariantInUrl(variants[(next + variants.length) % variants.length].slug, {
+      replace: true,
+    });
 
   const breadcrumbs = [
     { label: "Productos", href: "/" },
@@ -65,18 +93,17 @@ const VariantsPanel = ({
         <Breadcrumbs items={breadcrumbs} />
       </div>
 
-      <div className="flex h-[calc(100dvh-7.625rem)] overflow-hidden">
+      <div className="grid grid-cols-3 h-[calc(100dvh-6.25rem)] overflow-hidden">
         {children}
 
-        <ReactLenis
-          className="flex-1 overflow-y-auto"
-          data-lenis-prevent
-          options={{ orientation: "vertical" }}
+        <ScrollArea
+          className="col-span-2"
+          lenisOptions={{ orientation: "vertical" }}
         >
           {selected ? (
-            <div className="grid grid-cols-2 h-[calc(100dvh-7.625rem)]">
-              <div className="border-r border-primary-00 relative">
-                <div className="relative h-full px-10 py-15">
+            <div className="grid grid-cols-2 h-[calc(100dvh-6.25rem)]">
+              <div className="border-r border-primary-00 relative flex flex-col">
+                <div className="relative h-full w-full">
                   <Carousel
                     key={selectedIndex}
                     images={
@@ -86,16 +113,16 @@ const VariantsPanel = ({
                     }
                   />
                 </div>
-                <div className="absolute bottom-0 h-7.5 w-full border-t border-primary-01"></div>
+                <div className="h-16.25 w-full shrink-0 border-t border-primary-00"></div>
               </div>
-              <div className="flex flex-col justify-between h-full">
-                <div className="flex flex-col h-full">
-                  <div className="h-22.5 shrink-0 border-b border-primary-00 flex items-center justify-between px-6.5">
+              <div className="flex flex-col h-full">
+                <div className="flex flex-col">
+                  <div className="h-20 shrink-0 border-b border-primary-01 flex items-center justify-between px-6.5">
                     <button
                       type="button"
                       onClick={() => goToVariant(selectedIndex - 1)}
                       aria-label="Variante anterior"
-                      className="cursor-pointer h-full rotate-180 border-l border-primary-00 pl-6.5"
+                      className="cursor-pointer h-full rotate-180  pl-6.5"
                     >
                       <Chevron />
                     </button>
@@ -117,15 +144,15 @@ const VariantsPanel = ({
                       type="button"
                       onClick={() => goToVariant(selectedIndex + 1)}
                       aria-label="Variante siguiente"
-                      className="cursor-pointer h-full border-l border-primary-00 pl-6.5"
+                      className="cursor-pointer h-full  pl-6.5"
                     >
                       <Chevron />
                     </button>
                   </div>
-                  <div className="relative h-60 w-full shrink-0 grow flex flex-col items-center">
+                  <div className="relative h-auto w-full shrink-0  flex flex-col items-center">
                     {isLoggedIn && (
-                      <div className="h-12 py-2 2xl:py-0 w-full border-b border-primary-00 flex items-center justify-center gap-3">
-                        <p className="uppercase">
+                      <div className="h-10 py-2 2xl:py-0 w-full border-b border-primary-01 flex items-center justify-center gap-3">
+                        <p className="uppercase text-[14px]">
                           {isFavorited(productSlug, selected.slug)
                             ? "Quitar de favoritos"
                             : "Agregar a favoritos"}
@@ -135,12 +162,12 @@ const VariantsPanel = ({
                           onToggle={() =>
                             toggleFavorite(productSlug, selected.slug)
                           }
-                          className="w-5 2xl:w-6"
+                          className="w-5 2xl:w-5 pb-0.5"
                         />
                       </div>
                     )}
-                    <div className="h-full w-full flex justify-center items-center">
-                      <div className="relative w-40 h-full 2xl:h-70 2xl:w-72.75">
+                    <div className="h-full w-full flex justify-center items-center py-12">
+                      <div className="relative w-40 h-full 2xl:h-60 2xl:w-61.25 ">
                         <AnimatePresence mode="wait" initial={false}>
                           <motion.div
                             key={selectedIndex}
@@ -161,55 +188,59 @@ const VariantsPanel = ({
                         </AnimatePresence>
                       </div>
                     </div>
+                    <PriceAndAvailability
+                      variant={selected}
+                      index={selectedIndex}
+                      className="px-7.5 pb-6.25"
+                    />
                   </div>
-                  {isLoggedIn && (
-                    <div className="h-8 shrink-0 w-full border-t border-primary-01 flex items-center justify-center gap-2 py-6">
-                      <p className="btn-sm text-secondary-02">Precio</p>
-                      <p className="btn-sm">
-                        {priceFormatter.format(selected.price)}
-                      </p>
-                      <p className="btn-sm text-secondary-02">X M2</p>
-                    </div>
-                  )}
+                  {/* {isLoggedIn && ( */}
+
+                  {/* )} */}
                 </div>
                 <div className="border-t border-primary-00">
                   <div className="h-12.5 flex justify-center items-center border-b border-primary-01">
                     <p className="hl-xs uppercase">Ficha técnica</p>
                   </div>
-                  <div className="grid grid-cols-2 gap-px bg-primary-01">
-                    {details.map(({ label, value }) => (
-                      <Fragment key={label}>
-                        <div className="pl-1.75 py-0.5 flex items-center bg-primary-03">
-                          <p className="text-secondary-02 by-sm">{label}</p>
-                        </div>
-                        <div className="pl-1.75 flex items-center bg-primary-03">
-                          <p className="by-sm">{value}</p>
-                        </div>
-                      </Fragment>
-                    ))}
+                  <div className="grid grid-cols-2 gap-px bg-primary-01 border-b border-primary-01">
+                    {getProductDetails(specs, selected).map(
+                      ({ label, value }) => (
+                        <Fragment key={label}>
+                          <div className="pl-9.75 py-0.5 flex items-center bg-primary-03">
+                            <p className="text-secondary-02 by-sm">{label}</p>
+                          </div>
+                          <div className="pl-9.75 flex items-center bg-primary-03">
+                            <p className="by-sm">{value}</p>
+                          </div>
+                        </Fragment>
+                      ),
+                    )}
                   </div>
                 </div>
-                {selected.downloads.length > 0 && (
-                  <div className="flex w-full justify-center gap-5 bg-primary-03 border-t border-primary-00">
-                    {selected.downloads.map(({ label, href }) => (
-                      <a
-                        key={label}
-                        href={href ?? undefined}
-                        download={href ? true : undefined}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="cursor-pointer underline h-15 flex items-center justify-center  btn-sm uppercase text-primary-00 hover:text-secondary-01 transition-colors duration-300 ease-in-out"
-                      >
-                        {label}
-                      </a>
-                    ))}
-                  </div>
-                )}
+                <div className="mt-auto w-full h-16.25 shrink-0 border-t border-primary-00 flex justify-center gap-5">
+                  {(selected.downloads.length > 0
+                    ? selected.downloads
+                    : MOCKUP_DOWNLOADS
+                  ).map(({ label, href }) => (
+                    <a
+                      key={label}
+                      href={href ?? undefined}
+                      download={href ? true : undefined}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="cursor-pointer underline h-full flex items-center justify-center btn-sm uppercase text-primary-00 hover:text-secondary-01 transition-colors duration-300 ease-in-out"
+                    >
+                      {label}
+                    </a>
+                  ))}
+                </div>
               </div>
             </div>
           ) : (
-            <div className="grid grid-cols-2 gap-px bg-primary-01 auto-rows-[calc((100dvh-7.625rem-2px)/2)]">
-              {variants.map(({ name, slug, catalogPhoto, price }, index) => (
+            <div className="grid grid-cols-2 gap-px bg-primary-01 auto-rows-[calc((100dvh-6.25rem-2px)/2)]">
+              {variants.map((variant, index) => {
+                const { name, slug, catalogPhoto } = variant;
+                return (
                 <div
                   key={name}
                   role="button"
@@ -226,7 +257,9 @@ const VariantsPanel = ({
                   {hasTopCross(index, 2) && <GridCross />}
 
                   <div className="h-21.75 relative shrink-0 border-b border-primary-01 w-full flex items-center justify-center">
-                    <p className="hl-sm uppercase max-w-50 text-center 2xl:max-w-100">{name}</p>
+                    <p className="hl-sm uppercase max-w-50 text-center 2xl:max-w-100">
+                      {name}
+                    </p>
                     {isLoggedIn && (
                       <FavoriteButton
                         isFavorited={isFavorited(productSlug, slug)}
@@ -246,19 +279,20 @@ const VariantsPanel = ({
                       />
                     </div>
                   </div>
-                  {isLoggedIn && (
-                    <div className="h-8 py-7 shrink-0 w-full border-t border-primary-01 flex items-center justify-center gap-2">
-                      <p className="hl-xs uppercase text-secondary-02">Precio</p>
-                      <p className="hl-xs">{priceFormatter.format(price)}</p>
-                      <p className="hl-xs uppercase text-secondary-02">X M2</p>
-                    </div>
-                  )}
+                  {/* {isLoggedIn && ( */}
+                  <PriceAndAvailability
+                    variant={variant}
+                    index={index}
+                    className="h-8 py-7 shrink-0 px-7.5 "
+                  />
+                  {/* )} */}
                 </div>
-              ))}
+                );
+              })}
               <GridFillers items={variants} cols={2} minRows={2} crosses />
             </div>
           )}
-        </ReactLenis>
+        </ScrollArea>
       </div>
     </>
   );

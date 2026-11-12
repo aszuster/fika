@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import AccountTabs from "@/components/account/AccountTabs";
+import { getCatalogBySlug } from "@/data/catalog";
 
 export default async function MiCuentaPage() {
   const supabase = await createClient();
@@ -18,6 +19,7 @@ export default async function MiCuentaPage() {
     { data: favorites },
     { data: projects },
     { data: quoteRequests },
+    catalog,
   ] = await Promise.all([
     supabase.from("profiles").select("*").eq("id", user.id).single(),
     supabase
@@ -35,6 +37,7 @@ export default async function MiCuentaPage() {
       .select("*, quote_request_items(*)")
       .eq("user_id", user.id)
       .order("created_at", { ascending: false }),
+    getCatalogBySlug(),
   ]);
 
   return (
@@ -43,6 +46,7 @@ export default async function MiCuentaPage() {
       favorites={favorites ?? []}
       projects={projects ?? []}
       quoteRequests={quoteRequests ?? []}
+      catalog={catalog}
     />
   );
 }

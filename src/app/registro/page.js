@@ -98,7 +98,7 @@ export default function RegistroPage() {
 
   if (step === "done") {
     return (
-      <div className="flex h-[calc(100dvh-4.5rem)] relative">
+      <div className="flex h-[calc(100dvh-3.125rem)] relative">
         <div className="w-full h-full relative">
           <div className="grid grid-cols-2 bg-primary-01 gap-px w-full h-full">
             <div className="bg-primary-03"></div>
@@ -117,7 +117,7 @@ export default function RegistroPage() {
         </div>
         <div className="bg-primary-03 border-x border-primary-01 w-full h-full flex items-center justify-center">
           <div className="w-full h-full flex flex-col justify-between items-center text-center">
-            <div className="h-full flex flex-col justify-center pt-20">
+            <div className="h-full flex flex-col justify-center p-20">
               <p className="hl-sm uppercase pb-6">Gracias por registrarte</p>
               {needsEmailConfirmation ? (
                 <p className="by-sm">
@@ -167,7 +167,7 @@ export default function RegistroPage() {
   }
 
   return (
-    <div className="flex h-[calc(100dvh-4.5rem)] relative">
+    <div className="flex h-[calc(100dvh-3.125rem)] relative">
       <div className="w-full h-full relative">
         <div className="grid grid-cols-2 bg-primary-01 gap-px w-full h-full">
           <div className="bg-primary-03"></div>
@@ -245,7 +245,7 @@ export default function RegistroPage() {
                       onClick={() => setShowPassword((value) => !value)}
                       className="by-sm text-secondary-02 cursor-pointer pr-5"
                     >
-                      {showPassword ? <Hidden /> : <Visible />}
+                      {showPassword ? <Visible /> : <Hidden />}
                     </button>
                   </div>
                 </div>
@@ -267,7 +267,7 @@ export default function RegistroPage() {
                       onClick={() => setShowRepeatPassword((value) => !value)}
                       className="by-sm text-secondary-02 cursor-pointer pr-5"
                     >
-                      {showRepeatPassword ? <Hidden /> : <Visible />}
+                      {showRepeatPassword ? <Visible /> : <Hidden />}
                     </button>
                   </div>
                   {form.repeatPassword !== "" &&
@@ -357,19 +357,19 @@ export default function RegistroPage() {
 
               <div className="flex">
                 <Button
-                  copy={loading ? "Creando cuenta..." : "Crear cuenta"}
-                  type="submit"
-                  variant="primary"
-                  disabled={!isStep2Valid || loading}
-                  className={`border-x-0! border-y! border-primary-00! bg-primary-03! text-primary-00! enabled:hover:bg-primary-00! enabled:hover:text-primary-03! disabled:text-secondary-02!`}
-                />
-                <Button
                   copy="Volver"
                   type="button"
                   variant="primary"
                   onClick={() => setStep(1)}
                   disabled={loading}
                   className={`border-x-0! border-y! border-l! border-primary-00! bg-primary-03! text-primary-00! enabled:hover:bg-primary-00! enabled:hover:text-primary-03! disabled:text-secondary-02!`}
+                />
+                <Button
+                  copy={loading ? "Creando cuenta..." : "Crear cuenta"}
+                  type="submit"
+                  variant="primary"
+                  disabled={!isStep2Valid || loading}
+                  className={`border-x-0! border-y! border-primary-00! bg-primary-03! text-primary-00! enabled:hover:bg-primary-00! enabled:hover:text-primary-03! disabled:text-secondary-02!`}
                 />
               </div>
             </>

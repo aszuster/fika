@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/utils/supabase/server";
-import { getProductBySlug } from "@/data/products";
+import { getCatalogBySlug } from "@/data/catalog";
 
 async function requireUser(supabase) {
   const {
@@ -178,10 +178,10 @@ export async function requestQuote({ projectId, items: selections }) {
     throw new Error("No hay productos para cotizar.");
   }
 
-  // Los nombres lindos hoy salen de la data mock local; el día que los
-  // productos vengan de Sanity, esto se reemplaza por una consulta ahí.
+  // Los nombres lindos salen del catálogo de Sanity.
+  const catalog = await getCatalogBySlug();
   const items = selectedItems.map((item) => {
-    const product = getProductBySlug(item.product_slug);
+    const product = catalog[item.product_slug];
     const variant = product?.variants.find(
       (v) => v.slug === item.variant_slug
     );
