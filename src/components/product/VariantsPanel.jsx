@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment } from "react";
+import { Fragment, useCallback, useState } from "react";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { AnimatePresence, motion } from "motion/react";
@@ -9,12 +9,12 @@ import GridCross, { hasTopCross } from "@/components/grid/GridCross";
 import Carousel from "@/components/carousel/Carousel";
 import Breadcrumbs from "@/components/product/Breadcrumbs";
 import FavoriteButton from "@/components/product/FavoriteButton";
+import FavoritesLoginModal from "@/components/modals/FavoritesLoginModal";
 import useFavorites from "@/hooks/useFavorites";
 import useIsMobile from "@/hooks/useIsMobile";
 import ScrollArea from "@/components/scrollbar/ScrollArea";
 import { priceFormatter } from "@/utils/price";
 import { getProductDetails } from "@/utils/productDetails";
-import Chevron from "@/svg/Chevron";
 
 const setVariantInUrl = (variantSlug, { replace = false } = {}) => {
   const params = new URLSearchParams(window.location.search);
@@ -79,11 +79,14 @@ const VariantsPanel = ({
   const selected = selectedIndex !== null ? variants[selectedIndex] : null;
 
   const { isLoggedIn, isFavorited, toggleFavorite } = useFavorites(productSlug);
+  const [isFavoritesModalOpen, setIsFavoritesModalOpen] = useState(false);
+  const closeFavoritesModal = useCallback(() => setIsFavoritesModalOpen(false), []);
 
-  const goToVariant = (next) =>
-    setVariantInUrl(variants[(next + variants.length) % variants.length].slug, {
-      replace: true,
-    });
+  // Sin sesión, en vez de guardar el favorito se abre el popup para crear cuenta.
+  const handleFavorite = (variantSlug) =>
+    isLoggedIn
+      ? toggleFavorite(productSlug, variantSlug)
+      : setIsFavoritesModalOpen(true);
 
   const breadcrumbs = [
     { label: "Productos", href: "/" },
@@ -95,18 +98,10 @@ const VariantsPanel = ({
 
   // Piezas del detalle de la variante: desktop y mobile las ordenan distinto.
   const detail = selected && {
-    // Nombre de la variante con las flechas para pasar a la anterior/siguiente.
+    // Nombre de la variante (centrado) con el botón de favoritos a la derecha.
     nav: (
-      <div className="h-12.5 lg:h-20 shrink-0 border-b border-primary-01 flex items-center justify-between px-6.5">
-        <button
-          type="button"
-          onClick={() => goToVariant(selectedIndex - 1)}
-          aria-label="Variante anterior"
-          className="cursor-pointer h-full rotate-180  pl-6.5"
-        >
-          <Chevron />
-        </button>
-        <div className="relative h-full flex-1 flex items-center justify-center">
+      <div className="relative h-12.5 lg:h-20 shrink-0 border-b border-primary-01 flex items-center justify-end px-6.5">
+        <div className="absolute inset-0 px-16 flex items-center justify-center">
           <AnimatePresence mode="wait" initial={false}>
             <motion.p
               key={selectedIndex}
@@ -114,40 +109,23 @@ const VariantsPanel = ({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.25, ease: "easeInOut" }}
-              className="font-mono  hl-sm text-center uppercase absolute"
+              className="font-mono  hl-sm text-center uppercase"
             >
               {selected.name}
             </motion.p>
           </AnimatePresence>
         </div>
-        <button
-          type="button"
-          onClick={() => goToVariant(selectedIndex + 1)}
-          aria-label="Variante siguiente"
-          className="cursor-pointer h-full  pl-6.5"
-        >
-          <Chevron />
-        </button>
+        <FavoriteButton
+          isFavorited={isFavorited(productSlug, selected.slug)}
+          onToggle={() => handleFavorite(selected.slug)}
+          className="relative h-full pl-6.5"
+        />
       </div>
     ),
 
-    // Favoritos, foto de la variante, precio y disponibilidad.
+    // Foto de la variante, precio y disponibilidad.
     info: (
       <div className="relative h-auto w-full shrink-0  flex flex-col items-center">
-        {isLoggedIn && (
-          <div className="h-10 py-2 2xl:py-0 w-full max-lg:border-t lg:border-b border-primary-01 flex items-center justify-center gap-3 order-last lg:order-first">
-            <p className="uppercase text-[14px]">
-              {isFavorited(productSlug, selected.slug)
-                ? "Quitar de favoritos"
-                : "Agregar a favoritos"}
-            </p>
-            <FavoriteButton
-              isFavorited={isFavorited(productSlug, selected.slug)}
-              onToggle={() => toggleFavorite(productSlug, selected.slug)}
-              className="w-5 2xl:w-5 pb-0.5"
-            />
-          </div>
-        )}
         <div className="h-full w-full flex justify-center items-center py-12">
           <div className="relative w-40 h-40 lg:h-full 2xl:h-60 2xl:w-61.25 ">
             <AnimatePresence mode="wait" initial={false}>
@@ -307,17 +285,15 @@ const VariantsPanel = ({
 
                   <div className="h-15 lg:h-21.75 relative shrink-0 border-b border-primary-01 w-full flex items-center justify-center">
                     <p
-                      className={`${isMobile ? "hl-xs" : "hl-sm"} ${isLoggedIn ? "pl-2 pr-12.5 lg:px-0" : "px-2 lg:px-0"} uppercase max-w-50 text-center 2xl:max-w-100`}
+                      className={`${isMobile ? "hl-xs" : "hl-sm"} pl-2 pr-12.5 lg:px-0 uppercase max-w-50 text-center 2xl:max-w-100`}
                     >
                       {name}
                     </p>
-                    {isLoggedIn && (
-                      <FavoriteButton
-                        isFavorited={isFavorited(productSlug, slug)}
-                        onToggle={() => toggleFavorite(productSlug, slug)}
-                        className="absolute px-4 lg:px-8.25 right-0 h-full border-l border-primary-00"
-                      />
-                    )}
+                    <FavoriteButton
+                      isFavorited={isFavorited(productSlug, slug)}
+                      onToggle={() => handleFavorite(slug)}
+                      className="absolute px-4 lg:px-8.25 right-0 h-full border-l border-primary-00"
+                    />
                   </div>
                   <div className="min-h-0 w-full flex-1 p-5 lg:p-8">
                     <div className="relative h-full w-full">
@@ -346,6 +322,11 @@ const VariantsPanel = ({
           {mobileFooter}
         </PanelScroll>
       </div>
+
+      <FavoritesLoginModal
+        isOpen={isFavoritesModalOpen}
+        onClose={closeFavoritesModal}
+      />
     </>
   );
 };

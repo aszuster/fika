@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "motion/react";
@@ -10,6 +10,7 @@ import GridCross, { hasTopCross } from "@/components/grid/GridCross";
 import FiltersPanel from "@/components/filters/FiltersPanel";
 import FavoriteButton from "@/components/product/FavoriteButton";
 import SignupModal from "@/components/modals/SignupModal";
+import FavoritesLoginModal from "@/components/modals/FavoritesLoginModal";
 import useFavorites from "@/hooks/useFavorites";
 import { getCatalogView, saveCatalogView } from "@/utils/catalogView";
 import { priceFormatter } from "@/utils/price";
@@ -145,6 +146,8 @@ export default function Catalog({ products, filterOptions, initialFormat }) {
   const lenis = useLenis();
   const isIntroPlaying = useIntroPlaying();
   const { isLoggedIn, isFavorited, toggleFavorite } = useFavorites();
+  const [isFavoritesModalOpen, setIsFavoritesModalOpen] = useState(false);
+  const closeFavoritesModal = useCallback(() => setIsFavoritesModalOpen(false), []);
 
   useEffect(() => {
     saveCatalogView({ filters: appliedFilters, searchQuery });
@@ -272,11 +275,15 @@ export default function Catalog({ products, filterOptions, initialFormat }) {
                 className="flex h-full flex-col items-center"
               >
                 <div className={`${isMobile ? "h-15" : cols === 6 ? "h-16.25" : "h-21.75"} relative shrink-0 border-b border-primary-01 w-full flex items-center justify-center`}>
-                  <p className={` ${isVariant || isMobile ? "hl-xs max-w-50 text-center 2xl:max-w-100" : titles[cols]} ${isMobile && isVariant && isLoggedIn ? "pr-12.5 pl-2" : "px-2"} uppercase `}>{title} {subtitle}</p>
-                                {isVariant && isLoggedIn && (
+                  <p className={` ${isVariant || isMobile ? "hl-xs max-w-50 text-center 2xl:max-w-100" : titles[cols]} ${isMobile && isVariant ? "pr-12.5 pl-2" : "px-2"} uppercase `}>{title} {subtitle}</p>
+                                {isVariant && (
                 <FavoriteButton
                   isFavorited={isFavorited(productSlug, variantSlug)}
-                  onToggle={() => toggleFavorite(productSlug, variantSlug)}
+                  onToggle={() =>
+                    isLoggedIn
+                      ? toggleFavorite(productSlug, variantSlug)
+                      : setIsFavoritesModalOpen(true)
+                  }
                   className="absolute px-4 lg:px-8.25 right-0 h-full border-l border-primary-00"
                 />
               )}
@@ -327,6 +334,10 @@ export default function Catalog({ products, filterOptions, initialFormat }) {
       </div>
 
       <SignupModal />
+      <FavoritesLoginModal
+        isOpen={isFavoritesModalOpen}
+        onClose={closeFavoritesModal}
+      />
     </div>
   );
 }
