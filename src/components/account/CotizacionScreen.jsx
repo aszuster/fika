@@ -79,7 +79,7 @@ const CotizacionScreen = ({ project, catalog, onClose, onRequested }) => {
   };
 
   return (
-    <div className="fixed inset-x-0 top-12.5 bottom-0 z-50 bg-primary-03 flex flex-col">
+    <div data-lenis-prevent className="fixed inset-x-0 top-12.5 bottom-0 z-50 bg-primary-03 flex flex-col">
       <div className="h-12.5 shrink-0 border-b border-primary-00 flex items-center px-7.5">
         <button
           type="button"
