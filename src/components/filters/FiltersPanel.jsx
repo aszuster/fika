@@ -1,11 +1,13 @@
 "use client";
 
-import { useState } from "react";
-import { motion } from "motion/react";
+import { useId, useState } from "react";
+import { AnimatePresence, motion } from "motion/react";
 import Button from "@/components/buttons/Button";
 import GridFillers from "@/components/grid/GridFillers";
 import ScrollArea from "@/components/scrollbar/ScrollArea";
+import useIsMobile from "@/hooks/useIsMobile";
 import Close from "@/svg/Close";
+import Chevron from "@/svg/Chevron";
 
 const emptySelection = {
   color: [],
@@ -29,6 +31,78 @@ function FilterSection({
   onToggle,
   renderItem,
 }) {
+  // En mobile cada categoría es un acordeón de una columna; en desktop, una grilla de 2.
+  const isMobile = useIsMobile();
+  const [isExpanded, setIsExpanded] = useState(false);
+  const contentId = useId();
+
+  const options = (
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-px bg-primary-01">
+      {items.map((item, index) => {
+        const value = getValue(item);
+        const isSelected = selected.includes(value);
+
+        return (
+          <button
+            key={index}
+            type="button"
+            onClick={() => onToggle(value)}
+            aria-pressed={isSelected}
+            className="h-12.5 flex w-full items-center px-3.75 lg:px-7.5 text-left cursor-pointer bg-primary-03 hover:bg-primary-02"
+          >
+            {renderItem(item, isSelected)}
+          </button>
+        );
+      })}
+      {!isMobile && <GridFillers items={items} cols={2} />}
+    </div>
+  );
+
+  if (isMobile) {
+    return (
+      <div>
+        <button
+          type="button"
+          onClick={() => setIsExpanded((open) => !open)}
+          aria-expanded={isExpanded}
+          aria-controls={contentId}
+          className={`h-12.5 w-full flex justify-between items-center px-3.75 lg:px-7.25 border-b border-primary-00 cursor-pointer transition-colors duration-300 ease-in-out ${
+            isExpanded
+              ? "bg-primary-00 text-primary-03"
+              : "bg-primary-03 text-primary-00"
+          }`}
+        >
+          <p className="hl-xs uppercase">
+            {title}
+            {selected.length > 0 && ` (${selected.length})`}
+          </p>
+          <motion.span
+            animate={{ rotate: isExpanded ? -90 : 90 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className="flex"
+          >
+            {/* currentColor: el chevron toma el color del texto y transiciona con él. */}
+            <Chevron color="currentColor" />
+          </motion.span>
+        </button>
+        <AnimatePresence initial={false}>
+          {isExpanded && (
+            <motion.div
+              id={contentId}
+              initial={{ height: 0 }}
+              animate={{ height: "auto" }}
+              exit={{ height: 0 }}
+              transition={{ duration: 0.35, ease: "easeInOut" }}
+              className="overflow-hidden"
+            >
+              <div className="border-b border-primary-00">{options}</div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    );
+  }
+
   return (
     <div>
       <div
@@ -38,25 +112,7 @@ function FilterSection({
       >
         <p className="hl-xs uppercase">{title}</p>
       </div>
-      <div className="grid grid-cols-2 gap-px bg-primary-01">
-        {items.map((item, index) => {
-          const value = getValue(item);
-          const isSelected = selected.includes(value);
-
-          return (
-            <button
-              key={index}
-              type="button"
-              onClick={() => onToggle(value)}
-              aria-pressed={isSelected}
-              className="h-12.5 flex w-full items-center px-7.5 text-left cursor-pointer bg-primary-03 hover:bg-primary-02"
-            >
-              {renderItem(item, isSelected)}
-            </button>
-          );
-        })}
-        <GridFillers items={items} cols={2} />
-      </div>
+      {options}
     </div>
   );
 }
@@ -97,9 +153,9 @@ const FiltersPanel = ({
       initial={false}
       animate={{ x: isOpen ? 0 : "-100%" }}
       transition={{ duration: 0.35, ease: "easeInOut" }}
-      className="absolute top-0 left-0 w-160 bg-primary-03 h-[calc(100dvh-3.125rem)] border-r border-primary-00 flex flex-col"
+      className="absolute top-0 left-0 w-full lg:w-160 bg-primary-03 h-[calc(100dvh-3.125rem)] lg:border-r border-primary-00 flex flex-col"
     >
-      <div className="h-12.5 shrink-0 border-b border-primary-00 flex items-center justify-between px-7.5">
+      <div className="h-12.5 shrink-0 border-b border-primary-00 flex items-center justify-between px-7.25 lg:px-7.5">
         <p className="hl-xs uppercase border rounded-sm px-1.5">Filtros</p>
         <button
           type="button"
@@ -111,7 +167,7 @@ const FiltersPanel = ({
         </button>
       </div>
       <ScrollArea className="flex-1">
-        <div className="border-b border-primary-00">
+        <div className="lg:border-b border-primary-00">
         <FilterSection
           title="Color"
           items={colors}

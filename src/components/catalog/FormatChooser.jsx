@@ -83,9 +83,11 @@ const HalfGrid = ({ cols, rows, dashedRows }) => (
 
 export default function FormatChooser({ formats }) {
   return (
+    // En mobile los formatos van uno debajo del otro (una fila cada uno);
+    // en desktop, uno al lado del otro.
     <div
-      className="fixed inset-0 z-40 bg-primary-00 grid gap-px"
-      style={{ gridTemplateColumns: `repeat(${formats.length}, minmax(0, 1fr))` }}
+      className="fixed inset-0 z-40 bg-primary-00 grid gap-px grid-cols-1 grid-rows-[repeat(var(--format-count),minmax(0,1fr))] lg:grid-rows-1 lg:grid-cols-[repeat(var(--format-count),minmax(0,1fr))]"
+      style={{ "--format-count": formats.length }}
     >
       <RememberFormatChooser cookieName={FORMAT_CHOOSER_SEEN_COOKIE} />
       {/* Saltea la elección y va al catálogo completo. */}
@@ -114,9 +116,14 @@ export default function FormatChooser({ formats }) {
               dashedRows={dashedRows.filter((index) => index < half)}
             />
             {/* Línea del medio. Desde la segunda columna, lleva la cruz en su
-                borde izquierdo: el cruce con la línea entre columnas. */}
+                borde izquierdo: el cruce con la línea entre columnas. En mobile
+                no hay línea vertical entre formatos, así que no hay cruce. */}
             <div className="relative z-5 h-px shrink-0 bg-primary-00">
-              {formatIndex > 0 && <GridCross />}
+              {formatIndex > 0 && (
+                <div className="hidden lg:contents">
+                  <GridCross />
+                </div>
+              )}
             </div>
             <HalfGrid
               cols={cols}

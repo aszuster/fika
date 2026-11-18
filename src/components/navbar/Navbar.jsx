@@ -1,11 +1,12 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import Button from "../buttons/Button";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 import Plus from "@/svg/Plus";
+import MobileMenu, { MenuToggle } from "./MobileMenu";
 
 const navItems = [
   {
@@ -26,6 +27,8 @@ const navItems = [
 const Navbar = () => {
   const pathname = usePathname();
   const [isLoggedIn, setIsLoggedIn] = useState(null);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const closeMenu = useCallback(() => setIsMenuOpen(false), []);
 
   useEffect(() => {
     const supabase = createClient();
@@ -44,12 +47,12 @@ const Navbar = () => {
   }, []);
 
   return (
-    <nav className="sticky top-0 z-20 h-12.5 px-7.25 border-b border-primary-00 bg-primary-03 [view-transition-name:site-navbar]">
+    <nav className="sticky top-0 z-20 h-12.5 px-3.75 lg:px-7.25 border-b border-primary-00 bg-primary-03 [view-transition-name:site-navbar]">
       <div className="flex justify-between w-full h-full items-center relative">
-        <Link href="/">
+        <Link href="/" onClick={closeMenu}>
           <Image src="/img/logo.svg" width={67} height={25} alt="Fika logo" />
         </Link>
-        <div>
+        <div className="hidden lg:block">
           <ul className="flex gap-10.5 absolute top-1/2 left-1/2 -translate-1/2">
             {navItems.map(({ label, url, isActive, disabled }) => {
               if (disabled) {
@@ -78,7 +81,13 @@ const Navbar = () => {
             })}
           </ul>
         </div>
-        <div className=" h-full flex items-center ">
+        <div className="h-full flex items-center lg:hidden">
+          <MenuToggle
+            isOpen={isMenuOpen}
+            onClick={() => setIsMenuOpen((open) => !open)}
+          />
+        </div>
+        <div className="h-full hidden lg:flex items-center">
           {isLoggedIn && (
             <Link
               href="/mi-cuenta?tab=favoritos"
@@ -103,6 +112,13 @@ const Navbar = () => {
           </div>
         </div>
       </div>
+      <MobileMenu
+        isOpen={isMenuOpen}
+        onClose={closeMenu}
+        items={navItems}
+        pathname={pathname}
+        isLoggedIn={isLoggedIn}
+      />
     </nav>
   );
 };
