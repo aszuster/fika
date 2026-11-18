@@ -13,7 +13,9 @@ import FavoritesLoginModal from "@/components/modals/FavoritesLoginModal";
 import useFavorites from "@/hooks/useFavorites";
 import useIsMobile from "@/hooks/useIsMobile";
 import ScrollArea from "@/components/scrollbar/ScrollArea";
+import AvailabilityTag from "@/components/product/AvailabilityTag";
 import { priceFormatter } from "@/utils/price";
+import { getVariantPrice, isVariantAvailable } from "@/utils/variantMockup";
 import { getProductDetails } from "@/utils/productDetails";
 
 const setVariantInUrl = (variantSlug, { replace = false } = {}) => {
@@ -28,38 +30,24 @@ const setVariantInUrl = (variantSlug, { replace = false } = {}) => {
   window.history[replace ? "replaceState" : "pushState"](null, "", url);
 };
 
-const MOCKUP_PRICE = 68000;
 const MOCKUP_DOWNLOADS = [
   { label: "Plano DWG", href: null },
   { label: "Ficha", href: null },
   { label: "3D SKP", href: null },
 ];
-const isAvailable = (variant, index) => variant.available ?? index % 2 === 0;
 
-const PriceAndAvailability = ({ variant, index, className = "" }) => {
-  const available = isAvailable(variant, index);
-
-  return (
-    <div
-      className={`flex flex-col gap-2 lg:flex-row lg:justify-between items-center w-full ${className}`}
-    >
-      <div className="w-full flex flex-wrap justify-center lg:justify-start gap-x-2">
-        <p className="btn-sm text-secondary-02">Precio sugerido</p>
-        <p className="btn-sm">
-          {priceFormatter.format(variant.price ?? MOCKUP_PRICE)}
-        </p>
-        <p className="btn-sm text-secondary-02">X M2</p>
-      </div>
-      <div
-        className={`${available ? "border border-primary-00 px-1 lg:px-1" : "bg-primary-01 px-1 lg:px-2"} py-0 lg:py-0.5 rounded-sm w-auto h-auto`}
-      >
-        <p className="hl-xs uppercase h-auto whitespace-nowrap">
-          {available ? "Disponible" : "A consultar"}
-        </p>
-      </div>
+const PriceAndAvailability = ({ variant, index, className = "" }) => (
+  <div
+    className={`flex flex-col gap-2 lg:flex-row lg:justify-between items-center w-full ${className}`}
+  >
+    <div className="w-full flex flex-wrap justify-center lg:justify-start gap-x-2">
+      <p className="btn-sm text-secondary-02">Precio sugerido</p>
+      <p className="btn-sm">{priceFormatter.format(getVariantPrice(variant))}</p>
+      <p className="btn-sm text-secondary-02">X M2</p>
     </div>
-  );
-};
+    <AvailabilityTag available={isVariantAvailable(variant, index)} />
+  </div>
+);
 
 const VariantsPanel = ({
   productSlug,
