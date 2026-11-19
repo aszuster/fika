@@ -255,11 +255,18 @@ html.lenis body {
 
   /* Scrollbar from top minus navbar */
   --page-scrollbar-top: 3.125rem;
+  /* Scrollbar from bottom (a fixed bottom bar) */
+  --page-scrollbar-bottom: 0rem;
 }
 
 /* If there's a second bar */
 :root:has([data-catalog-toolbar]) {
   --page-scrollbar-top: 6.25rem;
+}
+
+/* If there's a fixed bottom bar (muestras/elegir) */
+:root:has([data-bottom-toolbar]) {
+  --page-scrollbar-bottom: 3.125rem;
 }
 
 /* Con el menú mobile abierto (MobileMenu.jsx) la página no scrollea: se oculta

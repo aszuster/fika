@@ -15,12 +15,11 @@ const navItems = [
     isActive: (pathname) =>
       pathname === "/" || pathname.startsWith("/productos"),
   },
-  // Colecciones y Boxes todavía no están disponibles: se muestran en gris y sin link.
-  { label: "Colecciones", disabled: true },
+  // { label: "Colecciones", disabled: true },
   { label: "Proyectos", url: "/proyectos" },
   { label: "Distribuidores", url: "/distribuidores" },
   { label: "Nosotros", url: "/nosotros" },
-  { label: "Boxes", disabled: true },
+  { label: "Muestras", url: "/muestras" },
   { label: "Descargas", url: "/descargas" },
 ];
 

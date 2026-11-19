@@ -33,8 +33,8 @@ export default function RootLayout({ children }) {
       <body className="min-h-full flex flex-col">
         <Navbar />
         <PageTransition>{children}</PageTransition>
-        {/* Scroll de la página: arranca donde indica --page-scrollbar-top (globals.css). */}
-        <Scrollbar className="page-scrollbar fixed top-(--page-scrollbar-top) right-0 h-[calc(100dvh-var(--page-scrollbar-top))] [view-transition-name:page-scrollbar]" />
+        {/* Scroll de la página: va de --page-scrollbar-top a --page-scrollbar-bottom (globals.css). */}
+        <Scrollbar className="page-scrollbar fixed top-(--page-scrollbar-top) right-0 h-[calc(100dvh-var(--page-scrollbar-top)-var(--page-scrollbar-bottom))] [view-transition-name:page-scrollbar]" />
         <LenisAutoResize />
       </body>
       </ReactLenis>
