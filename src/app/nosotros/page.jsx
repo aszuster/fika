@@ -3,6 +3,7 @@ import Image from "next/image";
 import Button from "@/components/buttons/Button";
 import BackToTop from "@/components/buttons/BackToTop";
 import Misc from "@/svg/Misc";
+import Phone from "@/svg/Phone";
 
 export default async function Nosotros() {
   return (
@@ -170,16 +171,33 @@ export default async function Nosotros() {
       </div>
       <div className="flex flex-col">
         <div className="bg-primary-03 px-12.5 pt-25">
-          <Image src="/img/logo.svg" width={67} height={25} className="w-full h-auto" alt="" />
+          <Image
+            src="/img/logo.svg"
+            width={67}
+            height={25}
+            className="w-full h-auto"
+            alt=""
+          />
         </div>
         <div className="h-full flex justify-between relative px-12.5 py-12.5">
           <div className="flex gap-10">
-            <a href="" className="hl-xs underline uppercase transition-all duration-300 hover:text-secondary-01">
+            <a
+              href=""
+              className="hl-xs underline uppercase transition-all duration-300 hover:text-secondary-01"
+            >
               Instagram
             </a>
-            <a href="mailto:info@fikarevestimientos.com" target="_blank" className="hl-xs underline uppercase transition-all duration-300 hover:text-secondary-01">
+            <a
+              href="mailto:info@fikarevestimientos.com"
+              target="_blank"
+              className="hl-xs underline uppercase transition-all duration-300 hover:text-secondary-01"
+            >
               info@fikarevestimientos.com
             </a>
+            <div className="flex items-center gap-2">
+              <Phone />
+              <a href="tel:+5491124768416" className="hl-xs underline uppercase transition-all duration-300 hover:text-secondary-01">+549 1124768416</a>
+            </div>
           </div>
           <div>
             <BackToTop className="hl-xs underline uppercase flex transition-all duration-300 hover:text-secondary-01" />
