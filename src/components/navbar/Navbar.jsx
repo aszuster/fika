@@ -19,7 +19,7 @@ const navItems = [
   { label: "Proyectos", url: "/proyectos" },
   { label: "Distribuidores", url: "/distribuidores" },
   { label: "Nosotros", url: "/nosotros" },
-  { label: "Muestras", url: "/muestras" },
+  { label: "Muestras", url: "/muestras", requiresAuth: true },
   { label: "Descargas", url: "/descargas" },
 ];
 
@@ -45,6 +45,11 @@ const Navbar = () => {
     return () => listener.subscription.unsubscribe();
   }, []);
 
+  // Los ítems con requiresAuth solo se muestran con la sesión iniciada.
+  const visibleItems = navItems.filter(
+    ({ requiresAuth }) => !requiresAuth || isLoggedIn,
+  );
+
   return (
     <nav className="sticky top-0 z-20 h-12.5 px-3.75 lg:px-7.25 border-b border-primary-00 bg-primary-03 [view-transition-name:site-navbar]">
       <div className="flex justify-between w-full h-full items-center relative">
@@ -53,7 +58,7 @@ const Navbar = () => {
         </Link>
         <div className="hidden lg:block">
           <ul className="flex gap-10.5 absolute top-1/2 left-1/2 -translate-1/2">
-            {navItems.map(({ label, url, isActive, disabled }) => {
+            {visibleItems.map(({ label, url, isActive, disabled }) => {
               if (disabled) {
                 return (
                   <li key={label} className="relative">
@@ -114,7 +119,7 @@ const Navbar = () => {
       <MobileMenu
         isOpen={isMenuOpen}
         onClose={closeMenu}
-        items={navItems}
+        items={visibleItems}
         pathname={pathname}
         isLoggedIn={isLoggedIn}
       />
