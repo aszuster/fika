@@ -128,7 +128,7 @@ export default function ElegirMuestras({ chips }) {
         data-catalog-toolbar
         className="sticky top-12.5 z-10 w-full h-12.5 bg-primary-03 border-b border-primary-00 flex items-center px-3.75 lg:px-7.25"
       >
-        <p className="by-sm">{chips.length} chips disponibles</p>
+        <p className="by-sm text-[14px]! mx-auto">{chips.length} chips disponibles</p>
       </div>
 
       {/* Grilla de chips: las líneas son el fondo gris que se ve por el gap. */}
@@ -158,10 +158,17 @@ export default function ElegirMuestras({ chips }) {
               />
               <span
                 aria-hidden="true"
-                className={`absolute top-3 left-3 size-4 border border-primary-00 transition-colors duration-300 peer-focus-visible:outline peer-focus-visible:outline-offset-2 peer-focus-visible:outline-primary-00 ${
+                className={`absolute top-5.5 left-5.5 size-4.5 flex items-center justify-center border border-primary-00 transition-colors duration-300 peer-focus-visible:outline peer-focus-visible:outline-offset-2 peer-focus-visible:outline-primary-00 ${
                   isSelected ? "bg-primary-00" : "bg-primary-03"
                 } ${isDisabled ? "opacity-30" : ""}`}
-              />
+              >
+                {/* Punto central de 2px: oscuro sin seleccionar, blanco al seleccionar. */}
+                <span
+                  className={`size-0.5 transition-colors duration-300 ${
+                    isSelected ? "bg-white" : "bg-primary-00"
+                  }`}
+                />
+              </span>
 
               <div className="min-h-0 w-full flex-1 p-8 lg:p-10">
                 <div className="relative h-full w-full">
@@ -177,9 +184,9 @@ export default function ElegirMuestras({ chips }) {
                 </div>
               </div>
 
-              <div className="shrink-0 w-full border-t border-primary-01 px-2 py-3 flex items-center justify-center">
-                <p className="hl-xs uppercase text-center">
-                  {productTitle} {variantName}
+              <div className="shrink-0 w-full px-5.5 pb-5.5 flex">
+                <p className="hl-xs uppercase leading-5!">
+                  {productTitle} <br/> {variantName}
                 </p>
               </div>
             </label>
@@ -191,15 +198,17 @@ export default function ElegirMuestras({ chips }) {
       {/* Barra inferior fija con la selección.
           data-bottom-toolbar hace que el scroll de la página termine arriba
           de esta barra (ver globals.css). */}
-      <div data-bottom-toolbar className="sticky bottom-0 z-10 w-full h-12.5 bg-primary-03 border-t border-primary-00 flex items-center justify-between gap-6 pl-3.75 lg:pl-7.25">
-        <div className="flex items-center gap-4 min-w-0">
-          <div className="flex items-center gap-1 shrink-0">
+      <div data-bottom-toolbar className="sticky bottom-0 z-10 w-full h-16.25 bg-primary-03 border-t border-primary-00 flex items-center justify-between gap-6">
+        {/* El padding va acá y no en la barra: si no, el w-1/3 de los botones
+            se calcula sobre el ancho sin padding y no coincide con el panel. */}
+        <div className="flex items-center gap-4 min-w-0 pl-3.75 lg:pl-7.25">
+          <div className="flex items-center gap-2 shrink-0">
             {Array.from({ length: MAX_MUESTRAS }, (_, index) => {
               const chip = chipsByKey[selected[index]];
               return (
                 <span
                   key={index}
-                  className="group relative size-2.5 border border-primary-00 bg-transparent transition-colors duration-300"
+                  className="group relative size-6.25 flex items-center justify-center border border-primary-00 bg-transparent transition-colors duration-300"
                   // Lleno: color principal de la variante (negro si no tiene).
                   style={
                     chip
@@ -207,11 +216,17 @@ export default function ElegirMuestras({ chips }) {
                       : undefined
                   }
                 >
+                  {/* Círculo central de 3px: negro vacío, blanco lleno. */}
+                  <span
+                    className={`size-0.75 rounded-full transition-colors duration-300 ${
+                      chip ? "bg-white" : "bg-primary-00"
+                    }`}
+                  />
                   {/* Tooltip con el chip elegido (solo en cuadrados llenos).
                       Alineado a la izquierda del cuadrado para que no se
                       salga de la pantalla en los primeros. */}
                   {chip && (
-                    <span className="pointer-events-none absolute bottom-full left-0 mb-2 whitespace-nowrap bg-primary-00 text-primary-03 by-sm uppercase px-2 py-1 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+                    <span className="pointer-events-none absolute bottom-full left-0 mb-2 whitespace-nowrap bg-primary-00 text-primary-03 by-sm text-[12px]! px-2 py-1 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
                       {chip.productTitle} {chip.variantName}
                     </span>
                   )}
@@ -219,14 +234,14 @@ export default function ElegirMuestras({ chips }) {
               );
             })}
           </div>
-          <p className="by-sm shrink-0">
-            ({selected.length}/{MAX_MUESTRAS}) chips
+          <p className="hl-xs text-[14px]! uppercase shrink-0 ">
+            {selected.length}/{MAX_MUESTRAS} chips
           </p>
           {sendError ? (
-            <p className="by-sm text-[#A20000] truncate">{sendError}</p>
+            <p className="by-sm text-[14px]! text-[#A20000] truncate">{sendError}</p>
           ) : (
-            <p className="by-sm text-secondary-01 truncate">
-              Elegí hasta {MAX_MUESTRAS} muestras para tu box
+            <p className="by-sm text-[14px]! text-primary-00 truncate pl-8.5">
+              Elegí hasta <span className="font-medium!">{MAX_MUESTRAS} muestras</span> para tu box
             </p>
           )}
         </div>
