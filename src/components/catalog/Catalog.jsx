@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "motion/react";
@@ -10,18 +10,24 @@ import GridCross, { hasTopCross } from "@/components/grid/GridCross";
 import FiltersPanel from "@/components/filters/FiltersPanel";
 import FavoriteButton from "@/components/product/FavoriteButton";
 import SignupModal from "@/components/modals/SignupModal";
+import FavoritesLoginModal from "@/components/modals/FavoritesLoginModal";
 import useFavorites from "@/hooks/useFavorites";
 import { getCatalogView, saveCatalogView } from "@/utils/catalogView";
 import { priceFormatter } from "@/utils/price";
 import Search from "@/svg/Search";
+import Filter from "@/svg/Filter";
 import { useIntroPlaying } from "@/utils/intro";
 import { useLenis } from "@/utils/lenis";
+import useIsMobile from "@/hooks/useIsMobile";
+
+// En mobile la grilla es siempre de 2 columnas; las vistas son solo de desktop.
+const MOBILE_COLS = 2;
 
 const grids = {
-  3: "grid-cols-3",
-  4: "grid-cols-4",
-  5: "grid-cols-5",
-  6: "grid-cols-6",
+  3: "lg:grid-cols-3",
+  4: "lg:grid-cols-4",
+  5: "lg:grid-cols-5",
+  6: "lg:grid-cols-6",
 };
 
 
@@ -35,8 +41,8 @@ const titles = {
 };
 
 const autoRaws = {
-  2: "auto-rows-[calc((100dvh-6.25rem-2px)/2)]",
-  3: "auto-rows-[calc((100dvh-6.25rem-2px)/3)]",
+  2: "lg:auto-rows-[calc((100dvh-6.25rem-2px)/2)]",
+  3: "lg:auto-rows-[calc((100dvh-6.25rem-2px)/3)]",
 };
 
 const emptyFilters = {
@@ -127,15 +133,21 @@ export default function Catalog({ products, filterOptions, initialFormat }) {
     savedView?.filters ??
     (initialFormat ? { ...emptyFilters, format: [initialFormat] } : emptyFilters);
 
-  const [cols, setCols] = useState(3);
+  const [desktopCols, setDesktopCols] = useState(3);
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
   const [appliedFilters, setAppliedFilters] = useState(initialFilters);
   const [searchQuery, setSearchQuery] = useState(savedView?.searchQuery ?? "");
-  const imageSizes = `${Math.ceil(100 / cols)}vw`;
-  const visibleRows = cols === 6 ? 3 : 2;
+  const isMobile = useIsMobile();
+  // Columnas reales en pantalla (las usan las cruces y los rellenos de la grilla).
+  const cols = isMobile ? MOBILE_COLS : desktopCols;
+  const imageSizes = `(max-width: 1023px) ${Math.ceil(100 / MOBILE_COLS)}vw, ${Math.ceil(100 / desktopCols)}vw`;
+  const desktopVisibleRows = desktopCols === 6 ? 3 : 2;
+  const visibleRows = isMobile ? 2 : desktopVisibleRows;
   const lenis = useLenis();
   const isIntroPlaying = useIntroPlaying();
   const { isLoggedIn, isFavorited, toggleFavorite } = useFavorites();
+  const [isFavoritesModalOpen, setIsFavoritesModalOpen] = useState(false);
+  const closeFavoritesModal = useCallback(() => setIsFavoritesModalOpen(false), []);
 
   useEffect(() => {
     saveCatalogView({ filters: appliedFilters, searchQuery });
@@ -164,21 +176,32 @@ export default function Catalog({ products, filterOptions, initialFormat }) {
   return (
     <div className="bg-primary-03 h-[calc(100%-3.125rem)]">
       <div data-catalog-toolbar className="sticky top-12.5 z-10 w-full bg-primary-03">
-        <div className="flex w-full justify-between items-center px-7.25  h-12.5 border-b border-primary-00">
-          <div className="flex items-center gap-7.25 h-full">
-            <div>
+        <div className="flex  w-full justify-between items-center px-3.75 lg:px-7.25  h-12.5 border-b border-primary-00">
+          <div className="flex flex-row-reverse lg:flex-row  items-center gap-7.25 h-full min-w-0 flex-1 lg:flex-none">
+            <div className="shrink-0">
               <Button
                 copy={
-                  appliedFiltersCount > 0
-                    ? `Filtros (${appliedFiltersCount})`
-                    : "Filtros"
+                  <>
+                    {/* Mobile: ícono (con la cantidad de filtros aplicados). */}
+                    <span className="lg:hidden flex items-center gap-1.5">
+                      <Filter />
+                      <span className="sr-only">Filtros</span>
+                      {appliedFiltersCount > 0 && `(${appliedFiltersCount})`}
+                    </span>
+                    {/* Desktop: texto. */}
+                    <span className="hidden lg:inline">
+                      {appliedFiltersCount > 0
+                        ? `Filtros (${appliedFiltersCount})`
+                        : "Filtros"}
+                    </span>
+                  </>
                 }
                 url=""
                 variant="secondary"
                 onClick={() => setIsFiltersOpen((open) => !open)}
               />
             </div>
-            <div className="border-l border-primary-00 pl-7.25 h-full flex items-center">
+            <div className="lg:border-l border-primary-00 lg:pl-7.25 h-full flex items-center min-w-0 flex-1 lg:flex-none">
               <Search />
               <input
                 type="text"
@@ -186,12 +209,12 @@ export default function Catalog({ products, filterOptions, initialFormat }) {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="¿Qué estás buscando?"
                 aria-label="Buscar productos"
-                className="by-sm w-56 bg-transparent outline-none placeholder:text-primary-00 pl-2.5"
+                className="by-sm w-full min-w-0 lg:w-56 bg-transparent outline-none placeholder:text-transparent lg:placeholder:text-primary-00 pl-2.5"
               />
             </div>
           </div>
 
-          <div className="flex h-full items-center gap-8  pl-7.25">
+          <div className="hidden lg:flex h-full items-center gap-8  pl-7.25">
             {/* Testing de cambio de tipografía a más chico en 12px */}
             <p className="font-mono text-[14px] uppercase">Vista</p>
             <input
@@ -199,8 +222,8 @@ export default function Catalog({ products, filterOptions, initialFormat }) {
               min={0}
               max={viewCols.length - 1}
               step={1}
-              value={viewCols.indexOf(cols)}
-              onChange={(e) => setCols(viewCols[Number(e.target.value)])}
+              value={viewCols.indexOf(desktopCols)}
+              onChange={(e) => setDesktopCols(viewCols[Number(e.target.value)])}
               aria-label="Zoom de la grilla"
               className="range-cols w-34.25"
             />
@@ -230,7 +253,7 @@ export default function Catalog({ products, filterOptions, initialFormat }) {
 
       <div>
         <div
-          className={`grid ${grids[cols]} gap-px bg-primary-01 ${autoRaws[visibleRows]}`}
+          className={`grid grid-cols-2 auto-rows-[calc((100dvh-6.25rem-2px)/2)] ${grids[desktopCols]} ${autoRaws[desktopVisibleRows]} gap-px bg-primary-01`}
         >
           {gridItems.map(({ key, href, title, subtitle, image: src, hoverImage, productSlug, variantSlug, price }, index) => {
             const isVariant = Boolean(variantSlug);
@@ -251,17 +274,21 @@ export default function Catalog({ products, filterOptions, initialFormat }) {
                 href={href}
                 className="flex h-full flex-col items-center"
               >
-                <div className={`${cols === 6 ? "h-16.25" : "h-21.75"} relative shrink-0 border-b border-primary-01 w-full flex items-center justify-center`}>
-                  <p className={` ${isVariant ? "hl-xs max-w-50 text-center 2xl:max-w-100" : titles[cols]}  uppercase `}>{title} {subtitle}</p>
-                                {isVariant && isLoggedIn && (
+                <div className={`${isMobile ? "h-15" : cols === 6 ? "h-16.25" : "h-21.75"} relative shrink-0 border-b border-primary-01 w-full flex items-center justify-center`}>
+                  <p className={` ${isVariant || isMobile ? "hl-xs max-w-50 text-center 2xl:max-w-100" : titles[cols]} ${isMobile && isVariant ? "pr-12.5 pl-2" : "px-2"} uppercase `}>{title} {subtitle}</p>
+                                {isVariant && (
                 <FavoriteButton
                   isFavorited={isFavorited(productSlug, variantSlug)}
-                  onToggle={() => toggleFavorite(productSlug, variantSlug)}
-                  className="absolute px-8.25 right-0 h-full border-l border-primary-00"
+                  onToggle={() =>
+                    isLoggedIn
+                      ? toggleFavorite(productSlug, variantSlug)
+                      : setIsFavoritesModalOpen(true)
+                  }
+                  className="absolute px-4 lg:px-8.25 right-0 h-full border-l border-primary-00"
                 />
               )}
                 </div>
-                <div className="min-h-0 w-full flex-1 p-12">
+                <div className="min-h-0 w-full flex-1 p-5 lg:p-12">
                   <div className="relative h-full w-full">
                     <Image
                       src={src}
@@ -307,6 +334,10 @@ export default function Catalog({ products, filterOptions, initialFormat }) {
       </div>
 
       <SignupModal />
+      <FavoritesLoginModal
+        isOpen={isFavoritesModalOpen}
+        onClose={closeFavoritesModal}
+      />
     </div>
   );
 }

@@ -3,6 +3,13 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/utils/supabase/server";
 import { getCatalogBySlug } from "@/data/catalog";
+import { priceFormatter } from "@/utils/price";
+import {
+  escapeHtml,
+  formatDateTime,
+  getCompanyEmails,
+  sendEmail,
+} from "@/utils/email";
 
 async function requireUser(supabase) {
   const {
@@ -211,6 +218,107 @@ export async function requestQuote({ projectId, items: selections }) {
 
   if (countError) throw new Error(countError.message);
 
+  // Aviso por mail a la empresa, que después le manda el presupuesto al
+  // cliente por su cuenta. El pedido ya quedó guardado: si el mail falla no
+  // se corta el flujo (queda registrado en la consola del servidor).
+  await sendQuoteEmail({
+    supabase,
+    user,
+    project,
+    items,
+    catalog,
+    number: count,
+  });
+
   revalidatePath("/mi-cuenta");
   return { quoteRequestId: data, number: count };
+}
+
+async function sendQuoteEmail({ supabase, user, project, items, catalog, number }) {
+  try {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("*")
+      .eq("id", user.id)
+      .single();
+
+    const location = [profile?.city, profile?.state_province, profile?.country]
+      .filter(Boolean)
+      .join(", ");
+    const contactRows = [
+      ["Nombre", profile?.full_name],
+      ["Mail", user.email],
+      ["Teléfono", profile?.phone],
+      ["Actividad profesional", profile?.professional_activity],
+      ["Empresa", profile?.company],
+      ["Web / Instagram", profile?.website_or_instagram],
+      ["Ubicación", location],
+    ];
+
+    // Precio de lista solo si la variante lo tiene cargado en Sanity.
+    const lines = items.map((item) => {
+      const price = catalog[item.product_slug]?.variants.find(
+        (v) => v.slug === item.variant_slug,
+      )?.price;
+      return {
+        name: `${item.product_title} ${item.variant_name}`,
+        quantity: item.quantity,
+        price: typeof price === "number" ? price : null,
+      };
+    });
+    const formatLinePrice = ({ price, quantity }) =>
+      price == null
+        ? ""
+        : `${priceFormatter.format(price)} x M2 = ${priceFormatter.format(price * quantity)}`;
+
+    const date = formatDateTime();
+    const clientName = profile?.full_name || user.email;
+    const requestLabel = `Solicitud #${String(number).padStart(2, "0")}`;
+
+    await sendEmail({
+      label: "cotizacion",
+      to: getCompanyEmails("COTIZACIONES_EMAIL_TO"),
+      replyTo: user.email,
+      subject: `Pedido de cotización – ${project.name} – ${clientName}`,
+      text: [
+        `Pedido de cotización (${date})`,
+        `Proyecto: ${project.name} (${requestLabel} del cliente)`,
+        "",
+        "Datos del cliente",
+        ...contactRows.map(([label, value]) => `${label}: ${value || "-"}`),
+        "",
+        "Productos",
+        ...lines.map((line, index) => {
+          const price = formatLinePrice(line);
+          return `${index + 1}. ${line.name} — ${line.quantity} M2${price ? ` (${price})` : ""}`;
+        }),
+      ].join("\n"),
+      html: `
+        <h2>Pedido de cotización</h2>
+        <p>${escapeHtml(date)}<br />
+        Proyecto: <strong>${escapeHtml(project.name)}</strong> (${escapeHtml(requestLabel)} del cliente)</p>
+        <h3>Datos del cliente</h3>
+        <table cellpadding="4">
+          ${contactRows
+            .map(
+              ([label, value]) =>
+                `<tr><td><strong>${escapeHtml(label)}</strong></td><td>${escapeHtml(value || "-")}</td></tr>`,
+            )
+            .join("")}
+        </table>
+        <h3>Productos</h3>
+        <table cellpadding="4" border="1" style="border-collapse: collapse">
+          <tr><th>#</th><th>Producto</th><th>M2</th><th>Precio de lista</th></tr>
+          ${lines
+            .map(
+              (line, index) =>
+                `<tr><td>${index + 1}</td><td>${escapeHtml(line.name)}</td><td>${escapeHtml(line.quantity)}</td><td>${escapeHtml(formatLinePrice(line) || "-")}</td></tr>`,
+            )
+            .join("")}
+        </table>
+      `,
+    });
+  } catch (error) {
+    console.error("[cotizacion] Error al armar el mail", error);
+  }
 }

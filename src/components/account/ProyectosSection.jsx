@@ -301,8 +301,8 @@ const ProyectosSection = ({ projects, quoteRequests, catalog }) => {
                 ))}
               </div>
             </div>
-            <div className="h-24.25 shrink-0" />
-            <div className="fixed bottom-0 inset-x-0 z-10 h-24.25 bg-primary-03 border-t border-primary-00 flex items-center justify-between gap-4 pl-12.5">
+            <div className="h-16.25 shrink-0" />
+            <div className="fixed bottom-0 inset-x-0 z-10 h-16.25 bg-primary-03 border-t border-primary-00 flex items-center justify-between gap-4 pl-12.5">
               <p className="btn-sm text-secondary-02 font-normal!">
                 Tenés <span className="text-primary-00">{projects.length} {projects.length === 1 ? "proyecto" : "proyectos"} </span>
                 {projects.length === 1 ? "creado" : "creados"}

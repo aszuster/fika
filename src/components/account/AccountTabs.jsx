@@ -98,10 +98,15 @@ const AccountTabs = ({ profile, favorites, projects, quoteRequests, catalog }) =
   }
 
   return (
-    <div className="bg-primary-03 h-[calc(100%-3.125rem)] flex flex-col">
+    // Alto fijo de la pantalla (menos el navbar): así scrollea solo el
+    // ScrollArea de adentro y no la página entera.
+    <div className="bg-primary-03 h-[calc(100dvh-3.125rem)] flex flex-col">
       <TabBar tabs={TABS} activeTab={activeTab} onSelect={setActiveTab} />
 
-      <ScrollArea className="flex-1">
+      {/* Instancia propia de Lenis: el mismo scroll suave que el resto del sitio.
+          Los paneles que se abren encima llevan data-lenis-prevent para que la
+          rueda sobre ellos no mueva esta lista. */}
+      <ScrollArea className="flex-1" lenisOptions={{ orientation: "vertical" }}>
         {activeTab === "perfil" && <PerfilSection profile={profile} />}
         {activeTab === "favoritos" && (
           <FavoritosSection favorites={favorites} projects={projects} catalog={catalog} />

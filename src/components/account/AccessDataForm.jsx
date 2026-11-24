@@ -447,7 +447,7 @@ const AccessDataForm = () => {
       </div>
 
       {popup && (
-        <div className="fixed inset-0 z-20 bg-primary-00/40 flex items-center justify-center">
+        <div data-lenis-prevent className="fixed inset-0 z-20 bg-primary-00/40 flex items-center justify-center">
           <div className="bg-primary-03 h-[70%] w-[30%] flex flex-col items-center justify-between  py-12.5">
             <div className="flex flex-col justify-center h-full max-w-74 gap-5.5">
             <p className="hl-sm uppercase text-center">{popup.title}</p>
