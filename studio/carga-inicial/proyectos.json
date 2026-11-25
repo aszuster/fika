@@ -1,0 +1,83 @@
+[
+  {
+    "_id": "project-bp-studio",
+    "_type": "project",
+    "studio": "BP Studio",
+    "slug": { "_type": "slug", "current": "bp-studio" },
+    "order": 10,
+    "mainImage": { "_type": "image", "_file": "../public/img/proyectos/bp-studio.webp" }
+  },
+  {
+    "_id": "project-griscan",
+    "_type": "project",
+    "studio": "Griscan",
+    "slug": { "_type": "slug", "current": "griscan" },
+    "order": 20,
+    "mainImage": { "_type": "image", "_file": "../public/img/proyectos/griscan.webp" }
+  },
+  {
+    "_id": "project-jorgelina",
+    "_type": "project",
+    "studio": "Jorgelina Tortorici Arq. & Asoc.",
+    "title": "Casa Be",
+    "slug": { "_type": "slug", "current": "jorgelina" },
+    "order": 30,
+    "mainImage": { "_type": "image", "_file": "../public/img/proyectos/jorgelina.webp" },
+    "description": [
+      {
+        "_type": "block",
+        "_key": "desc1",
+        "style": "normal",
+        "markDefs": [
+          { "_type": "link", "_key": "adrogue", "href": "https://www.archdaily.com/es/tag/adrogue" }
+        ],
+        "children": [
+          {
+            "_type": "span",
+            "_key": "s1",
+            "marks": [],
+            "text": "Esta casa de 450m2 está ubicada en un lote en esquina, en un barrio cerrado de la ciudad de "
+          },
+          { "_type": "span", "_key": "s2", "marks": ["adrogue"], "text": "Adrogué" },
+          {
+            "_type": "span",
+            "_key": "s3",
+            "marks": [],
+            "text": ", Buenos Aires. Su implantación en \"L\" permite abrazar el jardín central de la casa desde afuera hacia adentro. Hacia un lado una fachada casi ciega, de hormigón visto, en relación con la calle principal de acceso al barrio, permite cerrarse al tránsito y a las vistas exteriores."
+          }
+        ]
+      }
+    ],
+    "gallery": [
+      { "_type": "image", "_key": "img0", "_file": "../public/img/proyectos/jorgelina_project.webp" }
+    ],
+    "professionals": "Arq. Jorgelina Tortorici / Arq. Nicolás Lanza",
+    "type": "Residencial",
+    "location": "Ramos Mejía, Buenos Aires",
+    "year": "2025",
+    "products": [
+      {
+        "_type": "projectProduct",
+        "_key": "p0",
+        "product": { "_type": "reference", "_ref": "product-stackbond" },
+        "variant": "matte-offwhite"
+      }
+    ]
+  },
+  {
+    "_id": "project-michino",
+    "_type": "project",
+    "studio": "Michino",
+    "slug": { "_type": "slug", "current": "michino" },
+    "order": 40,
+    "mainImage": { "_type": "image", "_file": "../public/img/proyectos/michino.webp" }
+  },
+  {
+    "_id": "project-griscan-2",
+    "_type": "project",
+    "studio": "Griscan",
+    "slug": { "_type": "slug", "current": "griscan-2" },
+    "order": 50,
+    "mainImage": { "_type": "image", "_file": "../public/img/proyectos/griscan2.webp" }
+  }
+]

@@ -88,9 +88,10 @@ export default function DistribuidoresPanel({ provincias }) {
                       </button>
                       <div className="flex flex-col gap-1 pt-1">
                       <p className="by-sm">{d.direccion}</p>
-                      <p className="by-sm">{d.telefono}</p>
+                      {d.telefono ? <p className="by-sm">{d.telefono}</p> : <></>}
                       {d.instagram ? <a target="_blank" href={`http://www.instagram.com/${d.instagram}`}><p className="by-sm">@{d.instagram}</p></a> : <></>}
-                      {d.website ? <a target="_blank" href={`http://${d.website}`}><p className="by-sm">{d.website}</p></a> : <></>}
+                      {/* En el Studio se puede cargar con o sin https://. */}
+                      {d.website ? <a target="_blank" href={/^https?:\/\//.test(d.website) ? d.website : `https://${d.website}`}><p className="by-sm">{d.website.replace(/^https?:\/\//, "").replace(/\/$/, "")}</p></a> : <></>}
 
                       </div>
                     </li>

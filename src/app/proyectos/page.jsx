@@ -5,7 +5,7 @@ import GridCross from "@/components/grid/GridCross";
 import ProjectImageTransition, {
   PROJECT_OPEN_TRANSITION,
 } from "@/components/transitions/ProjectImageTransition";
-import { projects } from "@/data/projects";
+import { getProjects } from "@/data/projects";
 
 const cols = 3;
 
@@ -19,12 +19,13 @@ const imageHover =
   "[clip-path:inset(0_round_0)] group-hover:[clip-path:inset(calc(50%-42cqmin)_calc(50%-42cqmin)_round_42cqmin)] group-focus-visible:[clip-path:inset(calc(50%-42cqmin)_calc(50%-42cqmin)_round_42cqmin)] transition-[clip-path]";
 
 export default async function Proyectos() {
+  const projects = await getProjects();
   const fillerCount = getFillerCount(projects.length, cols);
 
   return (
     <div className="bg-primary-03 h-[calc(100%-3.125rem)]">
       <div className="grid grid-cols-3 gap-px bg-primary-00 auto-rows-[calc(100dvh-3.125rem)]">
-        {projects.map(({ slug, title, image }, index) => (
+        {projects.map(({ slug, studio, image, imagePosition }, index) => (
           <Link
             key={slug}
             href={`/proyectos/${slug}`}
@@ -32,20 +33,23 @@ export default async function Proyectos() {
             className="group bg-primary-03 flex flex-col"
           >
             <div className="h-20 shrink-0 border-b border-primary-01 w-full flex items-center justify-center">
-              <p className="hl-sm uppercase">{title}</p>
+              <p className="hl-sm uppercase">{studio}</p>
             </div>
             <ProjectImageTransition slug={slug}>
               <div className="relative min-h-0 w-full flex-1 [container-type:size]">
                 {/* Mismo sizes que en la página de proyecto: así es el mismo
                     archivo y ya está cargado cuando arranca la transición. */}
-                <Image
-                  src={image}
-                  alt={title}
-                  fill
-                  sizes="50vw"
-                  className={`object-cover ${imageHover} ${hoverTransition}`}
-                  loading={index < cols ? "eager" : undefined}
-                />
+                {image && (
+                  <Image
+                    src={image}
+                    alt={studio}
+                    fill
+                    sizes="50vw"
+                    className={`object-cover ${imageHover} ${hoverTransition}`}
+                    style={{ objectPosition: imagePosition }}
+                    loading={index < cols ? "eager" : undefined}
+                  />
+                )}
                 <div
                   className={`absolute top-1/2 left-1/2 size-12.5 -translate-1/2 rounded-full bg-primary-03 scale-0 group-hover:scale-100 group-focus-visible:scale-100 transition-[scale] ${hoverTransition}`}
                 />

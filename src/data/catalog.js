@@ -1,35 +1,8 @@
 import { cache } from "react";
+import { sanityFetch } from "@/data/sanity";
 
 // Catálogo desde Sanity (productos, variantes y opciones de los filtros).
 // Solo se usa en el servidor: páginas, layouts y server actions.
-
-const projectId = process.env.SANITY_PROJECT_ID;
-const dataset = process.env.SANITY_DATASET ?? "production";
-
-// Next guarda el catálogo en caché. Al publicar en el Studio, el webhook de
-// Sanity (app/api/revalidate) la vacía al instante; esto es solo un respaldo
-// por si el webhook falla.
-const REVALIDATE_SECONDS = 3600;
-
-const sanityFetch = async (query, params = {}) => {
-  // api (y no apicdn): justo después del webhook el CDN de Sanity todavía
-  // podría devolver el dato viejo. Como Next ya cachea, se piden pocas veces.
-  const url = new URL(
-    `https://${projectId}.api.sanity.io/v2026-10-01/data/query/${dataset}`,
-  );
-  url.searchParams.set("query", query);
-  for (const [key, value] of Object.entries(params)) {
-    url.searchParams.set(`$${key}`, JSON.stringify(value));
-  }
-
-  const response = await fetch(url, {
-    next: { revalidate: REVALIDATE_SECONDS, tags: ["sanity"] },
-  });
-  if (!response.ok) {
-    throw new Error(`Sanity respondió ${response.status}: ${await response.text()}`);
-  }
-  return (await response.json()).result;
-};
 
 // Devuelve los productos con la misma forma que usaba la data mock. Las
 // referencias (->) se resuelven acá, y lo que la variante deja vacío
@@ -56,6 +29,12 @@ const productsQuery = `*[_type == "product" && defined(slug.current)] | order(or
     "application": coalesce(application->label, ^.application->label),
     "catalogPhoto": coalesce(catalogPhoto.asset->url, ^.image.asset->url),
     "samplePhotos": coalesce(samplePhotos[].asset->url, ^.samplePhotos[].asset->url, []),
+    // Chip de la página de muestras. Sin imagen propia usa la de catálogo;
+    // sin cargar el switch (variantes viejas) cuenta como disponible.
+    "chip": {
+      "image": coalesce(chip.image.asset->url, catalogPhoto.asset->url, ^.image.asset->url),
+      "available": chip.available != false
+    },
     "downloads": coalesce(
       downloads[]{ label, "href": file.asset->url },
       ^.downloads[]{ label, "href": file.asset->url },

@@ -8,7 +8,11 @@
     "build": "sanity build",
     "deploy": "sanity deploy",
     "extraer-wordpress": "node scripts/extraer-wordpress.mjs",
-    "importar": "sanity exec scripts/importar-excel.mjs --with-user-token --"
+    "importar": "sanity exec scripts/importar-excel.mjs --with-user-token --",
+    "importar-chips": "sanity exec scripts/importar-chips.mjs --with-user-token --",
+    "importar-distribuidores": "sanity exec scripts/importar-json.mjs --with-user-token -- carga-inicial/distribuidores.json",
+    "importar-proyectos": "sanity exec scripts/importar-json.mjs --with-user-token -- carga-inicial/proyectos.json",
+    "importar-descargas": "sanity exec scripts/importar-json.mjs --with-user-token -- carga-inicial/descargas.json"
   },
   "dependencies": {
     "@sanity/locale-es-es": "^1.2.39",
