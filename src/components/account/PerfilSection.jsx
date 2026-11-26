@@ -73,8 +73,9 @@ const PerfilSection = ({ profile }) => {
   };
 
   return (
+
     <div className="flex h-[calc(100dvh-6.25rem)] relative w-full">
-      <div className="w-full h-full relative">
+      <div className="hidden lg:block w-full h-full relative">
         <div className="grid grid-cols-2 grid-rows-[3fr_7.6fr] 2xl:grid-rows-[3fr_7fr] bg-primary-01 gap-px w-full h-full">
           <div className="bg-primary-03"></div>
           <div className="bg-primary-03"></div>
@@ -82,11 +83,26 @@ const PerfilSection = ({ profile }) => {
           <div className="relative bg-primary-03"></div>
         </div>
       </div>
-      <div className="w-full h-full flex flex-col border-x border-primary-01">
-        <div className="h-[20%] 2xl:h-[30%] shrink-0 flex flex-col justify-center items-center">
+      <div className="w-full h-full flex flex-col lg:border-x border-primary-01">
+        <div className="hidden lg:flex lg:h-[20%] 2xl:h-[30%] shrink-0 flex-col justify-center items-center">
           <h2 className="hl-lg uppercase">Perfil</h2>
         </div>
-        <ScrollArea className="flex-1 w-full" viewportClassName="flex flex-col">
+        <ScrollArea
+          className="flex-1 w-full"
+          viewportClassName="flex flex-col *:shrink-0"
+        >
+          <div className="lg:hidden h-53.25 px-5 flex justify-center items-center">
+            <div className="max-w-60 flex flex-col gap-2 text-center">
+              <p className="by-sm font-normal! text-secondary-01">
+                Bienvenido/a a la comunidad Fika.
+              </p>
+              <p className="by-sm font-normal! text-secondary-01">
+                Ahora podés acceder a beneficios exclusivos, guardar tus
+                productos favoritos y gestionar tus consultas de manera más
+                simple.
+              </p>
+            </div>
+          </div>
           <TabBar
             tabs={SUB_TABS}
             activeTab={activeSubTab}
@@ -177,7 +193,7 @@ const PerfilSection = ({ profile }) => {
           )}
         </ScrollArea>
       </div>
-      <div className="w-full h-full relative">
+      <div className="hidden lg:block w-full h-full relative">
         <div className="grid grid-cols-2 grid-rows-[3fr_7.6fr] 2xl:grid-rows-[3fr_7fr] bg-primary-01 gap-px w-full h-full">
           <div className="bg-primary-03"></div>
           <div className="bg-primary-03"></div>

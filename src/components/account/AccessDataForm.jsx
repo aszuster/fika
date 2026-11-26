@@ -84,16 +84,10 @@ const AccessDataForm = () => {
   const [passwordSaving, setPasswordSaving] = useState(false);
   const [passwordError, setPasswordError] = useState(null);
 
-  // Solo para que la fila de "contraseña actual" tenga el mismo look que un
-  // campo de contraseña — nunca es el valor real, nadie (ni nosotros, ni
-  // Supabase) puede leer la contraseña ya guardada, solo su hash.
   const [showMaskedPassword, setShowMaskedPassword] = useState(false);
 
   const [popup, setPopup] = useState(null);
 
-  // Medimos la altura real del contenido para poder animar el height entre
-  // 0 y un número concreto en las dos direcciones — animar directo hacia/
-  // desde "auto" con motion solo interpola bien al abrir, no al cerrar.
   const emailContentRef = useRef(null);
   const passwordContentRef = useRef(null);
   const [emailHeight, setEmailHeight] = useState(0);
@@ -413,10 +407,10 @@ const AccessDataForm = () => {
       </div>
 
       {popup && (
-        <div data-lenis-prevent className="fixed inset-0 z-20 bg-primary-00/40 flex items-center justify-center">
-          <div className="bg-primary-03 h-[70%] w-[30%] flex flex-col items-center justify-between  py-12.5">
+        <div data-lenis-prevent className="fixed inset-x-0 bottom-0 top-12.5 lg:top-0 z-50 bg-primary-00/40 flex items-center justify-center">
+          <div className="bg-primary-03 h-full lg:h-[70%] w-full lg:w-[30%] px-5 lg:px-0 flex flex-col items-center justify-between  py-12.5">
             <div className="flex flex-col justify-center h-full max-w-74 gap-5.5">
-            <p className="hl-sm uppercase text-center">{popup.title}</p>
+            <p className="hl-sm max-lg:text-[1.5625rem]! max-lg:leading-8.25! uppercase text-center">{popup.title}</p>
             <p className="by-sm text-secondary-02 text-center">{popup.message}</p>
             </div>
             <Button

@@ -234,7 +234,6 @@ function CompletarPedidoContent({ chips: initialChips }) {
                 </p>
               )}
             </div>
-            {/* Mismo ancho que cada botón de la barra de /muestras/elegir. */}
             <div className="w-1/3 h-full shrink-0 flex">
               <Button
                 copy={isSending ? "Enviando..." : "Solicitar"}

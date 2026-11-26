@@ -247,8 +247,6 @@ html.lenis body {
   --viewport-height: 100dvh;
 
   /* Soporte para nuevas unidades de viewport */
-  /* Usamos lvh (Large Viewport Height) para que use el viewport MÁS GRANDE (sin barras) */
-  /* Esto previene que los elementos se achiquen cuando aparecen las barras del navegador */
   @supports (height: 100lvh) {
     --viewport-height: 100lvh;
   }
@@ -259,18 +257,17 @@ html.lenis body {
   --page-scrollbar-bottom: 0rem;
 }
 
-/* If there's a second bar */
+
 :root:has([data-catalog-toolbar]) {
   --page-scrollbar-top: 6.25rem;
 }
 
-/* If there's a fixed bottom bar (muestras/elegir) */
+
 :root:has([data-bottom-toolbar]) {
   --page-scrollbar-bottom: 3.125rem;
 }
 
-/* Con el menú mobile abierto (MobileMenu.jsx) la página no scrollea: se oculta
-   su scrollbar, que si no queda por encima del panel. */
+
 :root:has(#mobile-menu) .page-scrollbar {
   visibility: hidden;
 }
@@ -489,10 +486,6 @@ select:open {
   animation: none;
 }
 
-/* Con hover se parte del círculo de la lista (proyectos/page.jsx). La imagen nueva
-   arranca con la escala que tenía la foto en el panel, para que no salte.
-   Medidas: el panel es 1/3 del ancho y el alto sin navbar ni título (8.125rem);
-   0.42 es el 42cqmin del círculo; 0.6737 es la proporción de las fotos. */
 @media (hover: hover) {
   ::view-transition-new(.project-morph) {
     --project-panel-width: calc(100vw / 3);
@@ -523,5 +516,16 @@ select:open {
   to {
     width: 100%;
     clip-path: inset(0 round 0);
+  }
+}
+
+/* Mobile: los campos de texto van a 16px. Con menos, Safari en iPhone hace
+   zoom solo en la página al tocarlos. !important para ganarle a by-sm y a las
+   clases de tamaño de cada formulario. Desktop no cambia. */
+@media screen and (max-width: 1023.98px) {
+  input,
+  select,
+  textarea {
+    font-size: 1rem !important; /*16px*/
   }
 }
