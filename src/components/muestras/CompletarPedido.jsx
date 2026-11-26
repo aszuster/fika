@@ -11,9 +11,10 @@ import {
   MUESTRAS_CONTACTO_KEY,
   MUESTRAS_PEDIDO_KEY,
   MUESTRAS_SELECCION_KEY,
-  isContactComplete,
+  CONTACT_RULES,
 } from "@/data/muestras";
 import { sendMuestrasOrder } from "@/app/muestras/actions";
+import { useValidation } from "@/utils/useValidation";
 
 const readJson = (key) => {
   try {
@@ -86,7 +87,10 @@ function CompletarPedidoContent({ chips: initialChips }) {
   const [isSending, setIsSending] = useState(false);
   const [sendError, setSendError] = useState(null);
 
-  const isValid = isContactComplete(form);
+  const { errors, touch, validate, isValid } = useValidation(
+    form,
+    CONTACT_RULES,
+  );
 
   // Se guarda a medida que se completa, para no perderlo si se vuelve a
   // editar la selección.
@@ -102,7 +106,7 @@ function CompletarPedidoContent({ chips: initialChips }) {
   // Envía el pedido (datos de contacto + chips elegidos) por mail y va a la
   // confirmación.
   const submitOrder = async () => {
-    if (!isValid || isSending) return;
+    if (isSending || !validate()) return;
 
     const order = {
       date: new Date().toISOString(),
@@ -169,7 +173,9 @@ function CompletarPedidoContent({ chips: initialChips }) {
             </div>
             <MuestrasForm
               form={form}
+              errors={errors}
               onChange={handleChange}
+              onBlur={touch}
               onSubmit={submitOrder}
             />
           </div>

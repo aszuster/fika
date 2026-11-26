@@ -1,6 +1,7 @@
 "use server";
 
-import { MAX_MUESTRAS } from "@/data/muestras";
+import { CONTACT_RULES, MAX_MUESTRAS } from "@/data/muestras";
+import { getErrors } from "@/utils/validation";
 import {
   escapeHtml,
   formatDateTime,
@@ -12,13 +13,13 @@ import {
 // confirmación a la persona que lo pidió. Configuración en utils/email.js.
 
 const CONTACT_FIELDS = [
-  ["fullName", "Nombre y Apellido", true],
-  ["email", "Mail de contacto", true],
-  ["phone", "Teléfono", true],
-  ["instagram", "Instagram del profesional / empresa / estudio", false],
-  ["province", "Provincia", true],
-  ["address", "Dirección", true],
-  ["postalCode", "Código Postal", true],
+  ["fullName", "Nombre y Apellido"],
+  ["email", "Mail de contacto"],
+  ["phone", "Teléfono"],
+  ["instagram", "Instagram del profesional / empresa / estudio"],
+  ["province", "Provincia"],
+  ["address", "Dirección"],
+  ["postalCode", "Código Postal"],
 ];
 
 const clean = (value) => (typeof value === "string" ? value.trim() : "");
@@ -28,10 +29,10 @@ export async function sendMuestrasOrder({ contact, chips }) {
   const data = Object.fromEntries(
     CONTACT_FIELDS.map(([name]) => [name, clean(contact?.[name])]),
   );
-  const missing = CONTACT_FIELDS.some(
-    ([name, , required]) => required && !data[name],
-  );
-  if (missing) return { ok: false, error: "Faltan datos de contacto." };
+  const errors = getErrors(data, CONTACT_RULES);
+  if (Object.keys(errors).length > 0) {
+    return { ok: false, error: "Revisá los datos de contacto." };
+  }
 
   const items = (Array.isArray(chips) ? chips : [])
     .map((chip) => `${clean(chip?.productTitle)} ${clean(chip?.variantName)}`.trim())

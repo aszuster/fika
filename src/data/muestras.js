@@ -36,20 +36,16 @@ export const MUESTRAS_SELECCION_KEY = "fika-muestras-seleccion";
 // /muestras/completar (se conservan si se vuelve a editar la selección).
 export const MUESTRAS_CONTACTO_KEY = "fika-muestras-contacto";
 
-// Campos obligatorios del formulario de contacto (Instagram es opcional).
-export const REQUIRED_CONTACT_FIELDS = [
-  "fullName",
-  "email",
-  "phone",
-  "province",
-  "address",
-  "postalCode",
-];
-
-export const isContactComplete = (contact) =>
-  REQUIRED_CONTACT_FIELDS.every(
-    (name) => typeof contact?.[name] === "string" && contact[name].trim() !== "",
-  );
+// Reglas del formulario de envío (ver utils/validation.js). Instagram es
+// opcional. Se usan en el formulario y en el server action.
+export const CONTACT_RULES = {
+  fullName: { required: true },
+  email: { required: true, type: "email" },
+  phone: { required: true, type: "phone" },
+  province: { required: true },
+  address: { required: true },
+  postalCode: { required: true },
+};
 
 // Clave de sessionStorage con el último pedido enviado (contacto + chips +
 // fecha). Por ahora no se manda a ningún lado: lo lee la página de confirmación.

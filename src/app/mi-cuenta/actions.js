@@ -4,6 +4,8 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/utils/supabase/server";
 import { getCatalogBySlug } from "@/data/catalog";
 import { priceFormatter } from "@/utils/price";
+import { PROFILE_RULES } from "@/data/profile";
+import { getErrors } from "@/utils/validation";
 import {
   escapeHtml,
   formatDateTime,
@@ -38,6 +40,14 @@ export async function updateProfile(formData) {
     city: formData.get("city") || null,
     updated_at: new Date().toISOString(),
   };
+
+  // El formulario ya valida, pero esto llega desde afuera.
+  const values = Object.fromEntries(
+    Object.keys(PROFILE_RULES).map((name) => [name, fields[name] ?? ""]),
+  );
+  if (Object.keys(getErrors(values, PROFILE_RULES)).length > 0) {
+    throw new Error("Datos de perfil inválidos.");
+  }
 
   const { error } = await supabase
     .from("profiles")

@@ -5,14 +5,21 @@ import Link from "next/link";
 import Button from "@/components/buttons/Button";
 import { createClient } from "@/utils/supabase/client";
 import Image from "next/image";
+import FieldError from "@/components/forms/FieldError";
+import { useValidation } from "@/utils/useValidation";
+
+const RULES = { email: { required: true, type: "email" } };
 
 export default function RecuperarContrasenaPage() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
 
+  const { errors, touch, validate, isValid } = useValidation({ email }, RULES);
+
   const handleSubmit = async (event) => {
     event.preventDefault();
+    if (loading || !validate()) return;
     setLoading(true);
 
     const supabase = createClient();
@@ -64,7 +71,7 @@ export default function RecuperarContrasenaPage() {
         </div>
       </div>
       <div className="bg-primary-03 h-full  w-full border-x border-primary-01 relative">
-        <form onSubmit={handleSubmit} className="w-full flex flex-col h-full ">
+        <form noValidate onSubmit={handleSubmit} className="w-full flex flex-col h-full ">
           <div className="h-full w-full flex flex-col justify-between">
             <div className="w-full h-full flex justify-center items-center">
               <div className="w-full flex flex-col items-center">
@@ -77,17 +84,21 @@ export default function RecuperarContrasenaPage() {
                 </p>
               </div>
             </div>
-            <div className="flex flex-col gap-1 w-full pb-2">
-              <input
-                id="email"
-                type="email"
-                required
-                autoComplete="email"
-                placeholder="Correo electrónico"
-                value={email}
-                onChange={(event) => setEmail(event.target.value)}
-                className="w-full py-3.75 px-5 by-sm border-y border-primary-00 bg-transparent outline-none"
-              />
+            <div className="flex flex-col w-full pb-2">
+              <div className="border-y border-primary-00">
+                <input
+                  id="email"
+                  type="email"
+                  autoComplete="email"
+                  placeholder="Correo electrónico"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
+                  onBlur={() => touch("email")}
+                  aria-invalid={Boolean(errors.email)}
+                  className="w-full py-3.75 px-5 by-sm bg-transparent outline-none"
+                />
+                <FieldError message={errors.email} />
+              </div>
             </div>
           </div>
           <div className="h-full w-full flex flex-col justify-between">
@@ -96,7 +107,7 @@ export default function RecuperarContrasenaPage() {
               copy={loading ? "Enviando..." : "Enviar instrucciones"}
               type="submit"
               variant="primary"
-              disabled={loading || !email.trim()}
+              disabled={loading || !isValid}
             />
 
             <p className="by-sm text-center pb-20.75">

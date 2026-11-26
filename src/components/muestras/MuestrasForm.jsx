@@ -1,6 +1,7 @@
 "use client";
 
 import Select from "@/components/forms/Select";
+import FieldError from "@/components/forms/FieldError";
 import { PROVINCIAS } from "@/data/muestras";
 import Corner from "@/svg/Corner";
 
@@ -14,23 +15,50 @@ export const initialForm = {
   postalCode: "",
 };
 
-const TextField = ({ label, className = "", ...props }) => (
-  <input
-    {...props}
-    placeholder={props.required ? `*${label}` : label}
-    className={`by-sm w-full bg-transparent outline-none border-b border-primary-01 py-2 2xl:py-3.75 px-5 ${className}`}
-  />
+// Campo con su mensaje de error abajo (dentro de la misma fila con borde).
+const Field = ({ error, errorId, className = "", children }) => (
+  <div className={`border-b border-primary-01 ${className}`}>
+    {children}
+    <FieldError id={errorId} message={error} />
+  </div>
 );
 
-// Formulario de datos de envío. El estado lo maneja CompletarPedido, que lo
-// envía junto con los chips elegidos.
-export default function MuestrasForm({ form, onChange, onSubmit }) {
-  const setField = (name) => (event) => onChange(name, event.target.value);
+const TextField = ({ label, error, className = "", ...props }) => (
+  <Field error={error} errorId={`${props.id}-error`} className={className}>
+    <input
+      {...props}
+      required={undefined}
+      aria-required={props.required}
+      aria-invalid={Boolean(error)}
+      aria-describedby={error ? `${props.id}-error` : undefined}
+      placeholder={props.required ? `*${label}` : label}
+      className="by-sm w-full bg-transparent outline-none py-2 2xl:py-3.75 px-5"
+    />
+  </Field>
+);
+
+// Formulario de datos de envío. El estado y la validación los maneja
+// CompletarPedido, que lo envía junto con los chips elegidos.
+export default function MuestrasForm({
+  form,
+  errors = {},
+  onChange,
+  onBlur,
+  onSubmit,
+}) {
+  const fieldProps = (name) => ({
+    id: name,
+    value: form[name],
+    error: errors[name],
+    onChange: (event) => onChange(name, event.target.value),
+    onBlur: () => onBlur?.(name),
+  });
 
   return (
     <div className="flex w-full">
       <div className="w-40 shrink-0 border-r  border-primary-00"></div>
       <form
+        noValidate
         onSubmit={(event) => {
           event.preventDefault();
           onSubmit();
@@ -51,63 +79,53 @@ export default function MuestrasForm({ form, onChange, onSubmit }) {
         </div>
         <div className="border-t border-primary-00">
           <TextField
-            id="fullName"
+            {...fieldProps("fullName")}
             label="Nombre y Apellido"
             type="text"
             required
             autoComplete="name"
-            value={form.fullName}
-            onChange={setField("fullName")}
           />
           <TextField
-            id="email"
+            {...fieldProps("email")}
             label="Mail de contacto"
             type="email"
             required
             autoComplete="email"
-            value={form.email}
-            onChange={setField("email")}
           />
           <TextField
-            id="phone"
+            {...fieldProps("phone")}
             label="Teléfono"
             type="tel"
             required
             autoComplete="tel"
-            value={form.phone}
-            onChange={setField("phone")}
           />
           <TextField
-            id="instagram"
+            {...fieldProps("instagram")}
             label="Instagram del profesional / empresa / estudio"
             type="text"
-            value={form.instagram}
-            onChange={setField("instagram")}
           />
-          <Select
-            value={form.province}
-            onChange={(value) => onChange("province", value)}
-            options={PROVINCIAS}
-            placeholder="*Provincia"
-            className="by-sm border-b border-primary-01 bg-transparent py-2 2xl:py-3.75 pl-5 pr-7"
-          />
+          <Field error={errors.province}>
+            <Select
+              value={form.province}
+              onChange={(value) => onChange("province", value)}
+              options={PROVINCIAS}
+              placeholder="*Provincia"
+              className="by-sm bg-transparent py-2 2xl:py-3.75 pl-5 pr-7"
+            />
+          </Field>
           <TextField
-            id="address"
+            {...fieldProps("address")}
             label="Dirección"
             type="text"
             required
             autoComplete="street-address"
-            value={form.address}
-            onChange={setField("address")}
           />
           <TextField
-            id="postalCode"
+            {...fieldProps("postalCode")}
             label="Código Postal"
             type="text"
             required
             autoComplete="postal-code"
-            value={form.postalCode}
-            onChange={setField("postalCode")}
             className="border-primary-00!"
           />
         </div>

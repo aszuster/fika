@@ -6,6 +6,20 @@ import { createClient } from "@/utils/supabase/client";
 import { translateAuthError } from "@/utils/supabase/authErrors";
 import Visible from "@/svg/Visible";
 import Hidden from "@/svg/Hidden";
+import FieldError from "@/components/forms/FieldError";
+import { useValidation } from "@/utils/useValidation";
+
+const RULES = {
+  password: { required: true, type: "password" },
+  repeatPassword: {
+    required: true,
+    validate: (value, values) =>
+      value !== values.password ? "Las contraseñas no coinciden" : null,
+  },
+};
+
+// Mismo estilo que el resto, sin el padding lateral (acá los campos no tienen).
+const errorClass = "px-0! pb-0! pt-1";
 
 export default function RestablecerContrasenaPage() {
   const [ready, setReady] = useState(false);
@@ -31,14 +45,15 @@ export default function RestablecerContrasenaPage() {
     return () => listener.subscription.unsubscribe();
   }, []);
 
+  const { errors, touch, validate, isValid } = useValidation(
+    { password, repeatPassword },
+    RULES,
+  );
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     setError(null);
-
-    if (password !== repeatPassword) {
-      setError("Las contraseñas no coinciden.");
-      return;
-    }
+    if (loading || !validate()) return;
 
     setLoading(true);
     const supabase = createClient();
@@ -85,6 +100,7 @@ export default function RestablecerContrasenaPage() {
   return (
     <div className="bg-primary-03 h-[calc(100%-3.125rem)] flex items-center justify-center">
       <form
+        noValidate
         onSubmit={handleSubmit}
         className="w-full max-w-90 flex flex-col gap-6 px-7.25"
       >
@@ -100,11 +116,11 @@ export default function RestablecerContrasenaPage() {
             <input
               id="password"
               type={showPassword ? "text" : "password"}
-              required
-              minLength={6}
               autoComplete="new-password"
               value={password}
               onChange={(event) => setPassword(event.target.value)}
+              onBlur={() => touch("password")}
+              aria-invalid={Boolean(errors.password)}
               className="by-sm bg-transparent py-2 outline-none flex-1"
             />
             <button
@@ -115,6 +131,7 @@ export default function RestablecerContrasenaPage() {
               {showPassword ? <Visible/> : <Hidden/>}
             </button>
           </div>
+          <FieldError message={errors.password} className={errorClass} />
         </div>
 
         <div className="flex flex-col gap-1">
@@ -124,21 +141,23 @@ export default function RestablecerContrasenaPage() {
           <input
             id="repeatPassword"
             type={showPassword ? "text" : "password"}
-            required
             autoComplete="new-password"
             value={repeatPassword}
             onChange={(event) => setRepeatPassword(event.target.value)}
+            onBlur={() => touch("repeatPassword")}
+            aria-invalid={Boolean(errors.repeatPassword)}
             className="by-sm border-b border-primary-00 bg-transparent py-2 outline-none"
           />
+          <FieldError message={errors.repeatPassword} className={errorClass} />
         </div>
 
-        {error && <p className="by-sm text-[#A20000]">{error}</p>}
+        <FieldError message={error} className={errorClass} />
 
         <Button
           copy={loading ? "Guardando..." : "Guardar contraseña"}
           type="submit"
           variant="primary"
-          disabled={loading || password.length < 6 || password !== repeatPassword}
+          disabled={loading || !isValid}
         />
       </form>
     </div>

@@ -9,6 +9,8 @@ import AvailabilityTag from "@/components/product/AvailabilityTag";
 import { requestQuote } from "@/app/mi-cuenta/actions";
 import { priceFormatter } from "@/utils/price";
 import { getVariantPrice, isVariantAvailable } from "@/utils/variantMockup";
+import FieldError from "@/components/forms/FieldError";
+import { MESSAGES } from "@/utils/validation";
 
 // Final de cada fila: la columna del total y el lugar del botón Quitar/Agregar.
 // Se repite igual en el recuadro del total estimado para que los montos queden
@@ -29,6 +31,13 @@ const TotalColumn = ({ total, action = null }) => (
   </div>
 );
 
+// La cantidad de M2 es obligatoria y tiene que ser mayor a 0.
+const getQuantityError = (value) => {
+  if (String(value ?? "").trim() === "") return MESSAGES.required;
+  if (!(Number(value) > 0)) return "La cantidad debe ser mayor a 0";
+  return null;
+};
+
 const CotizacionScreen = ({ project, catalog, onClose, onRequested }) => {
   const [isPending, startTransition] = useTransition();
   const [quantities, setQuantities] = useState({});
@@ -37,9 +46,17 @@ const CotizacionScreen = ({ project, catalog, onClose, onRequested }) => {
   const items = project.project_items ?? [];
   const includedItems = items.filter((item) => !removedIds.has(item.id));
   const includedCount = includedItems.length;
-  const hasMissingQuantity = includedItems.some(
-    (item) => !(Number(quantities[item.id]) > 0),
+  const hasMissingQuantity = includedItems.some((item) =>
+    getQuantityError(quantities[item.id]),
   );
+
+  // Cantidades cuyo error ya se muestra: al salir del campo, o al pasar el
+  // mouse por "Pedir cotización" deshabilitado (para explicar por qué).
+  const [touchedIds, setTouchedIds] = useState(new Set());
+  const touchItem = (itemId) =>
+    setTouchedIds((prev) => (prev.has(itemId) ? prev : new Set(prev).add(itemId)));
+  const touchAll = () =>
+    setTouchedIds(new Set(includedItems.map((item) => item.id)));
 
   const getVariant = (item) =>
     catalog[item.product_slug]?.variants.find(
@@ -109,6 +126,10 @@ const CotizacionScreen = ({ project, catalog, onClose, onRequested }) => {
               const isRemoved = removedIds.has(item.id);
               const price = getVariantPrice(variant);
               const quantity = Number(quantities[item.id]);
+              const quantityError =
+                !isRemoved && touchedIds.has(item.id)
+                  ? getQuantityError(quantities[item.id])
+                  : null;
 
               return (
                 <div
@@ -151,8 +172,11 @@ const CotizacionScreen = ({ project, catalog, onClose, onRequested }) => {
                       <p className="hl-xs whitespace-nowrap">
                         {priceFormatter.format(price)} <span>X M2</span>
                       </p>
-                      <div className="flex items-center border-b border-primary-00">
+                      <div className="relative flex items-center border-b border-primary-00">
                         <input
+                          aria-label="Cantidad de M2"
+                          aria-invalid={Boolean(quantityError)}
+                          onBlur={() => touchItem(item.id)}
                           type="number"
                           min="0"
                           step="1"
@@ -169,6 +193,11 @@ const CotizacionScreen = ({ project, catalog, onClose, onRequested }) => {
                           className="by-sm w-38  bg-transparent py-1 outline-none text-right"
                         />
                         <span className="hl-xs text-primary-00">M2</span>
+                        {/* Debajo de la línea, sin mover el resto de la fila. */}
+                        <FieldError
+                          message={quantityError}
+                          className="absolute top-full right-0 px-0! pb-0! pt-1 whitespace-nowrap"
+                        />
                       </div>
                       {/* Total de la línea: precio por la cantidad de M2. */}
                       <TotalColumn
@@ -231,7 +260,11 @@ const CotizacionScreen = ({ project, catalog, onClose, onRequested }) => {
           </span>{" "}
           {includedCount === 1 ? "agregado" : "agregados"}
         </p>
-        <div className="h-full">
+        {/* El botón deshabilitado no recibe eventos: el hover va en el contenedor. */}
+        <div
+          className="h-full"
+          onMouseEnter={() => hasMissingQuantity && touchAll()}
+        >
           <Button
             copy={isPending ? "Enviando..." : "Pedir cotización"}
             variant="primary"

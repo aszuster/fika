@@ -7,6 +7,8 @@ import { createClient } from "@/utils/supabase/client";
 import { translateAuthError } from "@/utils/supabase/authErrors";
 import Visible from "@/svg/Visible";
 import Hidden from "@/svg/Hidden";
+import FieldError from "@/components/forms/FieldError";
+import { useValidation } from "@/utils/useValidation";
 
 const emptyEmailForm = {
   currentEmailInput: "",
@@ -20,17 +22,38 @@ const emptyPasswordForm = {
   confirmNewPassword: "",
 };
 
-const PasswordField = ({ id, label, value, onChange, show, onToggleShow }) => (
-  <div className="flex flex-col gap-1">
+const PASSWORD_RULES = {
+  currentPassword: { required: true },
+  newPassword: { required: true, type: "password" },
+  confirmNewPassword: {
+    required: true,
+    validate: (value, values) =>
+      value !== values.newPassword ? "Las contraseñas no coinciden" : null,
+  },
+};
+
+const PasswordField = ({
+  id,
+  label,
+  value,
+  onChange,
+  onBlur,
+  error,
+  show,
+  onToggleShow,
+  autoComplete = "new-password",
+}) => (
+  <div className="flex flex-col">
     <div className="flex items-center gap-2 ">
       <input
         id={id}
         placeholder={label}
         type={show ? "text" : "password"}
-        required
-        autoComplete="new-password"
+        autoComplete={autoComplete}
         value={value}
         onChange={onChange}
+        onBlur={onBlur}
+        aria-invalid={Boolean(error)}
         className="by-sm bg-transparent outline-none flex-1 pl-5 py-3.75 "
       />
       <button
@@ -41,6 +64,7 @@ const PasswordField = ({ id, label, value, onChange, show, onToggleShow }) => (
         {show ? <Visible/> : <Hidden/>}
       </button>
     </div>
+    <FieldError message={error} />
   </div>
 );
 
@@ -109,81 +133,64 @@ const AccessDataForm = () => {
     return () => listener.subscription.unsubscribe();
   }, []);
 
-  const isEmailFormValid =
-    emailForm.currentEmailInput.trim().toLowerCase() ===
-      currentEmail.toLowerCase() &&
-    emailForm.newEmail.trim() !== "" &&
-    emailForm.newEmail !== currentEmail &&
-    emailForm.confirmNewEmail === emailForm.newEmail;
+  const sameEmail = (a, b) =>
+    a.trim().toLowerCase() === b.trim().toLowerCase();
 
-  const isPasswordFormValid =
-    passwordForm.currentPassword !== "" &&
-    passwordForm.newPassword.length >= 6 &&
-    passwordForm.confirmNewPassword === passwordForm.newPassword;
-
-  // Explica por qué "Guardar cambios" está deshabilitado. Solo avisamos
-  // sobre campos que ya se completaron, para no mostrar errores apenas se
-  // abre el formulario vacío.
-  const getEmailValidationError = () => {
-    const currentEmailInput = emailForm.currentEmailInput.trim();
-    if (
-      currentEmailInput !== "" &&
-      currentEmailInput.toLowerCase() !== currentEmail.toLowerCase()
-    ) {
-      return "El mail actual no es correcto.";
-    }
-    if (emailForm.newEmail.trim() !== "" && emailForm.newEmail === currentEmail) {
-      return "El mail nuevo tiene que ser distinto al actual.";
-    }
-    if (
-      emailForm.confirmNewEmail !== "" &&
-      emailForm.confirmNewEmail !== emailForm.newEmail
-    ) {
-      return "Los mails no coinciden.";
-    }
-    return null;
+  const emailRules = {
+    currentEmailInput: {
+      required: true,
+      type: "email",
+      validate: (value) =>
+        sameEmail(value, currentEmail) ? null : "El mail actual no es correcto",
+    },
+    newEmail: {
+      required: true,
+      type: "email",
+      validate: (value) =>
+        sameEmail(value, currentEmail)
+          ? "El mail nuevo tiene que ser distinto al actual"
+          : null,
+    },
+    confirmNewEmail: {
+      required: true,
+      validate: (value, values) =>
+        sameEmail(value, values.newEmail) ? null : "Los mails no coinciden",
+    },
   };
 
-  const getPasswordValidationError = () => {
-    if (
-      passwordForm.newPassword !== "" &&
-      passwordForm.newPassword.length < 6
-    ) {
-      return "La contraseña nueva tiene que tener al menos 6 caracteres.";
-    }
-    if (
-      passwordForm.confirmNewPassword !== "" &&
-      passwordForm.confirmNewPassword !== passwordForm.newPassword
-    ) {
-      return "Las contraseñas no coinciden.";
-    }
-    return null;
-  };
+  const emailValidation = useValidation(emailForm, emailRules);
+  const passwordValidation = useValidation(passwordForm, PASSWORD_RULES);
+  const emailErrors = emailValidation.errors;
+  const passwordErrors = passwordValidation.errors;
 
-  const emailMessage = getEmailValidationError() ?? emailError;
-  const passwordMessage = getPasswordValidationError() ?? passwordError;
+  const setEmailField = (name) => (event) =>
+    setEmailForm((prev) => ({ ...prev, [name]: event.target.value }));
+  const setPasswordField = (name) => (event) =>
+    setPasswordForm((prev) => ({ ...prev, [name]: event.target.value }));
 
   const cancelEmailChange = () => {
     setOpenSection(null);
     setEmailForm(emptyEmailForm);
     setEmailError(null);
+    emailValidation.reset();
   };
 
   const cancelPasswordChange = () => {
     setOpenSection(null);
     setPasswordForm(emptyPasswordForm);
     setPasswordError(null);
+    passwordValidation.reset();
   };
 
   const handleSaveEmail = async (event) => {
     event.preventDefault();
     setEmailError(null);
-    if (!isEmailFormValid) return;
+    if (emailSaving || !emailValidation.validate()) return;
 
     setEmailSaving(true);
     const supabase = createClient();
     const { error } = await supabase.auth.updateUser(
-      { email: emailForm.newEmail },
+      { email: emailForm.newEmail.trim() },
       {
         emailRedirectTo: `${window.location.origin}/mi-cuenta?tab=perfil&subtab=access-data`,
       }
@@ -208,7 +215,7 @@ const AccessDataForm = () => {
   const handleSavePassword = async (event) => {
     event.preventDefault();
     setPasswordError(null);
-    if (!isPasswordFormValid) return;
+    if (passwordSaving || !passwordValidation.validate()) return;
 
     setPasswordSaving(true);
     const supabase = createClient();
@@ -270,70 +277,38 @@ const AccessDataForm = () => {
         >
           <form
             ref={emailContentRef}
+            noValidate
             onSubmit={handleSaveEmail}
             className="flex flex-col"
           >
-            <div className="flex flex-col gap-1">
-              <input
-                id="currentEmailInput"
-                type="email"
-                placeholder="Mail actual"
-                required
-                value={emailForm.currentEmailInput}
-                onChange={(event) =>
-                  setEmailForm((prev) => ({
-                    ...prev,
-                    currentEmailInput: event.target.value,
-                  }))
-                }
-                className="by-sm border-b border-primary-01 bg-transparent px-5 py-3.75 outline-none"
-              />
-            </div>
+            {[
+              ["currentEmailInput", "Mail actual"],
+              ["newEmail", "Mail nuevo"],
+              ["confirmNewEmail", "Confirmar mail nuevo"],
+            ].map(([name, label]) => (
+              <div key={name} className="flex flex-col border-b border-primary-01">
+                <input
+                  id={name}
+                  type="email"
+                  placeholder={label}
+                  value={emailForm[name]}
+                  onChange={setEmailField(name)}
+                  onBlur={() => emailValidation.touch(name)}
+                  aria-invalid={Boolean(emailErrors[name])}
+                  className="by-sm bg-transparent px-5 py-3.75 outline-none"
+                />
+                <FieldError message={emailErrors[name]} />
+              </div>
+            ))}
 
-            <div className="flex flex-col ">
-              <input
-                id="newEmail"
-                type="email"
-                placeholder="Mail nuevo"
-                required
-                value={emailForm.newEmail}
-                onChange={(event) =>
-                  setEmailForm((prev) => ({
-                    ...prev,
-                    newEmail: event.target.value,
-                  }))
-                }
-                className="by-sm border-b border-primary-01 bg-transparent px-5 py-3.75 outline-none"
-              />
-            </div>
-
-            <div className="flex flex-col">
-              <input
-                id="confirmNewEmail"
-                type="email"
-                placeholder="Confirmar mail nuevo"
-                required
-                value={emailForm.confirmNewEmail}
-                onChange={(event) =>
-                  setEmailForm((prev) => ({
-                    ...prev,
-                    confirmNewEmail: event.target.value,
-                  }))
-                }
-                className="by-sm border-b border-primary-01 bg-transparent px-5 py-3.75 outline-none"
-              />
-            </div>
-
-            {emailMessage && (
-              <p className="by-sm text-[#A20000] px-5">{emailMessage}</p>
-            )}
+            <FieldError message={emailError} className="pt-2" />
 
             <div className="flex flex-col gap-px">
               <Button
                 copy={emailSaving ? "Guardando..." : "Guardar cambios"}
                 type="submit"
                 variant="primary"
-                disabled={emailSaving || !isEmailFormValid}
+                disabled={emailSaving || !emailValidation.isValid}
               />
               <Button
                 copy="Cancelar"
@@ -378,19 +353,18 @@ const AccessDataForm = () => {
         >
           <form
             ref={passwordContentRef}
+            noValidate
             onSubmit={handleSavePassword}
-            className="flex flex-col not-last:border-b not-last:border-primary-01"
+            className="flex flex-col"
           >
             <PasswordField
               id="currentPassword"
               label="Contraseña actual"
+              autoComplete="current-password"
               value={passwordForm.currentPassword}
-              onChange={(event) =>
-                setPasswordForm((prev) => ({
-                  ...prev,
-                  currentPassword: event.target.value,
-                }))
-              }
+              onChange={setPasswordField("currentPassword")}
+              onBlur={() => passwordValidation.touch("currentPassword")}
+              error={passwordErrors.currentPassword}
               show={showCurrentPassword}
               onToggleShow={() => setShowCurrentPassword((value) => !value)}
             />
@@ -399,12 +373,9 @@ const AccessDataForm = () => {
               id="newPassword"
               label="Contraseña nueva"
               value={passwordForm.newPassword}
-              onChange={(event) =>
-                setPasswordForm((prev) => ({
-                  ...prev,
-                  newPassword: event.target.value,
-                }))
-              }
+              onChange={setPasswordField("newPassword")}
+              onBlur={() => passwordValidation.touch("newPassword")}
+              error={passwordErrors.newPassword}
               show={showNewPassword}
               onToggleShow={() => setShowNewPassword((value) => !value)}
             />
@@ -413,26 +384,21 @@ const AccessDataForm = () => {
               id="confirmNewPassword"
               label="Confirmar contraseña nueva"
               value={passwordForm.confirmNewPassword}
-              onChange={(event) =>
-                setPasswordForm((prev) => ({
-                  ...prev,
-                  confirmNewPassword: event.target.value,
-                }))
-              }
+              onChange={setPasswordField("confirmNewPassword")}
+              onBlur={() => passwordValidation.touch("confirmNewPassword")}
+              error={passwordErrors.confirmNewPassword}
               show={showConfirmPassword}
               onToggleShow={() => setShowConfirmPassword((value) => !value)}
             />
 
-            {passwordMessage && (
-              <p className="by-sm text-[#A20000] px-5">{passwordMessage}</p>
-            )}
+            <FieldError message={passwordError} className="pt-2" />
 
             <div className="flex flex-col gap-px">
               <Button
                 copy={passwordSaving ? "Guardando..." : "Guardar cambios"}
                 type="submit"
                 variant="primary"
-                disabled={passwordSaving || !isPasswordFormValid}
+                disabled={passwordSaving || !passwordValidation.isValid}
               />
               <Button
                 copy="Cancelar"
