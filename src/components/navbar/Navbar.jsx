@@ -19,7 +19,7 @@ const navItems = [
   { label: "Proyectos", url: "/proyectos" },
   { label: "Distribuidores", url: "/distribuidores" },
   { label: "Nosotros", url: "/nosotros" },
-  { label: "Muestras", url: "/muestras", requiresAuth: true },
+  { label: "Muestras", url: "/muestras" },
   { label: "Descargas", url: "/descargas" },
 ];
 
