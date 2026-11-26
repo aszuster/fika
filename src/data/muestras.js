@@ -28,8 +28,12 @@ export const PROVINCIAS = [
 // Cantidad máxima de muestras que entran en el material box.
 export const MAX_MUESTRAS = 8;
 
-// Clave de sessionStorage donde se guardan los datos de contacto hasta que se
-// elijan las muestras en el paso siguiente.
+// Clave de sessionStorage con los chips elegidos en /muestras/elegir, que se
+// revisan en /muestras/completar antes de solicitar.
+export const MUESTRAS_SELECCION_KEY = "fika-muestras-seleccion";
+
+// Clave de sessionStorage con los datos de contacto que se van completando en
+// /muestras/completar (se conservan si se vuelve a editar la selección).
 export const MUESTRAS_CONTACTO_KEY = "fika-muestras-contacto";
 
 // Campos obligatorios del formulario de contacto (Instagram es opcional).

@@ -196,7 +196,7 @@ export default async function Nosotros() {
             </a>
             <div className="flex items-center gap-2">
               <Phone />
-              <a href="tel:+5491124768416" className="hl-xs underline uppercase transition-all duration-300 hover:text-secondary-01">+549 1124768416</a>
+              <a href="https://wa.me/5491124768416" target="_blank" rel="noopener noreferrer" className="hl-xs underline uppercase transition-all duration-300 hover:text-secondary-01">+549 1124768416</a>
             </div>
           </div>
           <div>

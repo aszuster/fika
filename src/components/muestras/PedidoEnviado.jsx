@@ -6,7 +6,11 @@ import { motion } from "motion/react";
 import Button from "@/components/buttons/Button";
 import Close from "@/svg/Close";
 import { useLenis } from "@/utils/lenis";
-import { MUESTRAS_CONTACTO_KEY, MUESTRAS_PEDIDO_KEY } from "@/data/muestras";
+import {
+  MUESTRAS_CONTACTO_KEY,
+  MUESTRAS_PEDIDO_KEY,
+  MUESTRAS_SELECCION_KEY,
+} from "@/data/muestras";
 
 // sessionStorage no avisa cambios en la misma pestaña: alcanza con leerlo.
 const subscribe = () => () => {};
@@ -44,11 +48,12 @@ export default function PedidoEnviado() {
 
   const backToMuestras = useCallback(() => router.push("/muestras"), [router]);
 
-  // El pedido ya se envió: para uno nuevo hay que volver a completar el
-  // formulario de contacto.
+  // El pedido ya se envió: uno nuevo arranca con la selección y el
+  // formulario vacíos.
   useEffect(() => {
     try {
       sessionStorage.removeItem(MUESTRAS_CONTACTO_KEY);
+      sessionStorage.removeItem(MUESTRAS_SELECCION_KEY);
     } catch {}
   }, []);
 

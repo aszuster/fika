@@ -165,6 +165,10 @@ export default async function ProyectoPage({ params }) {
         <div className="flex gap-9.5 hl-xs uppercase font-light underline">
           <a href="" className="">Instagram</a>
           <a href="mailto:info@fikarevestimientos.com" className="">info@fikarevestimientos.com</a>
+                      <div className="flex items-center gap-2">
+<Image width={18} height={18} src="/img/whatsapp.svg" alt=""/>
+                        <a href="https://wa.me/5491124768416" target="_blank" rel="noopener noreferrer" className="hl-xs underline uppercase transition-all duration-300 hover:text-secondary-01">+549 1124768416</a>
+                      </div>
         </div>
         <div className="hl-xs uppercase font-light underline">
           <BackToTop/>

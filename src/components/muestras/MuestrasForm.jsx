@@ -1,12 +1,10 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import Button from "@/components/buttons/Button";
 import Select from "@/components/forms/Select";
-import { PROVINCIAS, MUESTRAS_CONTACTO_KEY } from "@/data/muestras";
+import { PROVINCIAS } from "@/data/muestras";
+import Corner from "@/svg/Corner";
 
-const initialForm = {
+export const initialForm = {
   fullName: "",
   email: "",
   phone: "",
@@ -24,35 +22,33 @@ const TextField = ({ label, className = "", ...props }) => (
   />
 );
 
-export default function MuestrasForm() {
-  const router = useRouter();
-  const [form, setForm] = useState(initialForm);
-
-  const setField = (name) => (event) =>
-    setForm((prev) => ({ ...prev, [name]: event.target.value }));
-
-  const isValid =
-    form.fullName.trim() !== "" &&
-    form.email.trim() !== "" &&
-    form.phone.trim() !== "" &&
-    form.province !== "" &&
-    form.address.trim() !== "" &&
-    form.postalCode.trim() !== "";
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    if (!isValid) return;
-    try {
-      sessionStorage.setItem(MUESTRAS_CONTACTO_KEY, JSON.stringify(form));
-    } catch {}
-    router.push("/muestras/elegir");
-  };
+// Formulario de datos de envío. El estado lo maneja CompletarPedido, que lo
+// envía junto con los chips elegidos.
+export default function MuestrasForm({ form, onChange, onSubmit }) {
+  const setField = (name) => (event) => onChange(name, event.target.value);
 
   return (
-    <>
-      <div className="flex w-full pb-22.5">
-      <div className="w-40 shrink-0 border-r border-y border-primary-00"></div>
-      <form onSubmit={handleSubmit} className="flex-1 min-w-0 flex flex-col justify-between ">
+    <div className="flex w-full">
+      <div className="w-40 shrink-0 border-r  border-primary-00"></div>
+      <form
+        onSubmit={(event) => {
+          event.preventDefault();
+          onSubmit();
+        }}
+        className="flex-1 min-w-0 flex flex-col justify-between relative"
+      >
+        <div className="absolute -top-0.5 -left-0.5">
+        <Corner/>
+        </div>
+        <div className="absolute -rotate-90 -bottom-0.5 -left-0.5">
+        <Corner/>
+        </div>
+        <div className="absolute rotate-90 -top-0.5 -right-0.5">
+        <Corner/>
+        </div>
+        <div className="absolute rotate-180 -bottom-0.5 -right-0.5">
+        <Corner/>
+        </div>
         <div className="border-t border-primary-00">
           <TextField
             id="fullName"
@@ -90,9 +86,7 @@ export default function MuestrasForm() {
           />
           <Select
             value={form.province}
-            onChange={(value) =>
-              setForm((prev) => ({ ...prev, province: value }))
-            }
+            onChange={(value) => onChange("province", value)}
             options={PROVINCIAS}
             placeholder="*Provincia"
             className="by-sm border-b border-primary-01 bg-transparent py-2 2xl:py-3.75 pl-5 pr-7"
@@ -120,16 +114,7 @@ export default function MuestrasForm() {
         {/* Botón invisible: permite enviar con Enter desde cualquier campo. */}
         <button type="submit" hidden />
       </form>
-      <div className="w-40 shrink-0 border-l border-y border-primary-00"></div>
-      </div>
-
-      <Button
-        copy="Elegir muestras"
-        variant="tertiary"
-        disabled={!isValid}
-        onClick={handleSubmit}
-        className="mx-auto"
-      />
-    </>
+      <div className="w-40 shrink-0 border-l  border-primary-00"></div>
+    </div>
   );
 }
