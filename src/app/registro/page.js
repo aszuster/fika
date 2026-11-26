@@ -134,8 +134,8 @@ export default function RegistroPage() {
 
   if (step === "done") {
     return (
-      <div className="flex h-[calc(100dvh-3.125rem)] relative">
-        <div className="w-full h-full relative">
+      <div className="flex min-h-[calc(100dvh-3.125rem)] lg:h-[calc(100dvh-3.125rem)] relative">
+        <div className="hidden lg:block w-full h-full relative">
           <div className="grid grid-cols-2 bg-primary-01 gap-px w-full h-full">
             <div className="bg-primary-03"></div>
             <div className="bg-primary-03"></div>
@@ -151,9 +151,9 @@ export default function RegistroPage() {
             </div>
           </div>
         </div>
-        <div className="bg-primary-03 border-x border-primary-01 w-full h-full flex items-center justify-center">
+        <div className="bg-primary-03 lg:border-x border-primary-01 w-full flex items-center justify-center py-10 lg:py-0">
           <div className="w-full h-full flex flex-col justify-between items-center text-center">
-            <div className="h-full flex flex-col justify-center p-20">
+            <div className="h-full flex flex-col justify-center px-5 py-15 lg:p-20">
               <p className="hl-sm uppercase pb-6">Gracias por registrarte</p>
               {needsEmailConfirmation ? (
                 <p className="by-sm">
@@ -178,11 +178,11 @@ export default function RegistroPage() {
               copy="Ver productos"
               url="/"
               variant="tertiary"
-              className="mb-20"
+              className="mb-10 lg:mb-20"
             />
           </div>
         </div>
-        <div className="w-full h-full relative">
+        <div className="hidden lg:block w-full h-full relative">
           <div className="grid grid-cols-2 bg-primary-01 gap-px w-full h-full">
             <div className="bg-primary-03"></div>
             <div className="bg-primary-03"></div>
@@ -203,8 +203,8 @@ export default function RegistroPage() {
   }
 
   return (
-    <div className="flex h-[calc(100dvh-3.125rem)] relative">
-      <div className="w-full h-full relative">
+    <div className="flex min-h-[calc(100dvh-3.125rem)] lg:h-[calc(100dvh-3.125rem)] relative">
+      <div className="hidden lg:block w-full h-full relative">
         <div className="grid grid-cols-2 bg-primary-01 gap-px w-full h-full">
           <div className="bg-primary-03"></div>
           <div className="bg-primary-03"></div>
@@ -220,9 +220,9 @@ export default function RegistroPage() {
           </div>
         </div>
       </div>
-      <div className="bg-primary-03 border-x border-primary-01 w-full h-full flex items-center justify-center">
+      <div className="bg-primary-03 lg:border-x border-primary-01 w-full flex items-center justify-center py-10 lg:py-0">
         <form noValidate onSubmit={handleSubmit} className="w-full flex flex-col">
-          <div className="flex flex-col items-center">
+          <div className="flex flex-col items-center px-5">
             <p className="hl-lg uppercase text-center max-w-105">
               Creá tu cuenta
             </p>
@@ -403,7 +403,7 @@ export default function RegistroPage() {
           </div>
         </form>
       </div>
-      <div className="w-full h-full relative">
+      <div className="hidden lg:block w-full h-full relative">
         <div className="grid grid-cols-2 bg-primary-01 gap-px w-full h-full">
           <div className="bg-primary-03"></div>
           <div className="bg-primary-03"></div>

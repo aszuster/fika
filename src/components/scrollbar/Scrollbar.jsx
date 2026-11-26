@@ -122,7 +122,8 @@ export default function Scrollbar({ targetRef, className = "" }) {
       ref={trackRef}
       onClick={handleTrackClick}
       aria-hidden
-      className={`group z-30 w-3 ${
+      // Solo en desktop: en mobile se scrollea con el dedo y no hace falta.
+      className={`group z-30 w-3 hidden lg:block ${
         thumb.visible ? "" : "invisible pointer-events-none"
       } ${className}`}
     >

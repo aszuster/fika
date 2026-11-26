@@ -54,8 +54,10 @@ export default function IngresarPage() {
   };
 
   return (
-    <div className="flex h-[calc(100dvh-3.125rem)] relative">
-      <div className="w-full h-full relative">
+    // Mobile: solo la columna del formulario, a todo el ancho y con scroll si
+    // no entra. Desktop (lg): las tres columnas con las grillas a los costados.
+    <div className="flex min-h-[calc(100dvh-3.125rem)] lg:h-[calc(100dvh-3.125rem)] relative">
+      <div className="hidden lg:block w-full h-full relative">
         <div className="grid grid-cols-2 bg-primary-01 gap-px w-full h-full">
           <div className="bg-primary-03"></div>
           <div className="bg-primary-03"></div>
@@ -71,14 +73,15 @@ export default function IngresarPage() {
           </div>
         </div>
       </div>
-      <div className="bg-primary-03 h-full  w-full border-x border-primary-01">
+      <div className="bg-primary-03 w-full flex flex-col lg:border-x border-primary-01">
         <form
           noValidate
           onSubmit={handleSubmit}
-          className="w-full flex flex-col items-center h-full"
+          className="w-full flex-1 flex flex-col items-center"
         >
-          <div className="h-full flex flex-col justify-between w-full">
-            <div className="flex flex-col h-full w-full justify-center items-center gap-6.25">
+          <div className="flex-1 flex flex-col justify-between w-full">
+            <div className="flex flex-col flex-1 w-full justify-center items-center gap-6.25 px-5 py-12 lg:py-0">
+
               <p className="hl-md uppercase text-center max-w-100">
                 Ingresá a tu cuenta
               </p>
@@ -146,7 +149,7 @@ export default function IngresarPage() {
               </div>
             </div>
           </div>
-          <div className="h-full w-full flex flex-col justify-between">
+          <div className="flex-1 w-full flex flex-col justify-between">
             <Button
             className="border-x-0! border-y!"
               copy={loading ? "Ingresando..." : "Iniciar sesión"}
@@ -154,7 +157,7 @@ export default function IngresarPage() {
               variant="primary"
               disabled={loading || !isValid}
             />
-            <div className="flex flex-col justify-center items-center gap-2 pb-20.75">
+            <div className="flex flex-col justify-center items-center gap-2 pt-12 pb-12 lg:pt-0 lg:pb-20.75">
               <p className="by-sm text-center ">¿Todavía no tenes cuenta?</p>
               <Link href="/registro" className="underline btn-sm hover:text-secondary-01 transition-all">
                 Crear cuenta
@@ -163,7 +166,7 @@ export default function IngresarPage() {
           </div>
         </form>
       </div>
-      <div className="w-full">
+      <div className="hidden lg:block w-full">
         <div className="grid grid-cols-2 bg-primary-01 gap-px w-full h-full">
           <div className="bg-primary-03"></div>
           <div className="bg-primary-03"></div>

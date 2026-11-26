@@ -51,7 +51,7 @@ const Navbar = () => {
   );
 
   return (
-    <nav className="sticky top-0 z-20 h-12.5 px-3.75 lg:px-7.25 border-b border-primary-00 bg-primary-03 [view-transition-name:site-navbar]">
+    <nav className="sticky top-0 z-45 h-12.5 px-3.75 lg:px-7.25 border-b border-primary-00 bg-primary-03 [view-transition-name:site-navbar]">
       <div className="flex justify-between w-full h-full items-center relative">
         <Link href="/" onClick={closeMenu}>
           <Image src="/img/logo.svg" width={67} height={25} alt="Fika logo" />

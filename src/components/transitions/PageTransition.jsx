@@ -4,6 +4,31 @@ import { ViewTransition } from "react";
 import { usePathname } from "next/navigation";
 import { PROJECT_OPEN_TRANSITION } from "@/components/transitions/ProjectImageTransition";
 
+// Si el tamaño de la ventana cambia durante una View Transition (en el celular
+// pasa al aparecer/esconderse la barra del navegador), Chrome la cancela. Es
+// inofensivo: la página cambia igual, solo sin el fade. React ignora esos
+// errores, pero compara el mensaje exacto y Chrome lo cambió ("...invalid
+// state. Viewport size changed"), así que React lo reporta como error. Acá se
+// descarta solo ese caso. Escucha en captura para correr antes que el overlay
+// de errores de Next.
+const isAbortedViewTransition = (error) =>
+  error?.name === "InvalidStateError" &&
+  /view ?transition|transition was aborted|viewport size changed/i.test(
+    error.message ?? "",
+  );
+
+if (typeof window !== "undefined" && !window.__fikaIgnoreVTErrors) {
+  window.__fikaIgnoreVTErrors = true;
+  const ignore = (event) => {
+    if (isAbortedViewTransition(event.error ?? event.reason)) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+    }
+  };
+  window.addEventListener("error", ignore, true);
+  window.addEventListener("unhandledrejection", ignore, true);
+}
+
 // Fade entre páginas (las animaciones están en globals.css). La key hace que
 // solo se dispare al cambiar de ruta: filtros, ?formato= y demás actualizaciones
 // internas no animan.
