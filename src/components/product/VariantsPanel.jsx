@@ -280,7 +280,7 @@ const VariantsPanel = ({
                     <FavoriteButton
                       isFavorited={isFavorited(productSlug, slug)}
                       onToggle={() => handleFavorite(slug)}
-                      className="absolute px-4 lg:px-8.25 right-0 h-full border-l border-primary-00"
+                      className="absolute px-4 lg:px-8.25 right-0 h-full"
                     />
                   </div>
                   <div className="min-h-0 w-full flex-1 p-5 lg:p-8">

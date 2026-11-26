@@ -95,7 +95,7 @@ const MaterialBoxPanel = ({ isOpen, chips, onRemove, onClose }) => {
                     />
                   </>
                 ) : (
-                  <p className="by-sm text-secondary-02">Lugar disponible</p>
+                  <p className="by-sm text-secondary-02">-</p>
                 )}
               </div>
             );
