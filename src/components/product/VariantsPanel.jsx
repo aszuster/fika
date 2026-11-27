@@ -9,6 +9,7 @@ import GridCross, { hasTopCross } from "@/components/grid/GridCross";
 import Carousel from "@/components/carousel/Carousel";
 import Breadcrumbs from "@/components/product/Breadcrumbs";
 import FavoriteButton from "@/components/product/FavoriteButton";
+import VariantCardMobile from "@/components/product/VariantCardMobile";
 import FavoritesLoginModal from "@/components/modals/FavoritesLoginModal";
 import useFavorites from "@/hooks/useFavorites";
 import useIsMobile from "@/hooks/useIsMobile";
@@ -38,12 +39,14 @@ const MOCKUP_DOWNLOADS = [
 
 const PriceAndAvailability = ({ variant, index, className = "" }) => (
   <div
-    className={`flex flex-col gap-2 lg:flex-row lg:justify-between items-center w-full ${className}`}
+    className={`flex gap-2 justify-between items-end lg:items-center w-full ${className}`}
   >
-    <div className="w-full flex flex-wrap justify-center lg:justify-start gap-x-2">
+    <div className="w-full flex flex-col lg:flex-row lg:flex-wrap justify-start gap-x-2">
       <p className="btn-sm text-secondary-02">Precio sugerido</p>
-      <p className="btn-sm">{priceFormatter.format(getVariantPrice(variant))}</p>
-      <p className="btn-sm text-secondary-02">X M2</p>
+      <div className="flex flex-row gap-x-2">
+      <p className="btn-sm text-[15px]!">{priceFormatter.format(getVariantPrice(variant))}</p>
+      <p className="btn-sm text-[15px]! text-secondary-02">X M2</p>
+      </div>
     </div>
     <AvailabilityTag available={isVariantAvailable(variant, index)} />
   </div>
@@ -238,7 +241,9 @@ const VariantsPanel = ({
 
   return (
     <>
-      <div className="flex w-full items-center px-3.75 lg:px-7.25 h-12.5 border-b border-primary-00">
+      {/* Solo desktop: en mobile se vuelve con el "atrás" del teléfono (elegir
+          una variante agrega una entrada al historial). */}
+      <div className="hidden lg:flex w-full items-center px-3.75 lg:px-7.25 h-12.5 border-b border-primary-00">
         <Breadcrumbs items={breadcrumbs} />
       </div>
 
@@ -252,7 +257,9 @@ const VariantsPanel = ({
           {selected ? (
             isMobile ? mobileDetail : desktopDetail
           ) : (
-            <div className="grid grid-cols-2 gap-px bg-primary-01 auto-rows-[calc((100dvh-6.25rem-2px)/2)]">
+            // Mobile: cada tarjeta mide lo que su contenido (imagen cuadrada).
+            // Desktop: 2 filas por pantalla.
+            <div className="grid grid-cols-2 gap-px bg-primary-01 lg:auto-rows-[calc((100dvh-6.25rem-2px)/2)]">
               {variants.map((variant, index) => {
                 const { name, slug, catalogPhoto } = variant;
                 return (
@@ -271,6 +278,19 @@ const VariantsPanel = ({
                 >
                   {hasTopCross(index, 2) && <GridCross />}
 
+                  {isMobile ? (
+                    // Mobile: favoritos arriba a la derecha, la imagen y debajo
+                    // nombre, "Precio sugerido", precio X M2 y disponibilidad.
+                    <VariantCardMobile
+                      name={name}
+                      image={catalogPhoto}
+                      price={getVariantPrice(variant)}
+                      available={isVariantAvailable(variant, index)}
+                      isFavorited={isFavorited(productSlug, slug)}
+                      onToggleFavorite={() => handleFavorite(slug)}
+                    />
+                  ) : (
+                  <>
                   <div className="h-15 lg:h-21.75 relative shrink-0 border-b border-primary-01 w-full flex items-center justify-center">
                     <p
                       className={`${isMobile ? "hl-xs" : "hl-sm"} pl-2 pr-12.5 lg:px-0 uppercase max-w-50 text-center 2xl:max-w-100`}
@@ -301,6 +321,8 @@ const VariantsPanel = ({
                     className="py-3 lg:h-8 lg:py-7 shrink-0 px-3 lg:px-7.5 "
                   />
                   {/* )} */}
+                  </>
+                  )}
                 </div>
                 );
               })}

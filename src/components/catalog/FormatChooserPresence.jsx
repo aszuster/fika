@@ -18,7 +18,7 @@ export default function FormatChooserPresence({ children }) {
           animate={{ clipPath: "inset(0 0 0% 0)" }}
           exit={{ clipPath: "inset(0 0 100% 0)" }}
           transition={{ duration: SWEEP_DURATION, ease: EASE_IN_OUT }}
-          className="fixed inset-0 z-40"
+          className="fixed inset-0 z-46"
         >
           {children}
         </motion.div>

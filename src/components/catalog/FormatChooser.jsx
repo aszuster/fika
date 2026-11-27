@@ -1,6 +1,7 @@
 import Link from "next/link";
 import GridCross from "@/components/grid/GridCross";
 import Button from "@/components/buttons/Button";
+import Close from "@/svg/Close";
 import RememberFormatChooser from "@/components/catalog/RememberFormatChooser";
 
 export const formatParam = (label) => label.toLowerCase();
@@ -86,12 +87,21 @@ export default function FormatChooser({ formats }) {
     // En mobile los formatos van uno debajo del otro (una fila cada uno);
     // en desktop, uno al lado del otro.
     <div
-      className="fixed inset-0 z-40 bg-primary-00 grid gap-px grid-cols-1 grid-rows-[repeat(var(--format-count),minmax(0,1fr))] lg:grid-rows-1 lg:grid-cols-[repeat(var(--format-count),minmax(0,1fr))]"
+      className="fixed inset-0 z-46 bg-primary-00 grid gap-px grid-cols-1 grid-rows-[repeat(var(--format-count),minmax(0,1fr))] lg:grid-rows-1 lg:grid-cols-[repeat(var(--format-count),minmax(0,1fr))]"
       style={{ "--format-count": formats.length }}
     >
       <RememberFormatChooser cookieName={FORMAT_CHOOSER_SEEN_COOKIE} />
       {/* Saltea la elección y va al catálogo completo. */}
-      <div className="absolute top-0 right-0 z-20  flex items-center  bg-primary-03 p-7.25">
+      {/* Mobile: una cruz en vez de "Cerrar". */}
+      <Link
+        href={`/?formato=${ALL_FORMATS_PARAM}`}
+        replace
+        aria-label="Cerrar"
+        className="lg:hidden absolute top-0 right-0 z-20 flex items-center bg-primary-03 p-4"
+      >
+        <Close />
+      </Link>
+      <div className="hidden absolute top-0 right-0 z-20 lg:flex items-center bg-primary-03 p-7.25">
         <Button copy="Cerrar" url={`/?formato=${ALL_FORMATS_PARAM}`} variant="tertiary" className="text-[15px]!" replace />
       </div>
       {formats.map(({ label, note }, formatIndex) => {

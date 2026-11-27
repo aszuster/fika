@@ -155,7 +155,7 @@ const FiltersPanel = ({
       transition={{ duration: 0.35, ease: "easeInOut" }}
       className="absolute top-0 left-0 w-full lg:w-160 bg-primary-03 h-[calc(100dvh-3.125rem)] lg:border-r border-primary-00 flex flex-col"
     >
-      <div className="h-12.5 shrink-0 border-b border-primary-00 flex items-center justify-between px-7.25 lg:px-7.5">
+      <div className="h-12.5 shrink-0 border-b border-primary-00 flex items-center justify-between px-3.75 lg:px-7.5">
         <p className="hl-xs uppercase border rounded-sm px-1.5">Filtros</p>
         <button
           type="button"

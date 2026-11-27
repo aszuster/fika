@@ -16,7 +16,12 @@ const FavoriteButton = ({ isFavorited, onToggle, className = "" }) => (
 
     ${className}`}
   >
-    {isFavorited ? <Minus/> : <Plus/>}
+    {/* Mobile: 20px en vez de 24px (el viewBox es de 24, así que escala). */}
+    {isFavorited ? (
+      <Minus className="max-lg:size-5" />
+    ) : (
+      <Plus className="max-lg:size-5" />
+    )}
   </button>
 );
 
