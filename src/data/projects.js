@@ -21,8 +21,13 @@ const projectsQuery = `*[_type == "project" && defined(slug.current)] | order(or
   "products": coalesce(products[defined(product._ref) && defined(variant)] {
     "productSlug": product->slug.current,
     "productTitle": product->title,
+    "productImage": product->image.asset->url,
     variant,
-    "variants": product->variants[] { name, "slug": slug.current }
+    "variants": product->variants[] {
+      name,
+      "slug": slug.current,
+      "image": catalogPhoto.asset->url
+    }
   }, [])
 }`;
 
@@ -35,13 +40,15 @@ export const getProjects = cache(async () => {
       ? `${Math.round(hotspot.x * 100)}% ${Math.round(hotspot.y * 100)}%`
       : undefined,
     // Si la variante se borró o se le cambió el slug, no se muestra.
-    products: products.flatMap(({ productSlug, productTitle, variant, variants }) => {
+    products: products.flatMap(({ productSlug, productTitle, productImage, variant, variants }) => {
       const match = variants?.find((v) => v.slug === variant);
       if (!productSlug || !match) return [];
       return [
         {
           key: `${productSlug}/${variant}`,
           label: `${productTitle} ${match.name}`,
+          // Foto de catálogo de la variante; sin foto propia, la del producto.
+          image: match.image ?? productImage ?? null,
           href: `/productos/${productSlug}?variante=${encodeURIComponent(variant)}`,
         },
       ];

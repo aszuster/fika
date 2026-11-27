@@ -41,12 +41,24 @@ export default async function ProyectoPage({ params }) {
     { label: "Créditos", value: project.credits },
   ].filter(({ value }) => value);
 
+  // Mobile: el carrusel de arriba arranca con la portada y sigue con la galería.
+  const mobileImages = image ? [image, ...gallery] : gallery;
+
   return (
     <>
-      {/* Mobile: imagen arriba y nombre abajo. Desktop: mitad y mitad. */}
+      {/* Mobile: nombre arriba y carrusel abajo. Desktop: mitad y mitad. */}
       <div className="bg-primary-03 h-[calc(100dvh-3.125rem)] flex flex-col lg:flex-row shrink-0">
         <ProjectImageTransition slug={slug}>
-          <div className="relative w-full h-[55%] shrink-0 lg:shrink lg:w-auto lg:flex-1 lg:min-w-0 lg:h-full">
+          <div className="relative w-full h-[55%] shrink-0 pb-7.5 lg:pb-0 lg:shrink lg:w-auto lg:flex-1 lg:min-w-0 lg:h-full">
+            {mobileImages.length > 0 && (
+              <div className="relative h-full w-full lg:hidden">
+                <Carousel
+                  images={mobileImages}
+                  sizes="(min-width: 1024px) 50vw, 100vw"
+                  dotsClassName="absolute -bottom-7.5 left-1/2 -translate-x-1/2 h-7.5 items-center"
+                />
+              </div>
+            )}
             {image && (
               <Image
                 src={image}
@@ -54,13 +66,13 @@ export default async function ProyectoPage({ params }) {
                 fill
                 sizes="(min-width: 1024px) 50vw, 100vw"
                 loading="eager"
-                className="object-cover"
+                className="object-cover hidden lg:block"
                 style={{ objectPosition: imagePosition }}
               />
             )}
           </div>
         </ProjectImageTransition>
-        <div className="flex-1 min-h-0 min-w-0 lg:h-full bg-primary-03 flex flex-col items-center justify-between shrink-0 px-5 lg:px-0">
+        <div className="max-lg:order-first flex-1 min-h-0 min-w-0 lg:h-full bg-primary-03 flex flex-col items-center justify-between shrink-0 px-5 lg:px-0">
           <div className="flex flex-col h-full gap-6 lg:gap-25 justify-center">
             <h2 className="text-center hl-xl max-lg:text-[2.5rem]! max-lg:leading-12! uppercase mx-auto max-w-151">
               {studio}
@@ -71,7 +83,7 @@ export default async function ProyectoPage({ params }) {
               </p>
             )}
           </div>
-          <div className="h-15 lg:h-25">
+          <div className="hidden lg:block h-25">
             <div className="rotate-90">
               <Arrow className="mx-auto " />
             </div>
@@ -98,13 +110,14 @@ export default async function ProyectoPage({ params }) {
             <div className="h-12.5 flex justify-center items-center border-b border-primary-01">
               <p className="hl-xs uppercase">Ficha técnica</p>
             </div>
-            <div className="grid grid-cols-2 gap-px bg-primary-01 border-b border-primary-01">
+            {/* Mobile: una sola columna, cada título con su valor abajo. */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-px bg-primary-01 max-lg:border-b-0 border-b border-primary-01">
               {details.map(({ label, value }) => (
                 <Fragment key={label}>
-                  <div className="pl-5.25 py-0.5 flex items-center bg-primary-03">
-                    <p className="text-primary-00 by-sm">{label}</p>
+                  <div className="lg:pl-5.25 py-1 flex flex-col lg:flex-row items-center bg-primary-03">
+                    <p className="text-secondary-02 lg:text-primary-00 by-sm">{label}</p>
                   </div>
-                  <div className="pl-5.25 flex items-center bg-primary-03">
+                  <div className="lg:pl-5.25 py-1 lg:py-0 flex flex-col lg:flex-row items-center bg-primary-03">
                     <p className="by-sm">{value}</p>
                   </div>
                 </Fragment>
@@ -114,16 +127,31 @@ export default async function ProyectoPage({ params }) {
           <div className="flex-1 border-t lg:border-t-0 lg:border-l border-primary-00">
             <div className="h-12.5 flex justify-center items-center border-b border-primary-01 px-5">
               <p className="hl-xs uppercase text-center">
-                Productos Fika utilizados en el proyecto
+                Productos Fika utilizados
+                <span className="hidden lg:inline"> en el proyecto</span>
               </p>
             </div>
-            {products.map(({ key, label, href }) => (
+            {/* Mobile: foto de la variante y el nombre con el link abajo. */}
+            {products.map(({ key, label, href, image }) => (
               <div
                 key={key}
-                className="pl-5.25 py-0.5 flex items-center border-b border-primary-01"
+                className="border-b border-primary-01 lg:pl-5.25 lg:py-0.5 flex flex-col items-center lg:flex-row lg:items-center"
               >
-                <Link href={href} className="by-sm underline">
-                  {label}
+                <Link href={href} className="flex flex-col items-center py-5 lg:p-0 lg:inline">
+                  {image && (
+                    <div className="py-2.5  lg:hidden">
+                      <div className="relative h-35.25 w-35.25">
+                        <Image
+                          src={image}
+                          alt=""
+                          fill
+                          sizes="141px"
+                          className="object-cover"
+                        />
+                      </div>
+                    </div>
+                  )}
+                  <p className="by-sm underline py-0.5 lg:p-0">{label}</p>
                 </Link>
               </div>
             ))}
@@ -131,8 +159,9 @@ export default async function ProyectoPage({ params }) {
         </div>
         <div className="hidden lg:block w-13  border-l border-primary-00"></div>
       </div>
+      {/* Solo desktop: en mobile la galería ya está en el carrusel de arriba. */}
       {gallery.length > 0 && (
-        <div className="flex shrink-0 h-[80vw] lg:h-225.75">
+        <div className="hidden lg:flex shrink-0 h-225.75">
           <div className="hidden lg:block relative w-13 border-r border-primary-00 py-7.5"></div>
           <div className="w-full py-7.5 ">
             <div className="relative h-full w-full">
@@ -146,18 +175,18 @@ export default async function ProyectoPage({ params }) {
           <div className="hidden lg:block w-13 py-7.5 border-l border-primary-00"></div>
         </div>
       )}
-      <div className="flex shrink-0 h-30 lg:h-57.5 border-y border-primary-00">
+      <div className="flex shrink-0 h-12.5 lg:h-57.5 border-b lg:border-y border-primary-00">
         <div className="hidden lg:block relative w-13 border-r border-primary-00 py-7.5"></div>
         <Link
           href="/proyectos"
-          className="group w-full py-7.5 flex justify-center items-center gap-5.75 bg-primary-03  duration-300 ease-in-out"
+          className="group w-full lg:py-7.5 flex justify-center items-center gap-3 lg:gap-5.75 bg-primary-03  duration-300 ease-in-out"
         >
-          <p className="font-mono text-[22px] lg:text-[40px] font-light uppercase group-hover:text-secondary-01 transition-all duration-300 ease-in-out">
+          <p className="font-mono text-[15px] lg:text-[40px] font-light uppercase group-hover:text-secondary-01 transition-all duration-300 ease-in-out">
             Ver todos los proyectos
           </p>
           <Arrow
             color="currentColor"
-            className="group-hover:translate-x-1.5 transition-all duration-300 ease-in-out"
+            className="max-lg:size-4.5 group-hover:translate-x-1.5 transition-all duration-300 ease-in-out"
           />
         </Link>
         <div className="hidden lg:block w-13 py-7.5 border-l border-primary-00"></div>
