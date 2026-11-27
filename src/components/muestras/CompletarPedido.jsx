@@ -156,14 +156,20 @@ function CompletarPedidoContent({ chips: initialChips }) {
         />
       </div>
 
-      <div className="flex-1 min-h-0 flex">
+      {/* Mobile: una sola columna que scrollea (formulario y después la lista
+          de chips) con la barra de "Solicitar" fija abajo. Desktop: dos
+          columnas. */}
+      <div
+        data-lenis-prevent
+        className="flex-1 min-h-0 flex flex-col lg:flex-row overflow-y-auto lg:overflow-visible no-scrollbar"
+      >
         {/* Columna izquierda: título, texto y formulario. */}
         <div
           data-lenis-prevent
-          className="w-1/2 h-full overflow-y-auto no-scrollbar flex flex-col"
+          className="w-full lg:w-1/2 lg:h-full shrink-0 lg:shrink lg:overflow-y-auto no-scrollbar flex flex-col"
         >
           <div className="my-auto w-full flex flex-col py-10">
-            <div className="flex flex-col items-center px-5 pb-15">
+            <div className="flex flex-col items-center px-5 pb-10 lg:pb-15">
               <h1 className="hl-lg uppercase text-center max-w-105">
                 Completar pedido
               </h1>
@@ -182,16 +188,16 @@ function CompletarPedidoContent({ chips: initialChips }) {
         </div>
 
         {/* Columna derecha: resumen de los chips elegidos. */}
-        <div className="w-1/2 h-full border-l border-primary-00 flex flex-col">
-          <div className="h-12.5 shrink-0 border-b border-primary-00 flex items-center px-7.5">
+        <div className="w-full lg:w-1/2 lg:h-full shrink-0 lg:shrink border-t lg:border-t-0 lg:border-l border-primary-00 flex flex-col">
+          <div className="h-12.5 shrink-0 border-b border-primary-00 flex items-center px-5 lg:px-7.5">
             <p className="hl-xs uppercase">Tu material box</p>
           </div>
 
-          <ScrollArea className="flex-1" viewportClassName="flex flex-col">
+          <ScrollArea className="lg:flex-1" viewportClassName="flex flex-col">
             {chips.map((chip, index) => (
               <div
                 key={chip.key}
-                className="h-20 shrink-0 border-b border-primary-01 grid grid-cols-[1fr_2fr_1fr] items-center gap-5 px-7.5"
+                className="h-20 shrink-0 border-b border-primary-01 grid grid-cols-[auto_1fr_auto] lg:grid-cols-[1fr_2fr_1fr] items-center gap-5 px-5 lg:px-7.5"
               >
                 <p className="hl-xs text-primary-00">{index + 1}</p>
                 <div className="min-w-0 flex gap-5 items-center">
@@ -221,9 +227,11 @@ function CompletarPedidoContent({ chips: initialChips }) {
               </div>
             ))}
           </ScrollArea>
+          {/* Mobile: deja lugar para la barra fija de abajo. */}
+          <div className="lg:hidden h-16.25 shrink-0" />
 
-          <div className="h-16.25 shrink-0 border-t border-primary-00 flex items-center justify-between gap-6">
-            <div className="min-w-0 flex items-center gap-4 pl-7.5">
+          <div className="h-16.25 shrink-0 border-t border-primary-00 flex items-center justify-between gap-6 fixed lg:static inset-x-0 bottom-0 z-10 bg-primary-03">
+            <div className="min-w-0 flex items-center gap-4 pl-5 lg:pl-7.5">
               <p className="hl-xs text-[14px]! uppercase shrink-0">
                 {chips.length}{" "}
                 {chips.length === 1 ? "chip agregado" : "chips agregados"}
@@ -234,7 +242,7 @@ function CompletarPedidoContent({ chips: initialChips }) {
                 </p>
               )}
             </div>
-            <div className="w-1/3 h-full shrink-0 flex">
+            <div className="w-1/2 lg:w-1/3 h-full shrink-0 flex">
               <Button
                 copy={isSending ? "Enviando..." : "Solicitar"}
                 variant="primary"

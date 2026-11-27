@@ -9,7 +9,10 @@ import GridCross, { hasTopCross } from "@/components/grid/GridCross";
 import MaterialBoxPanel from "@/components/muestras/MaterialBoxPanel";
 import { MAX_MUESTRAS, MUESTRAS_SELECCION_KEY } from "@/data/muestras";
 
+// Columnas de la grilla: 2 en mobile, 6 en desktop (las cruces y los rellenos
+// se calculan para cada una).
 const COLS = 6;
+const MOBILE_COLS = 2;
 
 
 const subscribe = () => () => {};
@@ -79,7 +82,7 @@ export default function ElegirMuestras({ chips }) {
         <p className="by-sm text-[14px]! mx-auto">{chips.length} chips disponibles</p>
       </div>
 
-      <div className="flex-1 grid grid-cols-6 content-start gap-px bg-primary-01">
+      <div className="flex-1 grid grid-cols-2 lg:grid-cols-6 content-start gap-px bg-primary-01">
         {chips.map(({ key, productTitle, variantName, image }, index) => {
           const isSelected = selected.includes(key);
           const isDisabled = isFull && !isSelected;
@@ -93,7 +96,16 @@ export default function ElegirMuestras({ chips }) {
                   : "cursor-pointer hover:bg-[#EFEFEF]"
               }`}
             >
-              {hasTopCross(index, COLS) && <GridCross />}
+              {hasTopCross(index, MOBILE_COLS) && (
+                <span className="contents lg:hidden">
+                  <GridCross />
+                </span>
+              )}
+              {hasTopCross(index, COLS) && (
+                <span className="hidden lg:contents">
+                  <GridCross />
+                </span>
+              )}
 
               <input
                 type="checkbox"
@@ -104,7 +116,7 @@ export default function ElegirMuestras({ chips }) {
               />
               <span
                 aria-hidden="true"
-                className={`absolute top-5.5 left-5.5 size-4.5 flex items-center justify-center border border-primary-00 transition-colors duration-300 peer-focus-visible:outline peer-focus-visible:outline-offset-2 peer-focus-visible:outline-primary-00 ${
+                className={`absolute top-4 left-4 lg:top-5.5 lg:left-5.5 size-4.5 flex items-center justify-center border border-primary-00 transition-colors duration-300 peer-focus-visible:outline peer-focus-visible:outline-offset-2 peer-focus-visible:outline-primary-00 ${
                   isSelected ? "bg-primary-00" : "bg-primary-03"
                 } ${isDisabled ? "opacity-30" : ""}`}
               >
@@ -115,7 +127,7 @@ export default function ElegirMuestras({ chips }) {
                 />
               </span>
 
-              <div className="min-h-0 w-full flex-1 p-8 lg:p-10">
+              <div className="min-h-0 w-full flex-1 p-7 lg:p-10">
                 <div className="relative h-full w-full">
                   {image && (
                     <Image
@@ -129,7 +141,7 @@ export default function ElegirMuestras({ chips }) {
                 </div>
               </div>
 
-              <div className="shrink-0 w-full px-5.5 pb-5.5 flex">
+              <div className="shrink-0 w-full px-4 pb-4 lg:px-5.5 lg:pb-5.5 flex">
                 <p className="hl-xs uppercase leading-5!">
                   {productTitle} <br/> {variantName}
                 </p>
@@ -137,19 +149,26 @@ export default function ElegirMuestras({ chips }) {
             </label>
           );
         })}
-        <GridFillers items={chips} cols={COLS} crosses />
+        <div className="contents lg:hidden">
+          <GridFillers items={chips} cols={MOBILE_COLS} crosses />
+        </div>
+        <div className="hidden lg:contents">
+          <GridFillers items={chips} cols={COLS} crosses />
+        </div>
       </div>
 
-      <div data-bottom-toolbar className="sticky bottom-0 z-10 w-full h-16.25 bg-primary-03 border-t border-primary-00 flex items-center justify-between gap-6">
+      {/* Mobile: 2 filas (los chips elegidos arriba y los botones abajo, 101px
+          en total: MaterialBoxPanel deja ese lugar). Desktop: 1 fila. */}
+      <div data-bottom-toolbar className="sticky bottom-0 z-10 w-full lg:h-16.25 bg-primary-03 border-t border-primary-00 flex flex-col lg:flex-row lg:items-center justify-between lg:gap-6">
 
-        <div className="flex items-center gap-4 min-w-0 pl-3.75 lg:pl-7.25">
-          <div className="flex items-center gap-2 shrink-0">
+        <div className="h-12.5 lg:h-auto shrink-0 flex items-center justify-between lg:justify-start gap-4 min-w-0 px-3.75 lg:pr-0 lg:pl-7.25 border-b border-primary-00 lg:border-b-0">
+          <div className="flex items-center gap-1.5 lg:gap-2 shrink-0">
             {Array.from({ length: MAX_MUESTRAS }, (_, index) => {
               const chip = chipsByKey[selected[index]];
               return (
                 <span
                   key={index}
-                  className="group relative size-6.25 flex items-center justify-center border border-primary-00 bg-transparent transition-colors duration-300"
+                  className="group relative size-5 lg:size-6.25 flex items-center justify-center border border-primary-00 bg-transparent transition-colors duration-300"
                   style={
                     chip
                       ? { backgroundColor: chip.color ?? "var(--color-primary-00)" }
@@ -173,18 +192,18 @@ export default function ElegirMuestras({ chips }) {
           <p className="hl-xs text-[14px]! uppercase shrink-0 ">
             {selected.length}/{MAX_MUESTRAS} chips
           </p>
-          <p className="by-sm text-[14px]! text-primary-00 truncate pl-8.5">
+          <p className="hidden lg:block by-sm text-[14px]! text-primary-00 truncate pl-8.5">
             Elegí hasta <span className="font-medium!">{MAX_MUESTRAS} muestras</span> para tu box
           </p>
         </div>
 
-        <div className="w-1/3 h-full shrink-0 flex">
+        <div className="w-full h-12.5 lg:w-1/3 lg:h-full shrink-0 flex">
           <Button
             copy={isPanelOpen ? "Seguir editando" : "Ver selección"}
             variant="primary"
             disabled={!isPanelOpen && selected.length === 0}
             onClick={() => setIsPanelOpen((open) => !open)}
-            className="flex-1 h-full py-0! border-l border-primary-00 bg-primary-03! enabled:text-primary-00! enabled:hover:bg-primary-00! enabled:hover:text-primary-03!"
+            className="flex-1 h-full py-0! lg:border-l border-primary-00 bg-primary-03! enabled:text-primary-00! enabled:hover:bg-primary-00! enabled:hover:text-primary-03!"
           />
           <Button
             copy="Solicitar muestras"

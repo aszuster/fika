@@ -3,10 +3,13 @@ import Image from "next/image";
 
 export default function Muestras() {
   return (
-    <div className="bg-primary-03 w-full h-[calc(100dvh-3.125rem)] flex">
-      <div className="w-1/2 h-full relative bg-primary-02">
+    // Mobile: imagen arriba y texto abajo, todo en el alto de la pantalla.
+    // Desktop: dos columnas.
+    <div className="bg-primary-03 w-full h-[calc(100dvh-3.125rem)] flex flex-col lg:flex-row">
+      <div className="w-full h-1/2 lg:w-1/2 lg:h-full shrink-0 relative bg-primary-02">
         <Image
           fill
+          sizes="(min-width: 1024px) 50vw, 100vw"
           className="object-cover"
           src="/img/muestras/intro.webp"
           alt=""
@@ -15,9 +18,9 @@ export default function Muestras() {
 
       <div
         data-lenis-prevent
-        className="w-1/2 h-full overflow-y-auto no-scrollbar border-l border-primary-01 flex flex-col "
+        className="w-full flex-1 min-h-0 lg:w-1/2 lg:h-full overflow-y-auto no-scrollbar border-t lg:border-t-0 lg:border-l border-primary-01 flex flex-col "
       >
-        <div className="flex-1 w-full flex flex-col justify-center pt-10">
+        <div className="flex-1 w-full flex flex-col justify-center pt-8 lg:pt-10">
           <div className="flex flex-col items-center px-5">
             <h1 className="hl-lg uppercase text-center max-w-105">
               Material box
@@ -31,7 +34,7 @@ export default function Muestras() {
             </div>
           </div>
         </div>
-        <div className="shrink-0 flex justify-center pb-10">
+        <div className="shrink-0 flex justify-center pb-8 lg:pb-10">
           <Button
             copy="Elegir muestras"
             url="/muestras/elegir"

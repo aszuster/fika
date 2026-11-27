@@ -56,7 +56,8 @@ export default function MuestrasForm({
 
   return (
     <div className="flex w-full">
-      <div className="w-40 shrink-0 border-r  border-primary-00"></div>
+      {/* Columnas vacías a los costados solo en desktop. */}
+      <div className="hidden lg:block w-40 shrink-0 border-r  border-primary-00"></div>
       <form
         noValidate
         onSubmit={(event) => {
@@ -132,7 +133,7 @@ export default function MuestrasForm({
         {/* Botón invisible: permite enviar con Enter desde cualquier campo. */}
         <button type="submit" hidden />
       </form>
-      <div className="w-40 shrink-0 border-l  border-primary-00"></div>
+      <div className="hidden lg:block w-40 shrink-0 border-l  border-primary-00"></div>
     </div>
   );
 }

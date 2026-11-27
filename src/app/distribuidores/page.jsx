@@ -6,7 +6,8 @@ export default async function Distribuidores() {
 
   return (
     <div className="bg-primary-03 h-[calc(100dvh-3.125rem)] relative">
-        <div className="grid grid-cols-4 grid-rows-1 h-full relative">
+        {/* Mobile: el panel arma su propia columna. Desktop: grilla de 4. */}
+        <div className="lg:grid grid-cols-4 grid-rows-1 h-full relative">
             <DistribuidoresPanel provincias={provincias} />
         </div>
     </div>

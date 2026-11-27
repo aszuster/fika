@@ -20,7 +20,7 @@ const MaterialBoxPanel = ({ isOpen, chips, onRemove, onClose }) => {
         transition={{ duration: 0.35, ease: "easeInOut" }}
         onClick={onClose}
         data-lenis-prevent
-        className={`fixed inset-x-0 top-12.5 bottom-16 z-20 bg-primary-00/40 ${
+        className={`fixed inset-x-0 top-12.5 bottom-[6.3125rem] lg:bottom-16 z-20 bg-primary-00/40 ${
           isOpen ? "pointer-events-auto" : "pointer-events-none"
         }`}
       />
@@ -29,9 +29,9 @@ const MaterialBoxPanel = ({ isOpen, chips, onRemove, onClose }) => {
         animate={{ x: isOpen ? 0 : "100%" }}
         transition={{ duration: 0.35, ease: "easeInOut" }}
         data-lenis-prevent
-        className="fixed top-12.5 bottom-16.5 right-0 z-30 w-1/3 bg-primary-03 border-l border-primary-00 flex flex-col"
+        className="fixed top-12.5 bottom-[6.3125rem] lg:bottom-16.5 right-0 z-30 w-full lg:w-1/3 bg-primary-03 lg:border-l border-primary-00 flex flex-col"
       >
-        <div className="h-12.5 shrink-0 border-b border-primary-00 flex items-center justify-between px-7.5">
+        <div className="h-12.5 shrink-0 border-b border-primary-00 flex items-center justify-between px-5 lg:px-7.5">
           <p className="hl-xs uppercase">Tu material box</p>
           <button
             type="button"
@@ -43,7 +43,7 @@ const MaterialBoxPanel = ({ isOpen, chips, onRemove, onClose }) => {
           </button>
         </div>
 
-        <div className="h-12.5 shrink-0 border-b border-primary-00 flex items-center px-7.5">
+        <div className="min-h-12.5 py-2 lg:py-0 shrink-0 border-b border-primary-00 flex items-center px-5 lg:px-7.5">
           <p className="by-sm text-[14px]! text-center">
             {remaining > 0 ? (
               <>
@@ -67,7 +67,7 @@ const MaterialBoxPanel = ({ isOpen, chips, onRemove, onClose }) => {
             return (
               <div
                 key={chip?.key ?? `empty-${index}`}
-                className="h-20 shrink-0 border-b border-primary-01 flex items-center gap-5 px-7.5"
+                className="h-20 shrink-0 border-b border-primary-01 flex items-center gap-5 px-5 lg:px-7.5"
               >
                 <p className="hl-xs w-5 shrink-0 text-primary-00">
                   {String(index + 1).padStart(1)}

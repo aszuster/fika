@@ -24,7 +24,9 @@ export default async function Proyectos() {
 
   return (
     <div className="bg-primary-03 h-[calc(100%-3.125rem)]">
-      <div className="grid grid-cols-3 gap-px bg-primary-00 auto-rows-[calc(100dvh-3.125rem)]">
+      {/* Mobile: 1 columna, cada proyecto a 70% del alto de la pantalla y sin
+          los rellenos de la grilla de 3. */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-px bg-primary-00 auto-rows-[70dvh] lg:auto-rows-[calc(100dvh-3.125rem)]">
         {projects.map(({ slug, studio, image, imagePosition }, index) => (
           <Link
             key={slug}
@@ -32,7 +34,7 @@ export default async function Proyectos() {
             transitionTypes={[PROJECT_OPEN_TRANSITION]}
             className="group bg-primary-03 flex flex-col"
           >
-            <div className="h-20 shrink-0 border-b border-primary-01 w-full flex items-center justify-center">
+            <div className="h-15 lg:h-20 shrink-0 border-b border-primary-01 w-full flex items-center justify-center px-5">
               <p className="hl-sm uppercase">{studio}</p>
             </div>
             <ProjectImageTransition slug={slug}>
@@ -44,7 +46,7 @@ export default async function Proyectos() {
                     src={image}
                     alt={studio}
                     fill
-                    sizes="50vw"
+                    sizes="(min-width: 1024px) 50vw, 100vw"
                     className={`object-cover ${imageHover} ${hoverTransition}`}
                     style={{ objectPosition: imagePosition }}
                     loading={index < cols ? "eager" : undefined}
@@ -59,7 +61,7 @@ export default async function Proyectos() {
         ))}
 
         {Array.from({ length: fillerCount }, (_, index) => (
-          <div key={`filler-${index}`} className="bg-primary-03 flex flex-col">
+          <div key={`filler-${index}`} className="hidden bg-primary-03 lg:flex flex-col">
             <div className="h-21.75 shrink-0 border-b border-primary-01 w-full" />
             <div className="min-h-0 w-full flex-1 grid grid-cols-2 grid-rows-2 gap-px bg-primary-01">
               <div className="bg-primary-03" />
