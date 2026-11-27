@@ -29,10 +29,10 @@ export default function Scrollbar({ targetRef, className = "" }) {
     const target = targetRef?.current;
     const { top, scrollHeight, clientHeight } = getScroll(target);
     const trackHeight = trackRef.current?.clientHeight ?? 0;
-    const thumbHeight = Math.max(
-      (clientHeight / scrollHeight) * trackHeight,
-      MIN_THUMB_HEIGHT,
-    );
+    // Si el contenedor está oculto (display: none, p. ej. la versión desktop
+    // en mobile) todo mide 0 y 0/0 daría NaN.
+    const ratio = scrollHeight > 0 ? clientHeight / scrollHeight : 1;
+    const thumbHeight = Math.max(ratio * trackHeight, MIN_THUMB_HEIGHT);
     return {
       target,
       top,

@@ -4,8 +4,9 @@ import { useEffect, useId, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import Chevron from "@/svg/Chevron";
 
-// Mobile: en vez de los tabs, una barra con mobileLabel ("Mi cuenta") que al
-// tocarla despliega las secciones debajo. La sección activa se marca con fondo
+// Mobile: en vez de los tabs, una barra con el nombre de la sección activa (o
+// mobileLabel, "Mi cuenta", si no hay ninguna) que al tocarla despliega las
+// secciones debajo. Los nombres van a 25px. La sección activa se marca con fondo
 // negro, igual que en el menú mobile del navbar.
 const TabMenu = ({ tabs, activeTab, onSelect, label }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -20,6 +21,9 @@ const TabMenu = ({ tabs, activeTab, onSelect, label }) => {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isOpen]);
 
+  const currentLabel =
+    tabs.find(({ key }) => key === activeTab)?.label ?? label;
+
   const select = (key) => {
     setIsOpen(false);
     onSelect(key);
@@ -32,9 +36,9 @@ const TabMenu = ({ tabs, activeTab, onSelect, label }) => {
         onClick={() => setIsOpen((open) => !open)}
         aria-expanded={isOpen}
         aria-controls={listId}
-        className="w-full h-full flex items-center justify-between px-3.75 btn-sm uppercase cursor-pointer"
+        className="w-full h-full flex items-center justify-between px-3.75 btn-sm text-[1.5625rem]! uppercase cursor-pointer"
       >
-        {label}
+        {currentLabel}
         <span
           className={`shrink-0 transition-transform duration-200 ${
             isOpen ? "-rotate-90" : "rotate-90"
@@ -69,7 +73,7 @@ const TabMenu = ({ tabs, activeTab, onSelect, label }) => {
                       type="button"
                       onClick={() => select(key)}
                       aria-current={active ? "page" : undefined}
-                      className={`w-full h-12.5 flex items-center justify-center btn-sm uppercase cursor-pointer transition-colors duration-300 ${
+                      className={`w-full h-12.5 flex items-center justify-center btn-sm text-[1.5625rem]! uppercase cursor-pointer transition-colors duration-300 ${
                         active
                           ? "bg-primary-00 text-primary-03"
                           : "text-primary-00"

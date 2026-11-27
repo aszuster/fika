@@ -15,7 +15,7 @@ const Cross = ({ position }) => (
     width={24}
     height={24}
     alt=""
-    className={`pointer-events-none absolute left-0 z-5 -translate-x-[calc(50%+0.5px)] ${
+    className={`hidden lg:block pointer-events-none absolute left-0 z-5 -translate-x-[calc(50%+0.5px)] ${
       position === "bottom"
         ? "bottom-0 translate-y-[calc(50%+0.5px)]"
         : "top-0 -translate-y-1/2"
@@ -31,16 +31,16 @@ const FavoritosSection = ({ favorites, projects, catalog }) => {
   if (favorites.length === 0) {
     return (
       <div className="flex h-[calc(100dvh-6.25rem)] relative w-full">
-        <div className="w-full h-full relative">
+        <div className="hidden lg:block w-full h-full relative">
           <div className="grid grid-cols-2 grid-rows-[3fr_7fr] bg-primary-03 gap-px w-full h-full"></div>
         </div>
-        <div className="w-full h-full flex flex-col border-x border-primary-01">
-          <div className="h-[33%] shrink-0 flex flex-col justify-center items-center">
+        <div className="w-full h-full flex flex-col lg:border-x border-primary-01">
+          <div className="hidden lg:flex h-[33%] shrink-0 flex-col justify-center items-center">
             <h2 className="hl-lg uppercase">Favoritos</h2>
           </div>
           <ScrollArea className="flex-1 w-full" viewportClassName="flex flex-col">
-            <div className="h-full border-y border-primary-00 flex justify-center items-center">
-              <p className="by-sm text-secondary-01 font-normal! text-center max-w-70">
+            <div className="h-full border-b lg:border-t border-primary-00 flex justify-center items-center">
+              <p className="by-sm text-secondary-01 font-normal! text-center max-w-70 px-5 lg:px-0">
                 Guardá tus productos favoritos para encontrarlos fácilmente y
                 sumarlos a tus proyectos cuando quieras.
               </p>
@@ -51,13 +51,13 @@ const FavoritosSection = ({ favorites, projects, catalog }) => {
                   copy="Ir a productos"
                   url="/"
                   variant="tertiary"
-                  className="mb-20 font-normal!"
+                  className="mb-12 lg:mb-20 font-normal!"
                 />
               </div>
             </div>
           </ScrollArea>
         </div>
-        <div className="w-full h-full relative">
+        <div className="hidden lg:block w-full h-full relative">
           <div className="grid grid-cols-2 grid-rows-[3fr_7fr] bg-primary-03 gap-px w-full h-full"></div>
         </div>
       </div>
@@ -69,14 +69,16 @@ const FavoritosSection = ({ favorites, projects, catalog }) => {
 
   return (
     <div className="flex flex-col w-full min-h-[calc(100dvh-6.25rem)] overflow-x-clip">
-      <div className="h-59 w-full grid grid-cols-3 gap-px bg-primary-01">
+      {/* Mobile: sin título (la sección ya figura en el menú de arriba) y 1
+          columna, sin las cruces ni los rellenos de la grilla de 3. */}
+      <div className="hidden lg:grid h-59 w-full grid-cols-3 gap-px bg-primary-01">
         <div className="bg-primary-03 "></div>
         <div className="flex items-center justify-center bg-primary-03">
           <h2 className="hl-lg uppercase text-primary-00 z-10 ">Favoritos</h2>
         </div>
         <div className="bg-primary-03 h-full "></div>
       </div>
-      <div className="relative z-1 grid grid-cols-3 gap-px bg-primary-00 border-t border-primary-01">
+      <div className="relative z-1 grid grid-cols-1 lg:grid-cols-3 gap-px bg-primary-00 border-t border-primary-01">
         {favorites.map((favorite, index) => {
           const product = catalog[favorite.product_slug];
           const variant = product?.variants.find(
@@ -100,13 +102,13 @@ const FavoritosSection = ({ favorites, projects, catalog }) => {
                 </p>
               </div>
               <div className="flex items-start">
-              <div className=" w-1/2 flex justify-center items-center p-8.25 border-r border-primary-01">
-                <div className="relative h-46.25 w-49.5 ">
+              <div className=" w-1/2 flex justify-center items-center p-5 lg:p-8.25 border-r border-primary-01">
+                <div className="relative w-full aspect-198/185 lg:aspect-auto lg:h-46.25 lg:w-49.5 ">
                   <Image
                     src={variant?.catalogPhoto ?? product?.image}
                     alt=""
                     fill
-                    sizes="33vw"
+                    sizes="(min-width: 1024px) 33vw, 50vw"
                     className="object-cover"
                   />
                 </div>
@@ -153,7 +155,7 @@ const FavoritosSection = ({ favorites, projects, catalog }) => {
           const col = absoluteIndex % 3;
 
           return (
-            <div key={`filler-${fillerIndex}`} className="relative bg-primary-03">
+            <div key={`filler-${fillerIndex}`} className="hidden lg:block relative bg-primary-03">
               {row > 0 && col > 0 && <Cross position="top" />}
               {row === lastRow && col > 0 && <Cross position="bottom" />}
             </div>
@@ -161,7 +163,7 @@ const FavoritosSection = ({ favorites, projects, catalog }) => {
         })}
       </div>
       <div className="relative flex-1 min-h-0 overflow-hidden">
-        <div className="absolute inset-0 pt-px grid grid-cols-3 gap-px auto-rows-87 content-start bg-primary-01">
+        <div className="absolute inset-0 pt-px grid grid-cols-1 lg:grid-cols-3 gap-px auto-rows-87 content-start bg-primary-01">
           {Array.from({ length: 12 }, (_, cellIndex) => (
             <div key={cellIndex} className="relative bg-primary-03">
               {cellIndex >= 3 && cellIndex % 3 > 0 && <Cross position="top" />}
