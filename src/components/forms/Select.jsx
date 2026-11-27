@@ -8,10 +8,19 @@ import {
 } from "@headlessui/react";
 import Chevron from "@/svg/Chevron";
 
-const Select = ({ value, onChange, options, placeholder = "", className = "" }) => (
+// optionClassName: clases extra para las opciones de la lista (se suman a las
+// de base).
+const Select = ({
+  value,
+  onChange,
+  options,
+  placeholder = "",
+  className = "",
+  optionClassName = "",
+}) => (
   <Listbox value={value} onChange={onChange}>
     <ListboxButton
-      className={`group flex w-full items-center justify-between gap-4 text-left cursor-pointer outline-none ${className}`}
+      className={`select-button group flex w-full items-center justify-between gap-4 text-left cursor-pointer outline-none ${className}`}
     >
       <span className={`truncate ${value ? "" : "text-secondary-02"}`}>
         {value || placeholder}
@@ -29,7 +38,9 @@ const Select = ({ value, onChange, options, placeholder = "", className = "" }) 
         <ListboxOption
           key={option}
           value={option}
-          className="by-sm py-2.5 px-4 text-secondary-02 cursor-pointer data-selected:text-primary-00 data-focus:bg-primary-00 data-focus:text-secondary-02"
+          // Texto negro; en hover (data-focus) fondo negro y texto blanco. En
+          // mobile no hay hover, así que la opción elegida se marca igual.
+          className={`by-sm py-2.5 px-4 text-primary-00 cursor-pointer data-focus:bg-primary-00 data-focus:text-primary-03 max-lg:data-selected:bg-primary-00 max-lg:data-selected:text-primary-03 ${optionClassName}`}
         >
           {option}
         </ListboxOption>

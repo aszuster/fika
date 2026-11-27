@@ -10,6 +10,8 @@ import Image from "next/image";
 import Visible from "@/svg/Visible";
 import Hidden from "@/svg/Hidden";
 import Select from "@/components/forms/Select";
+import FieldError from "@/components/forms/FieldError";
+import { useValidation } from "@/utils/useValidation";
 
 const initialForm = {
   email: "",
@@ -25,13 +27,39 @@ const initialForm = {
   city: "",
 };
 
-const TextField = ({ label, ...props }) => (
-  <div className="flex flex-col gap-1 not-last:border-b not-last:border-primary-01">
+const STEP_1_FIELDS = [
+  "fullName",
+  "email",
+  "password",
+  "repeatPassword",
+  "professionalActivity",
+];
+
+const RULES = {
+  fullName: { required: true },
+  email: { required: true, type: "email" },
+  password: { required: true, type: "password" },
+  repeatPassword: {
+    required: true,
+    validate: (value, values) =>
+      value !== values.password ? "Las contraseñas no coinciden" : null,
+  },
+  professionalActivity: { required: true },
+  phone: { required: true, type: "phone" },
+  country: { required: true },
+  stateProvince: { required: true },
+  city: { required: true },
+};
+
+const TextField = ({ label, error, required, ...props }) => (
+  <div className="flex flex-col not-last:border-b not-last:border-primary-01">
     <input
       {...props}
-      placeholder={`*${label}`}
+      aria-invalid={Boolean(error)}
+      placeholder={required ? `*${label}` : label}
       className="by-sm  bg-transparent outline-none py-2 2xl:py-3.75 px-5"
     />
+    <FieldError message={error} />
   </div>
 );
 
@@ -44,25 +72,33 @@ export default function RegistroPage() {
   const [loading, setLoading] = useState(false);
   const [needsEmailConfirmation, setNeedsEmailConfirmation] = useState(false);
 
-  const setField = (name) => (event) =>
-    setForm((prev) => ({ ...prev, [name]: event.target.value }));
+  const { errors, touch, validate, isValid, isValidFor } = useValidation(
+    form,
+    RULES,
+  );
 
-  const isStep1Valid =
-    form.email.trim() !== "" &&
-    form.fullName.trim() !== "" &&
-    form.password.length >= 6 &&
-    form.repeatPassword === form.password &&
-    form.professionalActivity !== "";
+  // Props comunes de cada campo de texto: valor, error y validación al salir.
+  const fieldProps = (name) => ({
+    id: name,
+    value: form[name],
+    error: errors[name],
+    onChange: (event) =>
+      setForm((prev) => ({ ...prev, [name]: event.target.value })),
+    onBlur: () => touch(name),
+  });
 
-  const isStep2Valid =
-    form.phone.trim() !== "" &&
-    form.country.trim() !== "" &&
-    form.stateProvince.trim() !== "" &&
-    form.city.trim() !== "";
+  const goToStep2 = () => {
+    if (validate(STEP_1_FIELDS)) setStep(2);
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    if (!isStep2Valid) return;
+    // Enter en el paso 1 pasa al siguiente en vez de enviar.
+    if (step === 1) {
+      goToStep2();
+      return;
+    }
+    if (loading || !validate()) return;
 
     setError(null);
     setLoading(true);
@@ -98,8 +134,8 @@ export default function RegistroPage() {
 
   if (step === "done") {
     return (
-      <div className="flex h-[calc(100dvh-3.125rem)] relative">
-        <div className="w-full h-full relative">
+      <div className="flex min-h-[calc(100dvh-3.125rem)] lg:h-[calc(100dvh-3.125rem)] relative">
+        <div className="hidden lg:block w-full h-full relative">
           <div className="grid grid-cols-2 bg-primary-01 gap-px w-full h-full">
             <div className="bg-primary-03"></div>
             <div className="bg-primary-03"></div>
@@ -115,9 +151,9 @@ export default function RegistroPage() {
             </div>
           </div>
         </div>
-        <div className="bg-primary-03 border-x border-primary-01 w-full h-full flex items-center justify-center">
+        <div className="bg-primary-03 lg:border-x border-primary-01 w-full flex items-center justify-center py-10 lg:py-0">
           <div className="w-full h-full flex flex-col justify-between items-center text-center">
-            <div className="h-full flex flex-col justify-center p-20">
+            <div className="h-full flex flex-col justify-center px-5 py-15 lg:p-20">
               <p className="hl-sm uppercase pb-6">Gracias por registrarte</p>
               {needsEmailConfirmation ? (
                 <p className="by-sm">
@@ -142,11 +178,11 @@ export default function RegistroPage() {
               copy="Ver productos"
               url="/"
               variant="tertiary"
-              className="mb-20"
+              className="mb-10 lg:mb-20"
             />
           </div>
         </div>
-        <div className="w-full h-full relative">
+        <div className="hidden lg:block w-full h-full relative">
           <div className="grid grid-cols-2 bg-primary-01 gap-px w-full h-full">
             <div className="bg-primary-03"></div>
             <div className="bg-primary-03"></div>
@@ -167,8 +203,8 @@ export default function RegistroPage() {
   }
 
   return (
-    <div className="flex h-[calc(100dvh-3.125rem)] relative">
-      <div className="w-full h-full relative">
+    <div className="flex min-h-[calc(100dvh-3.125rem)] lg:h-[calc(100dvh-3.125rem)] relative">
+      <div className="hidden lg:block w-full h-full relative">
         <div className="grid grid-cols-2 bg-primary-01 gap-px w-full h-full">
           <div className="bg-primary-03"></div>
           <div className="bg-primary-03"></div>
@@ -184,9 +220,9 @@ export default function RegistroPage() {
           </div>
         </div>
       </div>
-      <div className="bg-primary-03 border-x border-primary-01 w-full h-full flex items-center justify-center">
-        <form onSubmit={handleSubmit} className="w-full flex flex-col">
-          <div className="flex flex-col items-center">
+      <div className="bg-primary-03 lg:border-x border-primary-01 w-full flex items-center justify-center py-10 lg:py-0">
+        <form noValidate onSubmit={handleSubmit} className="w-full flex flex-col">
+          <div className="flex flex-col items-center px-5">
             <p className="hl-lg uppercase text-center max-w-105">
               Creá tu cuenta
             </p>
@@ -209,35 +245,30 @@ export default function RegistroPage() {
             <>
               <div className="border-t border-primary-00">
                 <TextField
-                  id="fullName"
+                  {...fieldProps("fullName")}
                   label="Nombre y Apellido"
                   type="text"
                   required
-                  value={form.fullName}
-                  onChange={setField("fullName")}
+                  autoComplete="name"
                 />
 
                 <TextField
-                  id="email"
+                  {...fieldProps("email")}
                   label="Mail de contacto (Usuario)"
                   type="email"
                   required
                   autoComplete="email"
-                  value={form.email}
-                  onChange={setField("email")}
                 />
 
-                <div className="flex flex-col gap-1">
-                  <div className="flex items-center gap-2 border-b border-primary-01">
+                <div className="flex flex-col border-b border-primary-01">
+                  <div className="flex items-center gap-2">
                     <input
-                      id="password"
+                      {...fieldProps("password")}
+                      error={undefined}
+                      aria-invalid={Boolean(errors.password)}
                       placeholder="*Contraseña"
                       type={showPassword ? "text" : "password"}
-                      required
-                      minLength={6}
                       autoComplete="new-password"
-                      value={form.password}
-                      onChange={setField("password")}
                       className="by-sm bg-transparent outline-none flex-1 py-2 2xl:py-3.75 pl-5"
                     />
                     <button
@@ -248,18 +279,18 @@ export default function RegistroPage() {
                       {showPassword ? <Visible /> : <Hidden />}
                     </button>
                   </div>
+                  <FieldError message={errors.password} />
                 </div>
 
-                <div className="flex flex-col gap-1">
-                  <div className="flex items-center gap-2 border-b border-primary-01">
+                <div className="flex flex-col border-b border-primary-01">
+                  <div className="flex items-center gap-2">
                     <input
-                      id="repeatPassword"
+                      {...fieldProps("repeatPassword")}
+                      error={undefined}
+                      aria-invalid={Boolean(errors.repeatPassword)}
                       placeholder="*Repetir contraseña"
                       type={showRepeatPassword ? "text" : "password"}
-                      required
                       autoComplete="new-password"
-                      value={form.repeatPassword}
-                      onChange={setField("repeatPassword")}
                       className="by-sm bg-transparent outline-none flex-1 py-2 2xl:py-3.75 pl-5"
                     />
                     <button
@@ -270,15 +301,10 @@ export default function RegistroPage() {
                       {showRepeatPassword ? <Visible /> : <Hidden />}
                     </button>
                   </div>
-                  {form.repeatPassword !== "" &&
-                    form.repeatPassword !== form.password && (
-                      <p className="by-sm text-[#A20000]">
-                        Las contraseñas no coinciden.
-                      </p>
-                    )}
+                  <FieldError message={errors.repeatPassword} />
                 </div>
 
-                <div className="flex flex-col gap-1">
+                <div className="flex flex-col border-b border-primary-01">
                   <Select
                     value={form.professionalActivity}
                     onChange={(value) =>
@@ -289,71 +315,62 @@ export default function RegistroPage() {
                     }
                     options={PROFESSIONAL_ACTIVITIES}
                     placeholder="*Actividad profesional"
-                    className="by-sm border-b border-primary-01 bg-transparent py-2 2xl:py-3.75 pl-5 pr-7"
+                    className="by-sm bg-transparent py-2 2xl:py-3.75 pl-5 pr-7"
                   />
+                  <FieldError message={errors.professionalActivity} />
                 </div>
 
                 <TextField
-                  id="company"
+                  {...fieldProps("company")}
                   label="Empresa"
                   type="text"
-                  value={form.company}
-                  onChange={setField("company")}
                 />
 
                 <TextField
-                  id="websiteOrInstagram"
+                  {...fieldProps("websiteOrInstagram")}
                   label="Web / Instagram"
                   type="text"
-                  value={form.websiteOrInstagram}
-                  onChange={setField("websiteOrInstagram")}
                 />
               </div>
               <Button
                 copy="Siguiente"
                 type="button"
                 variant="primary"
-                disabled={!isStep1Valid}
-                onClick={() => setStep(2)}
+                disabled={!isValidFor(STEP_1_FIELDS)}
+                onClick={goToStep2}
                 className="border-x-0! border-y! border-primary-00!"
               />
             </>
           ) : (
             <>
               <TextField
-                id="phone"
+                {...fieldProps("phone")}
                 label="Teléfono"
                 type="tel"
                 required
-                value={form.phone}
-                onChange={setField("phone")}
+                autoComplete="tel"
               />
               <TextField
-                id="country"
+                {...fieldProps("country")}
                 label="País"
                 type="text"
                 required
-                value={form.country}
-                onChange={setField("country")}
+                autoComplete="country-name"
               />
               <TextField
-                id="stateProvince"
+                {...fieldProps("stateProvince")}
                 label="Provincia"
                 type="text"
                 required
-                value={form.stateProvince}
-                onChange={setField("stateProvince")}
               />
               <TextField
-                id="city"
+                {...fieldProps("city")}
                 label="Localidad"
                 type="text"
                 required
-                value={form.city}
-                onChange={setField("city")}
               />
 
-              {error && <p className="by-sm text-[#A20000]">{error}</p>}
+              <FieldError message={error} className="pt-2" />
 
               <div className="flex">
                 <Button
@@ -368,7 +385,7 @@ export default function RegistroPage() {
                   copy={loading ? "Creando cuenta..." : "Crear cuenta"}
                   type="submit"
                   variant="primary"
-                  disabled={!isStep2Valid || loading}
+                  disabled={loading || !isValid}
                   className={`border-x-0! border-y! border-primary-00! bg-primary-03! text-primary-00! enabled:hover:bg-primary-00! enabled:hover:text-primary-03! disabled:text-secondary-02!`}
                 />
               </div>
@@ -386,7 +403,7 @@ export default function RegistroPage() {
           </div>
         </form>
       </div>
-      <div className="w-full h-full relative">
+      <div className="hidden lg:block w-full h-full relative">
         <div className="grid grid-cols-2 bg-primary-01 gap-px w-full h-full">
           <div className="bg-primary-03"></div>
           <div className="bg-primary-03"></div>

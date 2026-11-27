@@ -9,19 +9,21 @@ export default async function ElegirMuestrasPage() {
     (filters?.colors ?? []).map(({ label, hex }) => [label, hex]),
   );
 
-  // Por ahora cada variante del catálogo es un chip, con su foto de catálogo.
-  // Más adelante los chips podrían tener una imagen propia.
+  // Cada variante es un chip, salvo las que en el CMS tienen el chip como no
+  // disponible. La imagen es la del chip (o la de catálogo si no tiene).
   const chips = products.flatMap((product) =>
-    product.variants.map((variant) => ({
-      key: `${product.slug}/${variant.slug}`,
-      productSlug: product.slug,
-      variantSlug: variant.slug,
-      productTitle: product.title,
-      variantName: variant.name,
-      image: variant.catalogPhoto,
-      // Color principal: el primero cargado en la variante.
-      color: colorHex[variant.colors[0]] ?? null,
-    })),
+    product.variants
+      .filter((variant) => variant.chip.available)
+      .map((variant) => ({
+        key: `${product.slug}/${variant.slug}`,
+        productSlug: product.slug,
+        variantSlug: variant.slug,
+        productTitle: product.title,
+        variantName: variant.name,
+        image: variant.chip.image,
+        // Color principal: el primero cargado en la variante.
+        color: colorHex[variant.colors[0]] ?? null,
+      })),
   );
 
   return <ElegirMuestras chips={chips} />;

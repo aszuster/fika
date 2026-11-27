@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import Image from "next/image";
+import { AnimatePresence, motion } from "motion/react";
 import Button from "@/components/buttons/Button";
 import { getFillerCount } from "@/components/grid/GridFillers";
 import Pencil from "@/svg/Pencil";
@@ -19,7 +20,7 @@ const Cross = ({ position }) => (
     width={24}
     height={24}
     alt=""
-    className={`pointer-events-none absolute left-0 z-5 -translate-x-[calc(50%+0.5px)] ${
+    className={`hidden lg:block pointer-events-none absolute left-0 z-5 -translate-x-[calc(50%+0.5px)] ${
       position === "bottom"
         ? "bottom-0 translate-y-[calc(50%+0.5px)]"
         : "top-0 -translate-y-1/2"
@@ -40,6 +41,8 @@ const ProyectosSection = ({ projects, quoteRequests, catalog }) => {
   const [editingName, setEditingName] = useState("");
   const [confirmingProject, setConfirmingProject] = useState(null);
   const [justRequestedId, setJustRequestedId] = useState(null);
+  // Mobile: proyecto cuyo menú de opciones (los 3 puntitos) está abierto.
+  const [menuProject, setMenuProject] = useState(null);
 
   // Mientras se crea un proyecto, el cuadro borrador ocupa la siguiente celda
   // de la grilla, así que cuenta para los rellenos y las cruces.
@@ -102,17 +105,18 @@ const ProyectosSection = ({ projects, quoteRequests, catalog }) => {
 
         {projects.length === 0 ? (
       <div className="flex h-[calc(100dvh-6.25rem)] relative w-full">
-        <div className="w-full h-full relative">
+        <div className="hidden lg:block w-full h-full relative">
           <div className="grid grid-cols-2 grid-rows-[3fr_7fr] bg-primary-03 gap-px w-full h-full">
           </div>
         </div>
-        <div className="w-full h-full flex flex-col border-x border-primary-01">
-          <div className="h-[33%] shrink-0 flex flex-col justify-center items-center">
+        <div className="w-full h-full flex flex-col lg:border-x border-primary-01">
+          {/* Mobile: sin título (la sección ya figura en el menú de arriba). */}
+          <div className="hidden lg:flex h-[33%] shrink-0 flex-col justify-center items-center">
             <h2 className="hl-lg uppercase">Proyectos</h2>
           </div>
           <ScrollArea className="flex-1 w-full" viewportClassName="flex flex-col">
-            <div className="h-full border-y border-primary-00 flex justify-center items-center">
-              <p className="by-sm text-secondary-01 font-normal! text-center max-w-70">
+            <div className="h-full border-b lg:border-t border-primary-00 flex justify-center items-center">
+              <p className="by-sm text-secondary-01 font-normal! text-center max-w-70 px-5 lg:px-0">
                 Creá tu proyecto, sumá productos desde Favoritos y solicitá un presupuesto cuando completes tu selección.
               </p>
             </div>
@@ -122,13 +126,13 @@ const ProyectosSection = ({ projects, quoteRequests, catalog }) => {
                 copy="Crear proyecto"
                 url="/"
                 variant="tertiary"
-                className="mb-20 font-normal!"
+                className="mb-12 lg:mb-20 font-normal!"
               />
               </div>
             </div>
           </ScrollArea>
         </div>
-        <div className="w-full h-full relative">
+        <div className="hidden lg:block w-full h-full relative">
           <div className="grid grid-cols-2 grid-rows-[3fr_7fr] bg-primary-03 gap-px w-full h-full">
 
           </div>
@@ -136,14 +140,16 @@ const ProyectosSection = ({ projects, quoteRequests, catalog }) => {
       </div>
         ) : (
           <div className="flex flex-col w-full min-h-[calc(100dvh-6.25rem)] overflow-x-clip">
-            <div className="h-59 shrink-0 w-full grid grid-cols-3 gap-px bg-primary-01">
+            {/* Mobile: sin título y 1 columna, sin las cruces ni los rellenos
+                de la grilla de 3. */}
+            <div className="hidden lg:grid h-59 shrink-0 w-full grid-cols-3 gap-px bg-primary-01">
               <div className="bg-primary-03 "></div>
               <div className="flex items-center justify-center bg-primary-03">
                 <h2 className="hl-lg uppercase text-primary-00 z-10 ">Proyectos</h2>
               </div>
               <div className="bg-primary-03 h-full "></div>
             </div>
-            <div className="relative z-1 grid grid-cols-3 gap-px bg-primary-01 border-t border-primary-01">
+            <div className="relative z-1 grid grid-cols-1 lg:grid-cols-3 gap-px bg-primary-01 border-t border-primary-01">
               {projects.map((project, index) => {
                 const items = project.project_items ?? [];
                 const itemCount = items.length;
@@ -152,16 +158,30 @@ const ProyectosSection = ({ projects, quoteRequests, catalog }) => {
                 const col = index % 3;
 
                 return (
+                  // Mobile: 217px de alto, sin la barra de botones (las opciones
+                  // están en el menú de los 3 puntitos), salvo al editar.
                   <div
                     key={project.id}
-                    className="relative flex flex-col bg-primary-03 ring-1 ring-primary-00"
+                    className="relative flex flex-col h-54.25 lg:h-auto bg-primary-03 ring-1 ring-primary-00"
                   >
                     {row > 0 && col > 0 && <Cross position="top" />}
                     {row === lastRow && col > 0 && <Cross position="bottom" />}
-                    <div className="h-17.5 shrink-0  w-full flex flex-col items-center justify-center px-4">
+                    {!isEditing && (
+                      <button
+                        type="button"
+                        onClick={() => setMenuProject(project)}
+                        aria-label={`Opciones del proyecto ${project.name}`}
+                        className="lg:hidden absolute top-0 right-0 z-2 h-12.5 px-5 flex items-center gap-1 cursor-pointer"
+                      >
+                        {[0, 1, 2].map((dot) => (
+                          <span key={dot} className="size-1 rounded-full bg-primary-00" />
+                        ))}
+                      </button>
+                    )}
+                    <div className="hidden lg:flex h-17.5 shrink-0  w-full flex-col items-center justify-center px-4">
 
                     </div>
-                    <div className="flex flex-col gap-2 p-8.25 min-h-62.75">
+                    <div className="flex-1 lg:flex-none flex flex-col justify-center lg:justify-start gap-2 px-5 lg:p-8.25 lg:min-h-62.75">
                       {isEditing ? (
                         <input
                           type="text"
@@ -185,7 +205,9 @@ const ProyectosSection = ({ projects, quoteRequests, catalog }) => {
                         </ul>
                       )} */}
                     </div>
-                    <div className="flex mt-auto border-t border-primary-00 h-12.5">
+                    <div
+                      className={`${isEditing ? "flex" : "hidden lg:flex"} mt-auto shrink-0 border-t border-primary-00 h-12.5`}
+                    >
                       {isEditing ? (
                         <>
                           <Button
@@ -233,13 +255,13 @@ const ProyectosSection = ({ projects, quoteRequests, catalog }) => {
                 );
               })}
               {isCreating && (
-                <div className="relative flex flex-col bg-primary-03 ring-1 ring-primary-00">
+                <div className="relative flex flex-col h-54.25 lg:h-auto bg-primary-03 ring-1 ring-primary-00">
                   {draftRow > 0 && draftCol > 0 && <Cross position="top" />}
                   {draftRow === lastRow && draftCol > 0 && <Cross position="bottom" />}
-                  <div className="h-17.5 shrink-0  w-full flex flex-col items-center justify-center px-4">
+                  <div className="hidden lg:flex h-17.5 shrink-0  w-full flex-col items-center justify-center px-4">
 
                   </div>
-                  <div className="flex flex-col items-center gap-2 p-8.25 min-h-62.75">
+                  <div className="flex-1 lg:flex-none flex flex-col items-center justify-center lg:justify-start gap-2 px-5 lg:p-8.25 lg:min-h-62.75">
                     <div className="flex items-center gap-3 max-w-full">
                     <input
                       type="text"
@@ -260,7 +282,7 @@ const ProyectosSection = ({ projects, quoteRequests, catalog }) => {
                       (0 productos)
                     </p>
                   </div>
-                  <div className="flex mt-auto border-t border-primary-00 h-12.5">
+                  <div className="flex mt-auto shrink-0 border-t border-primary-00 h-12.5">
                     <Button
                       copy="Cancelar"
                       variant="primary"
@@ -284,7 +306,7 @@ const ProyectosSection = ({ projects, quoteRequests, catalog }) => {
                 const col = absoluteIndex % 3;
 
                 return (
-                  <div key={`filler-${fillerIndex}`} className="relative bg-primary-03 flex items-end justify-center">
+                  <div key={`filler-${fillerIndex}`} className="hidden relative bg-primary-03 lg:flex items-end justify-center">
                     <div className="h-12.5 w-full border-t border-primary-01"></div>
                     {row > 0 && col > 0 && <Cross position="top" />}
                     {row === lastRow && col > 0 && <Cross position="bottom" />}
@@ -293,7 +315,7 @@ const ProyectosSection = ({ projects, quoteRequests, catalog }) => {
               })}
             </div>
             <div className="relative flex-1 min-h-0 overflow-hidden">
-              <div className="absolute inset-0 pt-px grid grid-cols-3 gap-px auto-rows-87 content-start bg-primary-01">
+              <div className="absolute inset-0 pt-px grid grid-cols-1 lg:grid-cols-3 gap-px auto-rows-87 content-start bg-primary-01">
                 {Array.from({ length: 12 }, (_, cellIndex) => (
                   <div key={cellIndex} className="relative bg-primary-03">
                     {cellIndex >= 3 && cellIndex % 3 > 0 && <Cross position="top" />}
@@ -301,18 +323,20 @@ const ProyectosSection = ({ projects, quoteRequests, catalog }) => {
                 ))}
               </div>
             </div>
-            <div className="h-16.25 shrink-0" />
-            <div className="fixed bottom-0 inset-x-0 z-10 h-16.25 bg-primary-03 border-t border-primary-00 flex items-center justify-between gap-4 pl-12.5">
-              <p className="btn-sm text-secondary-02 font-normal!">
+            <div className="h-12.5 lg:h-16.25 shrink-0" />
+            {/* Mobile: solo el botón "Crear nuevo proyecto", a todo el ancho.
+                Desktop: el contador a la izquierda y el botón a la derecha. */}
+            <div className="fixed bottom-0 inset-x-0 z-10 h-12.5 lg:h-16.25 bg-primary-03 border-t border-primary-00 flex items-center justify-between gap-4 lg:pl-12.5">
+              <p className="hidden lg:block btn-sm text-secondary-02 font-normal!">
                 Tenés <span className="text-primary-00">{projects.length} {projects.length === 1 ? "proyecto" : "proyectos"} </span>
                 {projects.length === 1 ? "creado" : "creados"}
               </p>
-              <div className="h-full ">              <Button
+              <div className="h-full w-full lg:w-auto">              <Button
                 copy="Crear nuevo proyecto"
                 variant="primary"
                 disabled={isCreating}
                 onClick={() => setIsCreating(true)}
-                className="px-12.5 bg-primary-03! h-full border-l border-primary-00! text-primary-00! enabled:hover:bg-primary-00! enabled:hover:text-primary-03! disabled:text-secondary-02!"
+                className="px-5 lg:px-12.5 bg-primary-03! h-full lg:border-l border-primary-00! text-primary-00! enabled:hover:bg-primary-00! enabled:hover:text-primary-03! disabled:text-secondary-02!"
               /></div>
 
 
@@ -349,6 +373,71 @@ const ProyectosSection = ({ projects, quoteRequests, catalog }) => {
           </div>
         )}
       </div> */}
+
+      {/* Mobile: menú de opciones del proyecto, desde abajo y por encima de
+          todo (también del navbar), con el resto de la pantalla oscurecido. */}
+      <AnimatePresence>
+        {menuProject && (
+          <>
+            <motion.div
+              key="backdrop"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              onClick={() => setMenuProject(null)}
+              data-lenis-prevent
+              className="lg:hidden fixed inset-0 z-50 bg-primary-00/40"
+            />
+            <motion.div
+              key="sheet"
+              role="dialog"
+              aria-modal="true"
+              aria-label={`Opciones del proyecto ${menuProject.name}`}
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ duration: 0.35, ease: [0.76, 0, 0.24, 1] }}
+              data-lenis-prevent
+              className="lg:hidden fixed inset-x-0 bottom-0 z-50 bg-primary-03 border-t border-primary-00 pb-[env(safe-area-inset-bottom)]"
+            >
+              <p className="hl-xs text-[15px]! uppercase  px-5 pt-3.5 pb-3 border-b border-primary-00 truncate">
+                Proyecto {menuProject.name}
+              </p>
+              {[
+                {
+                  label: "Cotizar",
+                  disabled: (menuProject.project_items ?? []).length === 0,
+                  onSelect: () => setConfirmingProject(menuProject),
+                },
+                {
+                  label: "Editar nombre",
+                  onSelect: () => startEditing(menuProject),
+                },
+                {
+                  label: "Eliminar",
+                  disabled: isPending,
+                  onSelect: () =>
+                    startTransition(() => deleteProject(menuProject.id)),
+                },
+              ].map(({ label, disabled, onSelect }) => (
+                <button
+                  key={label}
+                  type="button"
+                  disabled={disabled}
+                  onClick={() => {
+                    setMenuProject(null);
+                    onSelect();
+                  }}
+                  className="w-full h-12.5 border-b border-primary-01 last:border-b-0 flex items-center px-5 btn-sm uppercase cursor-pointer disabled:text-secondary-02 disabled:cursor-default"
+                >
+                  {label}
+                </button>
+              ))}
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
 
       {confirmingProject && (
         <CotizacionScreen

@@ -6,7 +6,11 @@ import { motion } from "motion/react";
 import Button from "@/components/buttons/Button";
 import Close from "@/svg/Close";
 import { useLenis } from "@/utils/lenis";
-import { MUESTRAS_CONTACTO_KEY, MUESTRAS_PEDIDO_KEY } from "@/data/muestras";
+import {
+  MUESTRAS_CONTACTO_KEY,
+  MUESTRAS_PEDIDO_KEY,
+  MUESTRAS_SELECCION_KEY,
+} from "@/data/muestras";
 
 // sessionStorage no avisa cambios en la misma pestaña: alcanza con leerlo.
 const subscribe = () => () => {};
@@ -44,11 +48,12 @@ export default function PedidoEnviado() {
 
   const backToMuestras = useCallback(() => router.push("/muestras"), [router]);
 
-  // El pedido ya se envió: para uno nuevo hay que volver a completar el
-  // formulario de contacto.
+  // El pedido ya se envió: uno nuevo arranca con la selección y el
+  // formulario vacíos.
   useEffect(() => {
     try {
       sessionStorage.removeItem(MUESTRAS_CONTACTO_KEY);
+      sessionStorage.removeItem(MUESTRAS_SELECCION_KEY);
     } catch {}
   }, []);
 
@@ -84,14 +89,14 @@ export default function PedidoEnviado() {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.35, ease: "easeInOut" }}
           onClick={backToMuestras}
-          className="fixed inset-0 z-50 bg-primary-00/40 flex items-center justify-center px-4"
+          className="fixed inset-x-0 bottom-0 top-12.5 lg:top-0 z-50 bg-primary-00/40 flex items-center justify-center lg:px-4"
         >
           <div
             role="dialog"
             aria-modal="true"
             aria-labelledby={titleId}
             onClick={(event) => event.stopPropagation()}
-            className="relative bg-primary-03 w-[33%] min-w-80 flex flex-col items-center gap-10 px-7.5 py-12.5 text-center"
+            className="relative bg-primary-03 w-full h-full lg:h-auto lg:w-[33%] lg:min-w-80 flex flex-col items-center justify-between lg:justify-start gap-10 px-5 lg:px-7.5 py-12.5 text-center"
           >
             <button
               type="button"
@@ -102,22 +107,23 @@ export default function PedidoEnviado() {
               <Close />
             </button>
 
-            <div className="flex flex-col gap-3.75 py-25">
+            <div className="flex-1 lg:flex-none flex flex-col justify-center gap-3.75 lg:py-25">
               <p
                 id={titleId}
                 className="text-[25px] font-light uppercase text-center mx-auto leading-6.50"
               >
-                Pedido enviado
+                Pedido solicitado
               </p>
-              <p className="by-sm text-center">
+              <p className="hl-sm uppercase text-center">
                 Material box
                 <br />
                 {dateFormatter.format(new Date(order.date))}
               </p>
-              <p className="by-sm text-secondary-01 font-normal! w-80 mx-auto pt-5">
+              <p className="by-sm text-secondary-01 font-normal! max-w-70 lg:max-w-80 mx-auto pt-5">
                 ¡Gracias por contactarte con nosotros!
                 <br />
-                En breve te responderemos.
+                Tu pedido está siendo procesado. <br/> Te enviamos el detalle por mail. <br/>
+Nos comunicaremos con vos a la brevedad para contarte los próximos pasos.
               </p>
             </div>
 

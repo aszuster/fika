@@ -9,6 +9,8 @@ import GridFillers from "@/components/grid/GridFillers";
 import GridCross, { hasTopCross } from "@/components/grid/GridCross";
 import FiltersPanel from "@/components/filters/FiltersPanel";
 import FavoriteButton from "@/components/product/FavoriteButton";
+import VariantCardMobile from "@/components/product/VariantCardMobile";
+import { getVariantPrice, isVariantAvailable } from "@/utils/variantMockup";
 import SignupModal from "@/components/modals/SignupModal";
 import FavoritesLoginModal from "@/components/modals/FavoritesLoginModal";
 import useFavorites from "@/hooks/useFavorites";
@@ -115,6 +117,9 @@ const getGridItems = (allProducts, filters, query) => {
       )
       .map((variant) => ({
         key: `${product.slug}-${variant.slug}`,
+        // Para la tarjeta mobile: precio y disponibilidad como en el producto.
+        variant,
+        variantIndex: product.variants.indexOf(variant),
         href: `/productos/${product.slug}?variante=${variant.slug}`,
         productSlug: product.slug,
         variantSlug: variant.slug,
@@ -172,10 +177,13 @@ export default function Catalog({ products, filterOptions, initialFormat }) {
   const gridItems = isFiltersOpen
     ? []
     : getGridItems(products, appliedFilters, searchQuery);
+  // Con búsqueda o filtros la grilla muestra variantes: en mobile cada celda
+  // mide lo que su tarjeta (imagen cuadrada + textos) en vez de 188px.
+  const showsVariants = Boolean(gridItems[0]?.variantSlug);
 
   return (
     <div className="bg-primary-03 h-[calc(100%-3.125rem)]">
-      <div data-catalog-toolbar className="sticky top-12.5 z-10 w-full bg-primary-03">
+      <div data-catalog-toolbar className="sticky top-12.5 z-20 w-full bg-primary-03">
         <div className="flex  w-full justify-between items-center px-3.75 lg:px-7.25  h-12.5 border-b border-primary-00">
           <div className="flex flex-row-reverse lg:flex-row  items-center gap-7.25 h-full min-w-0 flex-1 lg:flex-none">
             <div className="shrink-0">
@@ -253,9 +261,9 @@ export default function Catalog({ products, filterOptions, initialFormat }) {
 
       <div>
         <div
-          className={`grid grid-cols-2 auto-rows-[calc((100dvh-6.25rem-2px)/2)] ${grids[desktopCols]} ${autoRaws[desktopVisibleRows]} gap-px bg-primary-01`}
+          className={`grid grid-cols-2 ${showsVariants ? "" : "auto-rows-47"} ${grids[desktopCols]} ${autoRaws[desktopVisibleRows]} gap-px bg-primary-01`}
         >
-          {gridItems.map(({ key, href, title, subtitle, image: src, hoverImage, productSlug, variantSlug, price }, index) => {
+          {gridItems.map(({ key, href, title, subtitle, image: src, hoverImage, productSlug, variantSlug, price, variant, variantIndex }, index) => {
             const isVariant = Boolean(variantSlug);
             const hasHoverImage = Boolean(hoverImage) && hoverImage !== src;
 
@@ -274,8 +282,25 @@ export default function Catalog({ products, filterOptions, initialFormat }) {
                 href={href}
                 className="flex h-full flex-col items-center"
               >
-                <div className={`${isMobile ? "h-15" : cols === 6 ? "h-16.25" : "h-21.75"} relative shrink-0 border-b border-primary-01 w-full flex items-center justify-center`}>
-                  <p className={` ${isVariant || isMobile ? "hl-xs max-w-50 text-center 2xl:max-w-100" : titles[cols]} ${isMobile && isVariant ? "pr-12.5 pl-2" : "px-2"} uppercase `}>{title} {subtitle}</p>
+                {isMobile && isVariant ? (
+                  <VariantCardMobile
+                    name={`${title} ${subtitle}`}
+                    image={src}
+                    imageSizes={imageSizes}
+                    price={getVariantPrice(variant)}
+                    available={isVariantAvailable(variant, variantIndex)}
+                    isFavorited={isFavorited(productSlug, variantSlug)}
+                    onToggleFavorite={() =>
+                      isLoggedIn
+                        ? toggleFavorite(productSlug, variantSlug)
+                        : setIsFavoritesModalOpen(true)
+                    }
+                    imageLoading={index === 0 ? "eager" : undefined}
+                  />
+                ) : (
+                <>
+                <div className={`${isMobile ? "h-12.5" : cols === 6 ? "h-16.25" : "h-21.75"} relative shrink-0 border-b border-primary-01 w-full flex items-center justify-center`}>
+                  <p className={` ${isVariant || isMobile ? "hl-xs max-w-50 text-center 2xl:max-w-100" : titles[cols]} ${isMobile && isVariant ? "pr-12.5 pl-2" : "px-2"} hl-sm uppercase `}>{title} {subtitle}</p>
                                 {isVariant && (
                 <FavoriteButton
                   isFavorited={isFavorited(productSlug, variantSlug)}
@@ -319,6 +344,8 @@ export default function Catalog({ products, filterOptions, initialFormat }) {
                   <p className="hl-xs">{priceFormatter.format(price)}</p>
                   <p className="hl-xs uppercase text-secondary-02">X M2</p>
                 </div>
+                )}
+                </>
                 )}
               </Link>
             </div>

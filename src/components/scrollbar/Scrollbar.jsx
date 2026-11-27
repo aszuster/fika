@@ -29,10 +29,10 @@ export default function Scrollbar({ targetRef, className = "" }) {
     const target = targetRef?.current;
     const { top, scrollHeight, clientHeight } = getScroll(target);
     const trackHeight = trackRef.current?.clientHeight ?? 0;
-    const thumbHeight = Math.max(
-      (clientHeight / scrollHeight) * trackHeight,
-      MIN_THUMB_HEIGHT,
-    );
+    // Si el contenedor está oculto (display: none, p. ej. la versión desktop
+    // en mobile) todo mide 0 y 0/0 daría NaN.
+    const ratio = scrollHeight > 0 ? clientHeight / scrollHeight : 1;
+    const thumbHeight = Math.max(ratio * trackHeight, MIN_THUMB_HEIGHT);
     return {
       target,
       top,
@@ -122,7 +122,8 @@ export default function Scrollbar({ targetRef, className = "" }) {
       ref={trackRef}
       onClick={handleTrackClick}
       aria-hidden
-      className={`group z-30 w-3 ${
+      // Solo en desktop: en mobile se scrollea con el dedo y no hace falta.
+      className={`group z-30 w-3 hidden lg:block ${
         thumb.visible ? "" : "invisible pointer-events-none"
       } ${className}`}
     >

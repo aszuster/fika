@@ -1,0 +1,23 @@
+[
+  {
+    "_id": "siteDownload-manual-instalacion",
+    "_type": "siteDownload",
+    "title": "Manual de instalación",
+    "order": 10,
+    "file": { "_type": "file", "_file": "../public/docs/ManualInstalacion_Fika.pdf" }
+  },
+  {
+    "_id": "siteDownload-manual-advertencias",
+    "_type": "siteDownload",
+    "title": "Manual de advertencias",
+    "order": 20,
+    "file": { "_type": "file", "_file": "../public/docs/ManualAdvertencias_Fika.pdf" }
+  },
+  {
+    "_id": "siteDownload-catalogo",
+    "_type": "siteDownload",
+    "title": "Catálogo de productos",
+    "order": 30,
+    "file": { "_type": "file", "_file": "../public/docs/FIKA_2026all.pdf" }
+  }
+]

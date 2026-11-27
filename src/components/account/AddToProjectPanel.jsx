@@ -67,9 +67,9 @@ const AddToProjectPanel = ({ isOpen, favorite, projects, catalog, onClose }) => 
         animate={{ x: isOpen ? 0 : "100%" }}
         transition={{ duration: 0.35, ease: "easeInOut" }}
         data-lenis-prevent
-        className="fixed top-12.5 right-0 z-30 w-160 bg-primary-03 h-[calc(100dvh-3.125rem)] border-l border-primary-00 flex flex-col"
+        className="fixed top-12.5 right-0 z-30 w-full lg:w-160 bg-primary-03 h-[calc(100dvh-3.125rem)] lg:border-l border-primary-00 flex flex-col"
       >
-        <div className="h-12.5 shrink-0 border-b border-primary-00 flex items-center justify-between px-7.5">
+        <div className="h-12.5 shrink-0 border-b border-primary-00 flex items-center justify-between px-5 lg:px-7.5">
           <p className="hl-xs uppercase">Agregar a proyecto</p>
           <button
             type="button"
@@ -88,7 +88,7 @@ const AddToProjectPanel = ({ isOpen, favorite, projects, catalog, onClose }) => 
                 src={variant.catalogPhoto ?? product?.image}
                 alt=""
                 fill
-                sizes="40vw"
+                sizes="(min-width: 1024px) 40vw, 100vw"
                 className="object-contain"
               />
             )}
@@ -103,7 +103,7 @@ const AddToProjectPanel = ({ isOpen, favorite, projects, catalog, onClose }) => 
           {projects.map((project) => (
             <div
               key={project.id}
-              className="h-12.5 shrink-0 border-b border-primary-01 flex items-center justify-between px-7.5"
+              className="h-12.5 shrink-0 border-b border-primary-01 flex items-center justify-between px-5 lg:px-7.5"
             >
               <p className="hl-sm uppercase">{project.name}</p>
               {addedProjectIds.has(project.id) ? (
@@ -120,7 +120,7 @@ const AddToProjectPanel = ({ isOpen, favorite, projects, catalog, onClose }) => 
           ))}
 
           {isCreating && (
-            <div className="h-14.5 shrink-0 border-b border-primary-01 flex items-center justify-between px-7.5 gap-4">
+            <div className="h-14.5 shrink-0 border-b border-primary-01 flex items-center justify-between px-5 lg:px-7.5 gap-4">
               <input
                 type="text"
                 autoFocus
@@ -139,7 +139,7 @@ const AddToProjectPanel = ({ isOpen, favorite, projects, catalog, onClose }) => 
             </div>
           )}
         </ScrollArea>
-        <div className="h-24.25 shrink-0 border-t border-primary-00 flex items-center justify-center px-7.5">
+        <div className="h-15 lg:h-24.25 shrink-0 border-t border-primary-00 flex items-center justify-center px-5 lg:px-7.5">
           <Button
             copy="Crear nuevo proyecto"
             variant="secondary"

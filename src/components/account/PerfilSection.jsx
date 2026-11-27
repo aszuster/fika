@@ -6,9 +6,11 @@ import Button from "@/components/buttons/Button";
 import TabBar from "./TabBar";
 import AccessDataForm from "./AccessDataForm";
 import { updateProfile } from "@/app/mi-cuenta/actions";
-import { PROFESSIONAL_ACTIVITIES } from "@/data/profile";
+import { PROFESSIONAL_ACTIVITIES, PROFILE_RULES } from "@/data/profile";
 import Select from "@/components/forms/Select";
 import ScrollArea from "@/components/scrollbar/ScrollArea";
+import FieldError from "@/components/forms/FieldError";
+import { useValidation } from "@/utils/useValidation";
 
 const SUB_TABS = [
   { key: "personal-data", label: "Datos personales" },
@@ -24,7 +26,7 @@ const FIELDS = [
   },
   { name: "company", label: "Empresa" },
   { name: "website_or_instagram", label: "Web / Instagram" },
-  { name: "phone", label: "Teléfono" },
+  { name: "phone", label: "Teléfono", type: "tel" },
   { name: "country", label: "País" },
   { name: "state_province", label: "Provincia" },
   { name: "city", label: "Localidad" },
@@ -48,7 +50,13 @@ const PerfilSection = ({ profile }) => {
   const handleChange = (name, value) =>
     setValues((prev) => ({ ...prev, [name]: value }));
 
+  const { errors, touch, validate, reset, isValid } = useValidation(
+    values,
+    PROFILE_RULES,
+  );
+
   const handleSave = () => {
+    if (isPending || !validate()) return;
     const formData = new FormData();
     Object.entries(values).forEach(([key, value]) => formData.set(key, value));
 
@@ -60,12 +68,14 @@ const PerfilSection = ({ profile }) => {
 
   const handleCancel = () => {
     setValues(initialValues(profile));
+    reset();
     setIsEditing(false);
   };
 
   return (
+
     <div className="flex h-[calc(100dvh-6.25rem)] relative w-full">
-      <div className="w-full h-full relative">
+      <div className="hidden lg:block w-full h-full relative">
         <div className="grid grid-cols-2 grid-rows-[3fr_7.6fr] 2xl:grid-rows-[3fr_7fr] bg-primary-01 gap-px w-full h-full">
           <div className="bg-primary-03"></div>
           <div className="bg-primary-03"></div>
@@ -73,11 +83,26 @@ const PerfilSection = ({ profile }) => {
           <div className="relative bg-primary-03"></div>
         </div>
       </div>
-      <div className="w-full h-full flex flex-col border-x border-primary-01">
-        <div className="h-[20%] 2xl:h-[30%] shrink-0 flex flex-col justify-center items-center">
+      <div className="w-full h-full flex flex-col lg:border-x border-primary-01">
+        <div className="hidden lg:flex lg:h-[20%] 2xl:h-[30%] shrink-0 flex-col justify-center items-center">
           <h2 className="hl-lg uppercase">Perfil</h2>
         </div>
-        <ScrollArea className="flex-1 w-full" viewportClassName="flex flex-col">
+        <ScrollArea
+          className="flex-1 w-full"
+          viewportClassName="flex flex-col *:shrink-0"
+        >
+          <div className="lg:hidden h-53.25 px-5 flex justify-center items-center">
+            <div className="max-w-60 flex flex-col gap-2 text-center">
+              <p className="by-sm font-normal! text-secondary-01">
+                Bienvenido/a a la comunidad Fika.
+              </p>
+              <p className="by-sm font-normal! text-secondary-01">
+                Ahora podés acceder a beneficios exclusivos, guardar tus
+                productos favoritos y gestionar tus consultas de manera más
+                simple.
+              </p>
+            </div>
+          </div>
           <TabBar
             tabs={SUB_TABS}
             activeTab={activeSubTab}
@@ -88,35 +113,41 @@ const PerfilSection = ({ profile }) => {
           <div className="w-full">
             {activeSubTab === "personal-data" ? (
               <>
-            {FIELDS.map(({ name, label, select }) => (
-              <div key={name} className="flex flex-col gap-1 w-full">
+            {FIELDS.map(({ name, label, select, type = "text" }) => (
+              <div key={name} className="flex flex-col w-full">
                 {isEditing ? (
-                  select ? (
-                    <Select
-                      value={values[name]}
-                      onChange={(value) => handleChange(name, value)}
-                      options={PROFESSIONAL_ACTIVITIES}
-                      placeholder="Seleccionar..."
-                      className={`by-sm py-3 px-4 border-b border-primary-01 font-normal! ${
-                        values[name] === (profile?.[name] ?? "")
-                          ? "text-secondary-02"
-                          : "text-primary-00"
-                      }`}
-                    />
-                  ) : (
-                    <input
-                      type="text"
-                      value={values[name]}
-                      onChange={(event) =>
-                        handleChange(name, event.target.value)
-                      }
-                      className={`by-sm py-3 px-5 border-b border-primary-01 font-normal! ${
-                        values[name] === (profile?.[name] ?? "")
-                          ? "text-secondary-02"
-                          : "text-primary-00"
-                      }`}
-                    />
-                  )
+                  <div className="flex flex-col border-b border-primary-01">
+                    {select ? (
+                      <Select
+                        value={values[name]}
+                        onChange={(value) => handleChange(name, value)}
+                        options={PROFESSIONAL_ACTIVITIES}
+                        placeholder="Seleccionar..."
+                        className={`by-sm py-3 px-4 font-normal! ${
+                          values[name] === (profile?.[name] ?? "")
+                            ? "text-secondary-02"
+                            : "text-primary-00"
+                        }`}
+                      />
+                    ) : (
+                      <input
+                        type={type}
+                        aria-label={label}
+                        value={values[name]}
+                        onChange={(event) =>
+                          handleChange(name, event.target.value)
+                        }
+                        onBlur={() => touch(name)}
+                        aria-invalid={Boolean(errors[name])}
+                        className={`by-sm py-3 px-5 outline-none font-normal! ${
+                          values[name] === (profile?.[name] ?? "")
+                            ? "text-secondary-02"
+                            : "text-primary-00"
+                        }`}
+                      />
+                    )}
+                    <FieldError message={errors[name]} />
+                  </div>
                 ) : (
                   <p className="by-sm py-3 px-5 border-b border-primary-01 font-normal!">{values[name] || "—"}</p>
                 )}
@@ -135,7 +166,7 @@ const PerfilSection = ({ profile }) => {
                     copy={isPending ? "Guardando..." : "Guardar cambios"}
                     variant="primary"
                     onClick={handleSave}
-                    disabled={isPending}
+                    disabled={isPending || !isValid}
                     className="bg-primary-03! border-y! border-r!  border-primary-00! text-primary-00! hover:bg-primary-00! hover:text-primary-03!"
                   />
                   <div className="w-full flex items-center justify-center">
@@ -162,7 +193,7 @@ const PerfilSection = ({ profile }) => {
           )}
         </ScrollArea>
       </div>
-      <div className="w-full h-full relative">
+      <div className="hidden lg:block w-full h-full relative">
         <div className="grid grid-cols-2 grid-rows-[3fr_7.6fr] 2xl:grid-rows-[3fr_7fr] bg-primary-01 gap-px w-full h-full">
           <div className="bg-primary-03"></div>
           <div className="bg-primary-03"></div>

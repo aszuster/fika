@@ -85,6 +85,28 @@ export const variant = defineType({
       options: { layout: "grid" },
     }),
     defineField({
+      name: "chip",
+      title: "Chip de muestra",
+      type: "object",
+      description: "Cómo aparece esta variante en la página de muestras (material box).",
+      options: { collapsible: true, collapsed: false },
+      fields: [
+        defineField({
+          name: "image",
+          title: "Imagen del chip",
+          type: "image",
+          description: "Vacío = usa la foto de catálogo.",
+        }),
+        defineField({
+          name: "available",
+          title: "Disponible para muestras",
+          type: "boolean",
+          description: "Desactivado = no aparece en la página de muestras.",
+          initialValue: true,
+        }),
+      ],
+    }),
+    defineField({
       name: "downloads",
       title: "Descargas propias",
       type: "array",

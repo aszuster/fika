@@ -1,15 +1,13 @@
-import { notFound } from "next/navigation";
-import Image from "next/image";
-import Button from "@/components/buttons/Button";
 import DistribuidoresPanel from "@/components/distribuidores/DistribuidoresPanel";
-import { provincias } from "@/data/distribuidores";
-
+import { getProvinciasConDistribuidores } from "@/data/distribuidores";
 
 export default async function Distribuidores() {
+  const provincias = await getProvinciasConDistribuidores();
 
   return (
     <div className="bg-primary-03 h-[calc(100dvh-3.125rem)] relative">
-        <div className="grid grid-cols-4 grid-rows-1 h-full relative">
+        {/* Mobile: el panel arma su propia columna. Desktop: grilla de 4. */}
+        <div className="lg:grid grid-cols-4 grid-rows-1 h-full relative">
             <DistribuidoresPanel provincias={provincias} />
         </div>
     </div>
