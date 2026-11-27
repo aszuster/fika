@@ -525,7 +525,11 @@ select:open {
 @media screen and (max-width: 1023.98px) {
   input,
   select,
-  textarea {
+  textarea,
+  /* Los Select de los formularios (botón .select-button con by-sm), para que
+     se vean del mismo tamaño que los demás campos. El de Distribuidores no
+     usa by-sm y conserva su tamaño. */
+  .select-button.by-sm {
     font-size: 1rem !important; /*16px*/
   }
 }

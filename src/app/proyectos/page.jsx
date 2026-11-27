@@ -38,7 +38,7 @@ export default async function Proyectos() {
               <p className="hl-sm uppercase">{studio}</p>
             </div>
             <ProjectImageTransition slug={slug}>
-              <div className="relative min-h-0 w-full flex-1 [container-type:size]">
+              <div className="relative min-h-0 w-full flex-1 @container-size">
                 {/* Mismo sizes que en la página de proyecto: así es el mismo
                     archivo y ya está cargado cuando arranca la transición. */}
                 {image && (

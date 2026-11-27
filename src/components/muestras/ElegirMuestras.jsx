@@ -77,9 +77,12 @@ export default function ElegirMuestras({ chips }) {
     <div className="bg-primary-03 w-full min-h-[calc(100dvh-3.125rem)] flex flex-col">
       <div
         data-catalog-toolbar
-        className="sticky top-12.5 z-10 w-full h-12.5 bg-primary-03 border-b border-primary-00 flex items-center px-3.75 lg:px-7.25"
+        className="sticky top-12.5 z-10 w-full h-12.5 bg-primary-03 border-b border-primary-00 flex justify-between items-center px-3.75 lg:px-7.25"
       >
-        <p className="by-sm text-[14px]! mx-auto">{chips.length} chips disponibles</p>
+        <p className="by-sm text-[14px]! lg:mx-auto">{chips.length} chips disponibles</p>
+                <p className="lg:hidden hl-xs text-[14px]! uppercase shrink-0 ">
+            {selected.length}/{MAX_MUESTRAS} chips
+          </p>
       </div>
 
       <div className="flex-1 grid grid-cols-2 lg:grid-cols-6 content-start gap-px bg-primary-01">
@@ -127,7 +130,7 @@ export default function ElegirMuestras({ chips }) {
                 />
               </span>
 
-              <div className="min-h-0 w-full flex-1 p-7 lg:p-10">
+              <div className="min-h-0 w-full flex-1 p-0 lg:p-10">
                 <div className="relative h-full w-full">
                   {image && (
                     <Image
@@ -157,11 +160,12 @@ export default function ElegirMuestras({ chips }) {
         </div>
       </div>
 
-      {/* Mobile: 2 filas (los chips elegidos arriba y los botones abajo, 101px
-          en total: MaterialBoxPanel deja ese lugar). Desktop: 1 fila. */}
+      {/* Mobile: solo la fila de botones (50px + 1px de borde = 51px:
+          MaterialBoxPanel deja ese lugar, si cambia hay que cambiarlo allá
+          también). Desktop: 1 fila con los chips y los botones. */}
       <div data-bottom-toolbar className="sticky bottom-0 z-10 w-full lg:h-16.25 bg-primary-03 border-t border-primary-00 flex flex-col lg:flex-row lg:items-center justify-between lg:gap-6">
 
-        <div className="h-12.5 lg:h-auto shrink-0 flex items-center justify-between lg:justify-start gap-4 min-w-0 px-3.75 lg:pr-0 lg:pl-7.25 border-b border-primary-00 lg:border-b-0">
+        <div className="hidden lg:flex h-12.5 lg:h-auto shrink-0 items-center justify-between lg:justify-start gap-4 min-w-0 px-3.75 lg:pr-0 lg:pl-7.25 border-b border-primary-00 lg:border-b-0">
           <div className="flex items-center gap-1.5 lg:gap-2 shrink-0">
             {Array.from({ length: MAX_MUESTRAS }, (_, index) => {
               const chip = chipsByKey[selected[index]];
@@ -189,7 +193,7 @@ export default function ElegirMuestras({ chips }) {
               );
             })}
           </div>
-          <p className="hl-xs text-[14px]! uppercase shrink-0 ">
+          <p className="hidden lg:block hl-xs text-[14px]! uppercase shrink-0 ">
             {selected.length}/{MAX_MUESTRAS} chips
           </p>
           <p className="hidden lg:block by-sm text-[14px]! text-primary-00 truncate pl-8.5">

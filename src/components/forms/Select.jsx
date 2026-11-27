@@ -20,7 +20,7 @@ const Select = ({
 }) => (
   <Listbox value={value} onChange={onChange}>
     <ListboxButton
-      className={`group flex w-full items-center justify-between gap-4 text-left cursor-pointer outline-none ${className}`}
+      className={`select-button group flex w-full items-center justify-between gap-4 text-left cursor-pointer outline-none ${className}`}
     >
       <span className={`truncate ${value ? "" : "text-secondary-02"}`}>
         {value || placeholder}

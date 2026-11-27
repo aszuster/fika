@@ -112,17 +112,18 @@ export default function PedidoEnviado() {
                 id={titleId}
                 className="text-[25px] font-light uppercase text-center mx-auto leading-6.50"
               >
-                Pedido enviado
+                Pedido solicitado
               </p>
-              <p className="by-sm text-center">
+              <p className="hl-sm uppercase text-center">
                 Material box
                 <br />
                 {dateFormatter.format(new Date(order.date))}
               </p>
-              <p className="by-sm text-secondary-01 font-normal! max-w-80 mx-auto pt-5">
+              <p className="by-sm text-secondary-01 font-normal! max-w-70 lg:max-w-80 mx-auto pt-5">
                 ¡Gracias por contactarte con nosotros!
                 <br />
-                En breve te responderemos.
+                Tu pedido está siendo procesado. <br/> Te enviamos el detalle por mail. <br/>
+Nos comunicaremos con vos a la brevedad para contarte los próximos pasos.
               </p>
             </div>
 

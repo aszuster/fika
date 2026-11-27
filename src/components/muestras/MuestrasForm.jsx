@@ -15,7 +15,6 @@ export const initialForm = {
   postalCode: "",
 };
 
-// Campo con su mensaje de error abajo (dentro de la misma fila con borde).
 const Field = ({ error, errorId, className = "", children }) => (
   <div className={`border-b border-primary-01 ${className}`}>
     {children}
@@ -32,13 +31,10 @@ const TextField = ({ label, error, className = "", ...props }) => (
       aria-invalid={Boolean(error)}
       aria-describedby={error ? `${props.id}-error` : undefined}
       placeholder={props.required ? `*${label}` : label}
-      className="by-sm w-full bg-transparent outline-none py-2 2xl:py-3.75 px-5"
+      className="by-sm w-full bg-transparent outline-none py-2.5 2xl:py-3.75 px-5"
     />
   </Field>
 );
-
-// Formulario de datos de envío. El estado y la validación los maneja
-// CompletarPedido, que lo envía junto con los chips elegidos.
 export default function MuestrasForm({
   form,
   errors = {},
@@ -56,7 +52,6 @@ export default function MuestrasForm({
 
   return (
     <div className="flex w-full">
-      {/* Columnas vacías a los costados solo en desktop. */}
       <div className="hidden lg:block w-40 shrink-0 border-r  border-primary-00"></div>
       <form
         noValidate
@@ -66,16 +61,16 @@ export default function MuestrasForm({
         }}
         className="flex-1 min-w-0 flex flex-col justify-between relative"
       >
-        <div className="absolute -top-0.5 -left-0.5">
+        <div className="hidden lg:block absolute -top-0.5 -left-0.5">
         <Corner/>
         </div>
-        <div className="absolute -rotate-90 -bottom-0.5 -left-0.5">
+        <div className="hidden lg:block absolute -rotate-90 -bottom-0.5 -left-0.5">
         <Corner/>
         </div>
-        <div className="absolute rotate-90 -top-0.5 -right-0.5">
+        <div className="hidden lg:block absolute rotate-90 -top-0.5 -right-0.5">
         <Corner/>
         </div>
-        <div className="absolute rotate-180 -bottom-0.5 -right-0.5">
+        <div className="hidden lg:block absolute rotate-180 -bottom-0.5 -right-0.5">
         <Corner/>
         </div>
         <div className="border-t border-primary-00">
@@ -111,7 +106,7 @@ export default function MuestrasForm({
               onChange={(value) => onChange("province", value)}
               options={PROVINCIAS}
               placeholder="*Provincia"
-              className="by-sm bg-transparent py-2 2xl:py-3.75 pl-5 pr-7"
+              className="by-sm bg-transparent py-2.5 2xl:py-3.75 pl-5 pr-7"
             />
           </Field>
           <TextField

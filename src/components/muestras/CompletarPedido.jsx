@@ -6,6 +6,7 @@ import Image from "next/image";
 import Button from "@/components/buttons/Button";
 import ScrollArea from "@/components/scrollbar/ScrollArea";
 import MuestrasForm, { initialForm } from "@/components/muestras/MuestrasForm";
+import { MaterialBoxList } from "@/components/muestras/MaterialBoxPanel";
 import {
   MAX_MUESTRAS,
   MUESTRAS_CONTACTO_KEY,
@@ -85,6 +86,9 @@ function CompletarPedidoContent({ chips: initialChips }) {
     ...readJson(MUESTRAS_CONTACTO_KEY),
   }));
   const [isSending, setIsSending] = useState(false);
+  // Mobile: paso 1 el formulario, paso 2 la lista de chips y "Solicitar".
+  // Desktop muestra todo junto.
+  const [mobileStep, setMobileStep] = useState(1);
   const [sendError, setSendError] = useState(null);
 
   const { errors, touch, validate, isValid } = useValidation(
@@ -102,6 +106,11 @@ function CompletarPedidoContent({ chips: initialChips }) {
       } catch {}
       return next;
     });
+
+  const goToStep2 = () => {
+    if (!validate()) return;
+    setMobileStep(2);
+  };
 
   // Envía el pedido (datos de contacto + chips elegidos) por mail y va a la
   // confirmación.
@@ -145,35 +154,44 @@ function CompletarPedidoContent({ chips: initialChips }) {
   };
 
   return (
-    <div className="bg-primary-03 w-full h-[calc(100dvh-3.125rem)] flex flex-col">
-      {/* Barra superior, debajo del navbar. Vuelve a elegir conservando la
-          selección (queda guardada en sessionStorage). */}
+    // Mobile: los 2 pasos ocupan toda la pantalla (tapan el navbar). Desktop:
+    // debajo del navbar.
+    <div className="bg-primary-03 w-full max-lg:fixed max-lg:inset-0 max-lg:z-50 h-dvh lg:h-[calc(100dvh-3.125rem)] flex flex-col">
       <div className="h-12.5 shrink-0 border-b border-primary-00 flex items-center px-3.75 lg:px-7.25">
-        <Button
-          copy="Volver a muestras"
-          url="/muestras/elegir"
-          variant="tertiary"
-        />
+        {mobileStep === 2 && (
+          <div className="lg:hidden">
+            <Button
+              copy="Volver a tus datos"
+              variant="tertiary"
+              disabled={isSending}
+              onClick={() => setMobileStep(1)}
+            />
+          </div>
+        )}
+        <div className={mobileStep === 2 ? "hidden lg:block" : ""}>
+          <Button
+            copy="Volver a muestras"
+            url="/muestras/elegir"
+            variant="tertiary"
+          />
+        </div>
       </div>
-
-      {/* Mobile: una sola columna que scrollea (formulario y después la lista
-          de chips) con la barra de "Solicitar" fija abajo. Desktop: dos
-          columnas. */}
       <div
         data-lenis-prevent
         className="flex-1 min-h-0 flex flex-col lg:flex-row overflow-y-auto lg:overflow-visible no-scrollbar"
       >
-        {/* Columna izquierda: título, texto y formulario. */}
         <div
           data-lenis-prevent
-          className="w-full lg:w-1/2 lg:h-full shrink-0 lg:shrink lg:overflow-y-auto no-scrollbar flex flex-col"
+          className={`w-full lg:w-1/2 lg:h-full shrink-0 lg:shrink lg:overflow-y-auto no-scrollbar flex flex-col ${
+            mobileStep === 2 ? "max-lg:hidden" : ""
+          }`}
         >
           <div className="my-auto w-full flex flex-col py-10">
             <div className="flex flex-col items-center px-5 pb-10 lg:pb-15">
-              <h1 className="hl-lg uppercase text-center max-w-105">
+              <h1 className="hl-lg text-[25px]! lg:text-[40px]! uppercase text-center max-w-105">
                 Completar pedido
               </h1>
-              <p className="by-sm text-secondary-02 text-center max-w-75 py-6.25">
+              <p className="by-sm text-secondary-02 text-center max-w-60 lg:max-w-75 lg:py-6.25">
                 Por favor completá tus datos para el envío del material box.
               </p>
             </div>
@@ -182,18 +200,34 @@ function CompletarPedidoContent({ chips: initialChips }) {
               errors={errors}
               onChange={handleChange}
               onBlur={touch}
-              onSubmit={submitOrder}
+              // En mobile, Enter en el formulario pasa al paso 2.
+              onSubmit={() =>
+                window.matchMedia("(min-width: 1024px)").matches
+                  ? submitOrder()
+                  : goToStep2()
+              }
             />
           </div>
         </div>
-
-        {/* Columna derecha: resumen de los chips elegidos. */}
-        <div className="w-full lg:w-1/2 lg:h-full shrink-0 lg:shrink border-t lg:border-t-0 lg:border-l border-primary-00 flex flex-col">
-          <div className="h-12.5 shrink-0 border-b border-primary-00 flex items-center px-5 lg:px-7.5">
-            <p className="hl-xs uppercase">Tu material box</p>
+        <div
+          className={`w-full lg:w-1/2 lg:h-full shrink-0 lg:shrink lg:border-l border-primary-00 flex flex-col ${
+            mobileStep === 1 ? "max-lg:hidden" : ""
+          }`}
+        >
+          <div className="h-12.5 lg:h-18 shrink-0 border-b border-primary-00 flex items-center justify-center px-5 lg:px-7.5">
+            <p className="hl-xs text-[25px]! text-center! uppercase">Tu material box</p>
           </div>
 
-          <ScrollArea className="lg:flex-1" viewportClassName="flex flex-col">
+          {/* Mobile: la lista de "Ver selección", en modo lectura. */}
+          <div className="lg:hidden flex flex-col">
+            {/* Solo para revisar: sin el aviso ni los botones de quitar. */}
+            <MaterialBoxList chips={chips} readOnly />
+          </div>
+
+          <ScrollArea
+            className="hidden lg:block lg:flex-1"
+            viewportClassName="flex flex-col"
+          >
             {chips.map((chip, index) => (
               <div
                 key={chip.key}
@@ -227,10 +261,7 @@ function CompletarPedidoContent({ chips: initialChips }) {
               </div>
             ))}
           </ScrollArea>
-          {/* Mobile: deja lugar para la barra fija de abajo. */}
-          <div className="lg:hidden h-16.25 shrink-0" />
-
-          <div className="h-16.25 shrink-0 border-t border-primary-00 flex items-center justify-between gap-6 fixed lg:static inset-x-0 bottom-0 z-10 bg-primary-03">
+          <div className="hidden lg:flex h-16.25 shrink-0 border-t border-primary-00 items-center justify-between gap-6">
             <div className="min-w-0 flex items-center gap-4 pl-5 lg:pl-7.5">
               <p className="hl-xs text-[14px]! uppercase shrink-0">
                 {chips.length}{" "}
@@ -242,7 +273,7 @@ function CompletarPedidoContent({ chips: initialChips }) {
                 </p>
               )}
             </div>
-            <div className="w-1/2 lg:w-1/3 h-full shrink-0 flex">
+            <div className="w-1/3 h-full shrink-0 flex">
               <Button
                 copy={isSending ? "Enviando..." : "Solicitar"}
                 variant="primary"
@@ -257,6 +288,38 @@ function CompletarPedidoContent({ chips: initialChips }) {
               />
             </div>
           </div>
+        </div>
+      </div>
+
+      <div className="lg:hidden shrink-0 border-t border-primary-00">
+        {mobileStep === 2 && sendError && (
+          <p className="by-sm text-[14px]! text-[#A20000] px-5 py-2 border-b border-primary-00">
+            {sendError}
+          </p>
+        )}
+        <div className="h-12.5 lg:h-16.25">
+          {mobileStep === 1 ? (
+            <Button
+              copy="Continuar"
+              variant="primary"
+              disabled={!isValid}
+              onClick={goToStep2}
+              className="h-full py-0!"
+            />
+          ) : (
+            <Button
+              copy={isSending ? "Enviando..." : "Solicitar"}
+              variant="primary"
+              disabled={
+                !isValid ||
+                isSending ||
+                chips.length === 0 ||
+                chips.length > MAX_MUESTRAS
+              }
+              onClick={submitOrder}
+              className="h-full py-0!"
+            />
+          )}
         </div>
       </div>
     </div>
